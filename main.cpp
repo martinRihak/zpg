@@ -20,6 +20,7 @@
 #include "DrawableObject.hpp"
 #include "App.hpp"
 #include "Scene.hpp"
+
 bool rotateLeft = false;
 float maxSpeed = 50.f;
 static void error_callback(int error, const char *description) { fputs(description, stderr); }
@@ -59,6 +60,7 @@ float square[] = {
      1.f, -0.3f, 0.f,  // Bottom right
     -1.f, -0.3f, 0.f   // Bottom left
 };
+
 const char *vertex_shader =
     "#version 330\n"
     "layout(location=0) in vec3 vp;"
@@ -70,10 +72,11 @@ const char *vertex_shader =
 const char *vertex_shader_02=
     "#version 330\n"
     "layout(location=0) in vec3 vp;"
+    "uniform mat4 modelMatrix;"
     "out vec3 pos;"       
     "void main () {"
     "     pos = vec3(vp.x,vp.y,1);"
-    "     gl_Position = vec4(vp, 1.0);"
+    "     gl_Position = modelMatrix * vec4(vp, 1.0);"
     "}";
 const char *fragment_shader =
     "#version 330\n"
@@ -108,6 +111,7 @@ int main(void)
     ShaderProgram* shaderProgram02 = new ShaderProgram(*vertex02,*fragmentShader);
     DrawableObject* triangle = new DrawableObject(test,shaderProgram);
     DrawableObject* squareObject = new DrawableObject(squareModel,shaderProgram02);    
+    squareObject->getTransformation().setRotation(90.0,glm::vec3(1.0,1.0,1.0));
     scene1->addObject(squareObject);
     scene1->addObject(triangle);
 

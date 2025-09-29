@@ -11,6 +11,11 @@ DrawableObject::~DrawableObject(){
 
 void DrawableObject::draw(){
     shader->use();
+    glm::mat4 modelMatrix = tranformation.getModelMatrix();
+    this->shader->setModelMatrix(modelMatrix);
     model->draw();
-    
+}
+
+Transformation& DrawableObject::getTransformation() {
+    return this->tranformation;
 }

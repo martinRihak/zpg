@@ -8,10 +8,15 @@ ShaderProgram::ShaderProgram(const Shader& vertexShader,const Shader& fragmentSh
 }
 void ShaderProgram::use(){
     glUseProgram(this->shaderProgram);
+    GLint idModelTransform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
+
 }
 ShaderProgram::~ShaderProgram(){
     glDeleteProgram(this->shaderProgram);
 }
-GLuint ShaderProgram::getProgram(){
-    return  this->shaderProgram;
+
+
+void ShaderProgram::setModelMatrix(const glm::mat4& modelMatrix) {
+    GLuint modelLoc = glGetUniformLocation(this->shaderProgram, "modelMatrix");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 }

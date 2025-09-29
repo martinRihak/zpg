@@ -11,8 +11,10 @@ Model::Model(const float* model,size_t size, int vertexCount ){
     glBindVertexArray(VAO);       // bind the VAO
     
     glEnableVertexAttribArray(0); // enable vertex attributes
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 
     this->vertexCount = vertexCount;
 }
