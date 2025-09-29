@@ -15,7 +15,6 @@ ShaderProgram::~ShaderProgram(){
     glDeleteProgram(this->shaderProgram);
 }
 
-
 void ShaderProgram::setModelMatrix(const glm::mat4& modelMatrix) {
     GLuint modelLoc = glGetUniformLocation(this->shaderProgram, "modelMatrix");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix[0][0]);

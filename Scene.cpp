@@ -12,6 +12,6 @@ void Scene::addObject(DrawableObject* obj){
 
 void Scene::runScene(){
     for(DrawableObject* o : this->objects){
-        o->draw();
+        o->draw(); 
     }
 }

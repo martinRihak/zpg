@@ -44,6 +44,7 @@ void App::addScene(Scene *scene)
 
 void App::run()
 {
+    float angle = 0.01f;
     while (!glfwWindowShouldClose(this->window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -20,7 +20,8 @@
 #include "DrawableObject.hpp"
 #include "App.hpp"
 #include "Scene.hpp"
-
+//Model
+#include "Models/bushes.h"
 bool rotateLeft = false;
 float maxSpeed = 50.f;
 static void error_callback(int error, const char *description) { fputs(description, stderr); }
@@ -103,6 +104,7 @@ int main(void)
 
     Model* test = new Model(points,sizeof(points),3);
     Model* squareModel = new Model(square,sizeof(square),6);
+    Model* bush = new Model(bushes,sizeof(bushes),8730);
     Shader* vertexShader = new Shader(vertex_shader, GL_VERTEX_SHADER);
     Shader* fragmentShader = new Shader(fragment_shader,GL_FRAGMENT_SHADER);
     Shader* vertex02 = new Shader(vertex_shader_02,GL_VERTEX_SHADER);
@@ -110,10 +112,14 @@ int main(void)
     ShaderProgram* shaderProgram = new ShaderProgram(*vertexShader,*fragmentShader);
     ShaderProgram* shaderProgram02 = new ShaderProgram(*vertex02,*fragmentShader);
     DrawableObject* triangle = new DrawableObject(test,shaderProgram);
-    DrawableObject* squareObject = new DrawableObject(squareModel,shaderProgram02);    
-    squareObject->getTransformation().setRotation(90.0,glm::vec3(1.0,1.0,1.0));
+    DrawableObject* squareObject = new DrawableObject(squareModel,shaderProgram02); 
+    DrawableObject* bushesObject = new DrawableObject(bush,shaderProgram02);   
+    //squareObject->getTransformation().setRotation(90.0,glm::vec3(1.0,1.0,1.0));
+
+
     scene1->addObject(squareObject);
     scene1->addObject(triangle);
+    //scene1->addObject(bushesObject);
 
     app->run();
 
