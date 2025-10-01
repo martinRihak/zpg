@@ -15,6 +15,9 @@ private:
     Model* model ;
     ShaderProgram* shader;
     Transformation tranformation;
+
+    bool animated = false;
+    
 public:
     DrawableObject(Model* model,ShaderProgram* shader);
     ~DrawableObject();
@@ -22,4 +25,9 @@ public:
     Model* getModel() const;
     ShaderProgram* getShaderProgram() const;
     Transformation& getTransformation();
+
+    void Move(float x,float y,float z);
+    void Rotate(float angle, float x,float y,float z);
+    void Scale(float x,float y,float z);
+
 };

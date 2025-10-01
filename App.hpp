@@ -3,7 +3,16 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include<vector>
+
+#include "shaderProgram/Shader.hpp"
+#include "shaderProgram/ShaderProgram.hpp"
+#include "Model.hpp"
+#include "DrawableObject.hpp"
+#include "App.hpp"
 #include "Scene.hpp"
+//Model
+#include "Models/bushes.h"
+
 
 class App
 {
