@@ -13,5 +13,5 @@ public:
     ~Scene();
 
     void addObject(DrawableObject* obj);
-    void runScene();
+    void render(float dt);
 };

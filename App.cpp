@@ -37,11 +37,19 @@ App::~App()
     exit(EXIT_SUCCESS);
 }
 
-void App::addScene(Scene *scene)
-{
-    this->scenes.push_back(scene);
+void App::addObjectToScene(DrawableObject* obj,int8_t id){
+    this->scenes[id]->addObject(obj);
 }
-
+int8_t App::getSceneCount(){
+    return this->sceneCount;
+}
+int8_t App::activeScene(){
+    return this->active;
+}
+void App::createScene()
+{
+    this->scenes.push_back(new Scene());
+}
 void App::run()
 {
     float points[] = {
@@ -89,8 +97,6 @@ void App::run()
         "out vec4 frag_colour;"
         "void main () {"
         "     frag_colour = vec4(pos, 1.0);}";
-    Scene *scene1 = new Scene();
-    this->addScene(scene1);
 
     Model *test = new Model(points, sizeof(points), 3);
     Model *squareModel = new Model(square, sizeof(square), 6);
@@ -101,22 +107,28 @@ void App::run()
 
     ShaderProgram *shaderProgram = new ShaderProgram(*vertexShader, *fragmentShader);
     ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader);
-    DrawableObject *triangle = new DrawableObject(test, shaderProgram);
+    DrawableObject *triangle = new DrawableObject(test, shaderProgram02);
     DrawableObject *squareObject = new DrawableObject(squareModel, shaderProgram02);
     DrawableObject *bushesObject = new DrawableObject(bush, shaderProgram02);
-    squareObject->getTransformation().setRotation(90.0, glm::vec3(1.0, 1.0, 1.0));
 
-    scene1->addObject(bushesObject);
-    scene1->addObject(squareObject);
-    scene1->addObject(triangle);
-    float angle = 0.01f;
+    this->createScene();
+    this->addObjectToScene(triangle,0);
 
-    
+
+    triangle->createRotarion(100.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // Use glfwGetTime() to compute real delta-time per frame
+    double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(this->window))
     {
+        double currentTime = glfwGetTime();
+        float dt = static_cast<float>(currentTime - lastTime);
+        lastTime = currentTime;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        this->scenes[active]->runScene();
+        this->scenes[active]->render(dt);
         glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 }

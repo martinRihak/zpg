@@ -10,8 +10,8 @@ void Scene::addObject(DrawableObject* obj){
     this->objects.push_back(obj);
 }
 
-void Scene::runScene(){
+void Scene::render(float dt){
     for(DrawableObject* o : this->objects){
-        o->draw(); 
+        o->draw(dt); 
     }
 }

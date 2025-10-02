@@ -25,6 +25,10 @@ private:
 public:
     App(int width, int height);
     ~App();
-    void addScene(Scene* scene);
+    void createScene();
+    void addObjectToScene(DrawableObject* obj, int8_t id);
+    
+    int8_t getSceneCount();
+    int8_t activeScene();
     void run();
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <GL/glew.h>
 #include <glm/vec3.hpp>                 // glm::vec3
 #include <glm/vec4.hpp>                 // glm::vec4
@@ -9,25 +10,30 @@
 #include "Model.hpp"
 #include "shaderProgram/ShaderProgram.hpp"
 #include "Transformation.hpp"
+#include "IAnimator/IAnimator.hpp"
 class DrawableObject
 {
 private:
     Model* model ;
     ShaderProgram* shader;
     Transformation tranformation;
-
+    std::unique_ptr<IAnimator> animator = std::make_unique<NullAnimator>();
     bool animated = false;
     
+    
+    void update(float dt);
 public:
     DrawableObject(Model* model,ShaderProgram* shader);
     ~DrawableObject();
-    void draw();
+    void draw(float dt);
     Model* getModel() const;
     ShaderProgram* getShaderProgram() const;
     Transformation& getTransformation();
+    void createRotarion(float speedDegPerSec, glm::vec3 axis);
 
-    void Move(float x,float y,float z);
-    void Rotate(float angle, float x,float y,float z);
-    void Scale(float x,float y,float z);
+    // Animator API
+    IAnimator* getAnimator() const;
+    void setAnimated(bool enabled);
+    bool isAnimated() const;
 
 };
