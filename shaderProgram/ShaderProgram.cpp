@@ -19,3 +19,45 @@ void ShaderProgram::setModelMatrix(const glm::mat4& modelMatrix) {
     GLuint modelLoc = glGetUniformLocation(this->shaderProgram, "modelMatrix");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 }
+
+void ShaderProgram::setUniform(const char* name, float value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return; // silently ignore missing uniform
+    glUniform1f(loc, value);
+}
+
+void ShaderProgram::setUniform(const char* name, int value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniform1i(loc, value);
+}
+
+void ShaderProgram::setUniform(const char* name, bool value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniform1i(loc, value ? 1 : 0);
+}
+
+void ShaderProgram::setUniform(const char* name, const glm::vec3& value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniform3fv(loc, 1, &value[0]);
+}
+
+void ShaderProgram::setUniform(const char* name, const glm::vec2& value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniform2fv(loc, 1, &value[0]);
+}
+
+void ShaderProgram::setUniform(const char* name, const glm::vec4& value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniform4fv(loc, 1, &value[0]);
+}
+
+void ShaderProgram::setUniform(const char* name, const glm::mat4& value) {
+    GLint loc = glGetUniformLocation(this->shaderProgram, name);
+    if (loc == -1) return;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, &value[0][0]);
+}

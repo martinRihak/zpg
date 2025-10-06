@@ -25,6 +25,11 @@ glm::mat4 Transformation::getModelMatrix() const {
     return modelMatrix;
 }
 
+void Transformation::setModelMatrix(const glm::mat4& mat) {
+    modelMatrix = mat;
+    // optionally decompose mat into position/rotation/scale if needed later
+}
+
 void Transformation::updateModelMatrix() {
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);

@@ -1,8 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-class Transformation {
+#include "Transformation/ITransformation.hpp"
+class Transformation : public ITransformation {
 public:
     Transformation();
 
@@ -11,6 +11,7 @@ public:
     void setScale(const glm::vec3& scale);
 
     glm::mat4 getModelMatrix() const;
+    void setModelMatrix(const glm::mat4& mat);
 
 private:
     glm::mat4 modelMatrix;  

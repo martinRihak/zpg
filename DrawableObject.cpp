@@ -1,4 +1,5 @@
 #include "DrawableObject.hpp"
+#include "Transformation/ITransformation.hpp"
 
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader) {}
@@ -37,4 +38,17 @@ void DrawableObject::setAnimated(bool enabled){
 
 bool DrawableObject::isAnimated() const{
     return this->animated;
+}
+
+void DrawableObject::queueTransform(std::shared_ptr<ITransformation> t) {
+    if (!t) return;
+    queuedTransforms.add(t);
+}
+
+void DrawableObject::applyQueuedTransforms() {
+    glm::mat4 composed = queuedTransforms.getModelMatrix();
+    this->tranformation.setModelMatrix(composed);
+    // clear queue after applying
+    // simple clear by replacing with a fresh CompositeTransformation
+    queuedTransforms = CompositeTransformation();
 }

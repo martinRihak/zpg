@@ -11,6 +11,7 @@
 #include "shaderProgram/ShaderProgram.hpp"
 #include "Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
+#include "Transformation/ITransformation.hpp"
 class DrawableObject
 {
 private:
@@ -19,6 +20,8 @@ private:
     Transformation tranformation;
     std::unique_ptr<IAnimator> animator = std::make_unique<NullAnimator>();
     bool animated = false;
+    // queued composite transforms for demo / staged application
+    CompositeTransformation queuedTransforms;
     
     
     void update(float dt);
@@ -35,5 +38,10 @@ public:
     IAnimator* getAnimator() const;
     void setAnimated(bool enabled);
     bool isAnimated() const;
+
+    // Queue a single transformation into an internal composite (won't apply until asked)
+    void queueTransform(std::shared_ptr<ITransformation> t);
+    // Apply all queued transforms (compose and set as this object's transformation)
+    void applyQueuedTransforms();
 
 };
