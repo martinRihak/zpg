@@ -65,7 +65,8 @@ void App::createScene()
 }
 
 // void App::createShaderProgram(const char* vertexShader,const char* fragmentShader){}
-void App::addShaderProgram(ShaderProgram* program){
+void App::addShaderProgram(ShaderProgram *program)
+{
     this->camera->addObserver(program);
 }
 void App::run()
@@ -109,7 +110,7 @@ void App::run()
         "in vec3 vertexColor;"
         "out vec4 frag_colour;\n"
         "void main () {"
-        "     frag_colour = vec4(vertexColor, 0.0);"
+        "     frag_colour = vec4(vertexColor, 1.0);"
         "}";
     /* const char *fragment_shader_red =
          "#version 330\n"
@@ -129,7 +130,7 @@ void App::run()
     Shader *fragmentShader = new Shader(fragment_shader, GL_FRAGMENT_SHADER);
     Shader *vertex02 = new Shader(vertex_shader, GL_VERTEX_SHADER);
 
-    ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader,this->camera);
+    ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader, this->camera);
     this->addShaderProgram(shaderProgram02);
     // Shader *fragRed = new Shader(fragment_shader_red, GL_FRAGMENT_SHADER);
     // Shader *fragGreen = new Shader(fragment_shader_green, GL_FRAGMENT_SHADER);
@@ -209,7 +210,7 @@ void App::run()
         float dt = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         if (this->controller)
-            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount,this->camera);
+            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera);
 
         if (!this->scenes.empty() && this->active >= 0 && this->active < this->sceneCount)
         {
