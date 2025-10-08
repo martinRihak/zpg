@@ -2,24 +2,26 @@
 // Include GLFW
 #include <GL/glew.h>
 #include "Shader.hpp"
-
+#include <memory>
 #include <glm/vec3.hpp>                 
 #include <glm/vec2.hpp>                 
 #include <glm/vec4.hpp>                 
-#include <glm/mat4x4.hpp>               
-
+#include <glm/mat4x4.hpp>  
+#include "../Camera.hpp"             
+class Camera;
 class ShaderProgram
 {
 private:
     GLuint shaderProgram;
-
+    Camera* camera;
+    
 public:
-    ShaderProgram(const Shader& vertexShader,const Shader& fragmentShader);
+    ShaderProgram(const Shader& vertexShader,const Shader& fragmentShader,Camera* camera);
     ~ShaderProgram();    
     
     bool setShaderProgram(); 
     void use();
-    
+    void update();
     void setModelMatrix(const glm::mat4& modelMatrix);
     // Overloaded uniform setters
     void setUniform(const char* name, float value);
