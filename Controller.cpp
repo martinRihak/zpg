@@ -13,8 +13,6 @@ void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, i
     float mouseSensitivity = 0.1f; 
     if (!window)
         return;
-
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera->setEye(camera->getPosition() + cameraSpeed * camera->getTarget());
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -35,11 +33,8 @@ void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, i
             isRightMouseButtonPressed = true;
         }
 
-        float xoffset = (xpos - lastX) ;
-        float yoffset = (lastY - ypos); 
-
-        xoffset *=mouseSensitivity;
-        yoffset *=mouseSensitivity;
+        float xoffset = (xpos - lastX) * mouseSensitivity;
+        float yoffset = (lastY - ypos) * mouseSensitivity; 
      
         float newAlpha = camera->getAlpha() + yoffset; 
         float newFi = camera->getFi() + xoffset;       

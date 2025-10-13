@@ -1,8 +1,11 @@
 #version 330 core
-
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectMatrix;   
+out vec3 vertexColor;
 layout(location=0) in vec3 vp;
-out vec3 pos;
+layout(location=1) in vec3 vn;
 void main(){
-    pos = vec3(vp.x,vp,y,0.5);
-    gl_Position = vec4(vp,1.0);
+    vertexColor = vp;
+    gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);
 }

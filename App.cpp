@@ -67,12 +67,12 @@ void App::addShaderProgram(ShaderProgram *program)
 }
 void App::run()
 {
-float triangle[] = {
+    float triangle[] = {
 
-    0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // Top vertex
-    0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // Bottom right
-   -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f  // Bottom left
-};
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // Top vertex
+        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f // Bottom left
+    };
 
     float square[] = {
         -1.f, -0.3f, 0.f, // Bottom left
@@ -84,39 +84,23 @@ float triangle[] = {
         -1.f, -0.3f, 0.f  // Bottom left
     };
 
-    const char *vertex_shader =
-        "#version 330\n"
-        "uniform mat4 modelMatrix;"
-        "uniform mat4 projectMatrix;"
-        "uniform mat4 viewMatrix;"
-        "out vec3 vertexColor;"
-        "layout(location=0) in vec3 vp;"
-        "layout(location=1) in vec3 vn;"
-        "void main () {"
-        "     vertexColor=vn;"
-        "     gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);"
-        "}";
-    const char *fragment_shader =
-        "#version 330\n"
-        "in vec3 vertexColor;"
-        "out vec4 frag_colour;\n"
-        "void main () {"
-        "     frag_colour = vec4(vertexColor, 1.0);"
-        "}";
+
     Model *squareModel = new Model(square, sizeof(square), 6);
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
-    Model* treeModel = new Model(tree, sizeof(tree),92814) ;
-    Model* triangleModel = new Model(triangle,sizeof(triangle),3);
-    Shader *fragmentShader = new Shader(fragment_shader, GL_FRAGMENT_SHADER);
-    Shader *vertex02 = new Shader(vertex_shader, GL_VERTEX_SHADER);
+    Model *treeModel = new Model(tree, sizeof(tree), 92814);
+    Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
+    Shader *fragmentShader = new Shader();
+    Shader *vertex02 = new Shader();
+    vertex02->createShaderFromFile(GL_VERTEX_SHADER,"../shaders/vert.vert");
+    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER,"../shaders/frag.frag");
 
     ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader, this->camera);
     this->addShaderProgram(shaderProgram02);
 
-    DrawableObject* triangleObject = new DrawableObject(triangleModel,shaderProgram02);
+    DrawableObject *triangleObject = new DrawableObject(triangleModel, shaderProgram02);
     DrawableObject *bushesObject = new DrawableObject(bush, shaderProgram02);
-    DrawableObject* treeObject = new DrawableObject(treeModel,shaderProgram02);
+    DrawableObject *treeObject = new DrawableObject(treeModel, shaderProgram02);
     DrawableObject *sphere1 = new DrawableObject(sphereModel, shaderProgram02);
     DrawableObject *sphere2 = new DrawableObject(sphereModel, shaderProgram02);
     DrawableObject *sphere3 = new DrawableObject(sphereModel, shaderProgram02);
@@ -134,16 +118,16 @@ float triangle[] = {
     sphere4->getTransformation().setPosition(glm::vec3(0.0f, -0.7f, 0.0f));
     sphere4->getTransformation().setScale(glm::vec3(0.3f));
     this->createScene();
-    this->addObjectToScene(triangleObject,0);
+    this->addObjectToScene(triangleObject, 0);
     this->createScene();
     this->addObjectToScene(sphere1, 1);
     this->addObjectToScene(sphere3, 1);
     this->addObjectToScene(sphere2, 1);
     this->addObjectToScene(sphere4, 1);
-    std::vector<std::pair<DrawableObject* ,int>> forest = {{treeObject,50},{bushesObject,50}};
+    std::vector<std::pair<DrawableObject *, int>> forest = {{treeObject, 50}, {bushesObject, 50}};
 
     this->createScene();
-    this->scenes[2]->randomForest(glm::vec3(0.0f,0.0f,0.0f),5,forest);    
+    this->scenes[2]->randomForest(glm::vec3(0.0f, 0.0f, 0.0f), 5, forest);
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
@@ -153,7 +137,7 @@ float triangle[] = {
         float dt = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         if (this->controller)
-            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera,dt);
+            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera, dt);
 
         if (!this->scenes.empty() && this->active >= 0 && this->active < this->sceneCount)
         {

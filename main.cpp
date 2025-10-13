@@ -15,15 +15,11 @@
 #include "App.hpp"
 
 static void error_callback(int error, const char *description) { fputs(description, stderr); }
-
-
-
 static void window_size_callback(GLFWwindow *window, int width, int height)
 {
     printf("resize %d, %d \n", width, height);
     glViewport(0, 0, width, height);
 }
-
 static void button_callback(GLFWwindow *window, int button, int action, int mode)
 {
     if (action == GLFW_PRESS)

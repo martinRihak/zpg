@@ -9,7 +9,7 @@ endif()
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-find_package(GLEW REQUIRED)  # Bez uvozovek!
+find_package(GLEW REQUIRED)  
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
