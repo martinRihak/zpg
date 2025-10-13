@@ -153,7 +153,7 @@ float triangle[] = {
         float dt = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         if (this->controller)
-            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera);
+            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera,dt);
 
         if (!this->scenes.empty() && this->active >= 0 && this->active < this->sceneCount)
         {

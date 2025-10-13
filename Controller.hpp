@@ -11,7 +11,7 @@ public:
     Controller();
     ~Controller();
 
-    void processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t &active, int8_t sceneCount,Camera* camera);
+    void processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t &active, int8_t sceneCount,Camera* camera,float dt);
 
 private:
     // simple debounce state for keys 1..9

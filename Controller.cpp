@@ -8,8 +8,8 @@ Controller::Controller()
 
 Controller::~Controller() {}
 
-void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t& active, int8_t sceneCount, Camera* camera) {
-    float cameraSpeed = 0.05f;
+void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t& active, int8_t sceneCount, Camera* camera,float dt) {
+    float cameraSpeed = 0.05f ;
     float mouseSensitivity = 0.1f; 
     if (!window)
         return;
@@ -20,9 +20,9 @@ void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, i
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera->setEye(camera->getPosition() - cameraSpeed * camera->getTarget());
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera->setEye(camera->getPosition() + glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera->setEye(camera->getPosition() - glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->setEye(camera->getPosition() + glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
 
 
     if (glfwGetWindowAttrib(window, GLFW_FOCUSED) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
@@ -35,12 +35,14 @@ void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, i
             isRightMouseButtonPressed = true;
         }
 
-        float xoffset = static_cast<float>(xpos - lastX) * mouseSensitivity;
-        float yoffset = static_cast<float>(lastY - ypos) * mouseSensitivity; 
+        float xoffset = (xpos - lastX) ;
+        float yoffset = (lastY - ypos); 
 
+        xoffset *=mouseSensitivity;
+        yoffset *=mouseSensitivity;
      
         float newAlpha = camera->getAlpha() + yoffset; 
-        float newFi = camera->getFi() - xoffset;       
+        float newFi = camera->getFi() + xoffset;       
 
         camera->setAngels(newAlpha, newFi);
 

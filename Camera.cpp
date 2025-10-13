@@ -2,8 +2,8 @@
 
 Camera::Camera()
     : eye(0.0f, 0.0f, -0.5f), // V�choz� pozice kamery
-      up(0.0f, -1.0f, 0.0f),
-      alpha(0.0f),
+      up(0.0f, 1.0f, 0.0f),
+      alpha(85.0f),
       fi(-90.0f)
 {
     update();
@@ -14,14 +14,14 @@ glm::mat4 Camera::getCamera() const
 }
 glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const
 {
-    return glm::perspective(60.0f, aspectRatio, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
 }
 
 void Camera::update()
 {
-    target.x = cos(glm::radians(fi)) * cos(glm::radians(alpha));
-    target.y = sin(glm::radians(alpha));
-    target.z = sin(glm::radians(fi)) * cos(glm::radians(alpha));
+    target.x = sin(glm::radians(alpha)) * cos(glm::radians(fi));
+    target.y = cos(glm::radians(alpha));
+    target.z = sin(glm::radians(alpha)) * sin(glm::radians(fi));
     target = glm::normalize(target);
 }
 
@@ -32,11 +32,11 @@ void Camera::setEye(const glm::vec3 &eye)
     update();
     notifyObservers();
 }
-void Camera::setAngels(float aplha, float fi)
+void Camera::setAngels(float alpha, float fi)
 {
-    this->alpha = glm::clamp(alpha, -90.0f, 89.0f);
+    this->alpha = glm::clamp(alpha, -89.0f, 89.0f);
     this->fi = fi;
-    std::cout << aplha << " | " << fi << std::endl;
+    std::cout << alpha << " | " << fi << std::endl;
     update();
     notifyObservers();
 }

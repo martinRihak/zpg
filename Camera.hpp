@@ -34,7 +34,7 @@ public:
     glm::mat4 getProjectionMatrix(float aspectRatio) const;
 
     void setEye(const glm::vec3 &eye);
-    void setAngels(float aplha, float fi);
+    void setAngels(float alpha, float fi);
     void addObserver(ShaderProgram *observer);
     void notifyObservers();
 };
