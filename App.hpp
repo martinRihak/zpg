@@ -41,7 +41,7 @@ public:
     //void createShaderProgram(const char* vertexShader,const char* fragmentShader);
     //void createShaderProgram(Shader* vertexShader,Shader* fragmentShader);
     void addShaderProgram(ShaderProgram* program);
-
+    Scene* getScene(int i);
     int8_t getSceneCount();
     int8_t activeScene();
     void run();

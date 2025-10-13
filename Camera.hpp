@@ -30,7 +30,6 @@ public:
     float getAlpha() const;
     float getFi() const;
 
-
     glm::mat4 getCamera() const;
     glm::mat4 getProjectionMatrix(float aspectRatio) const;
 

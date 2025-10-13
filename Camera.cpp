@@ -2,9 +2,9 @@
 
 Camera::Camera()
     : eye(0.0f, 0.0f, -0.5f), // V�choz� pozice kamery
-      up(0.0f, 1.0f, 0.0f),
+      up(0.0f, -1.0f, 0.0f),
       alpha(0.0f),
-      fi(90.0f)
+      fi(-90.0f)
 {
     update();
 }
@@ -34,7 +34,7 @@ void Camera::setEye(const glm::vec3 &eye)
 }
 void Camera::setAngels(float aplha, float fi)
 {
-    this->alpha = glm::clamp(alpha, -89.0f, 89.0f);
+    this->alpha = glm::clamp(alpha, -90.0f, 89.0f);
     this->fi = fi;
     std::cout << aplha << " | " << fi << std::endl;
     update();

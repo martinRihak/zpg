@@ -12,36 +12,28 @@
 #include "Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
 #include "Transformation/ITransformation.hpp"
-class DrawableObject
-{
+class DrawableObject {
 private:
-    Model* model ;
+    Model* model;
     ShaderProgram* shader;
     Transformation tranformation;
-    std::unique_ptr<IAnimator> animator = std::make_unique<NullAnimator>();
+    std::unique_ptr<IAnimator> animator;
     bool animated = false;
-    // queued composite transforms for demo / staged application
     CompositeTransformation queuedTransforms;
-    
-    
-    void update(float dt);
+
 public:
-    DrawableObject(Model* model,ShaderProgram* shader);
+    DrawableObject(Model* model, ShaderProgram* shader);
     ~DrawableObject();
     void draw(float dt);
-    Model* getModel() const;
-    ShaderProgram* getShaderProgram() const;
+    void createRotarion(float speedDegPerSec, glm::vec3 axis); 
     Transformation& getTransformation();
-    void createRotarion(float speedDegPerSec, glm::vec3 axis);
-
-    // Animator API
+    void update(float dt);
     IAnimator* getAnimator() const;
     void setAnimated(bool enabled);
     bool isAnimated() const;
-
-    // Queue a single transformation into an internal composite (won't apply until asked)
     void queueTransform(std::shared_ptr<ITransformation> t);
-    // Apply all queued transforms (compose and set as this object's transformation)
     void applyQueuedTransforms();
 
+
+    DrawableObject* clone() const;
 };

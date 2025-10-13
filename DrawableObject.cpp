@@ -48,7 +48,13 @@ void DrawableObject::queueTransform(std::shared_ptr<ITransformation> t) {
 void DrawableObject::applyQueuedTransforms() {
     glm::mat4 composed = queuedTransforms.getModelMatrix();
     this->tranformation.setModelMatrix(composed);
-    // clear queue after applying
-    // simple clear by replacing with a fresh CompositeTransformation
     queuedTransforms = CompositeTransformation();
+}
+DrawableObject* DrawableObject::clone() const {
+
+    DrawableObject* newObj = new DrawableObject(this->model, this->shader);
+    
+    newObj->tranformation = this->tranformation; 
+    
+    return newObj;
 }

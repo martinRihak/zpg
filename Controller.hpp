@@ -17,5 +17,5 @@ private:
     // simple debounce state for keys 1..9
     bool prevKeyState[9];
     float lastX, lastY;
-    bool isLeftMouseButtonPressed = false;
+    bool isRightMouseButtonPressed = false;
 };
