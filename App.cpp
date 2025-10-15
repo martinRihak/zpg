@@ -63,7 +63,7 @@ void App::createScene()
 
 void App::addShaderProgram(ShaderProgram *program)
 {
-    this->camera->addObserver(program);
+    this->camera->attach(program);
 }
 void App::run()
 {
@@ -93,7 +93,7 @@ void App::run()
     Shader *fragmentShader = new Shader();
     Shader *vertex02 = new Shader();
     vertex02->createShaderFromFile(GL_VERTEX_SHADER,"../shaders/vert.vert");
-    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER,"../shaders/frag.frag");
+    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER,"../shaders/Lambert.frag");
 
     ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader, this->camera);
     this->addShaderProgram(shaderProgram02);
@@ -127,7 +127,7 @@ void App::run()
     std::vector<std::pair<DrawableObject *, int>> forest = {{treeObject, 50}, {bushesObject, 50}};
 
     this->createScene();
-    this->scenes[2]->randomForest(glm::vec3(0.0f, 0.0f, 0.0f), 5, forest);
+    this->scenes[2]->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))

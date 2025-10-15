@@ -7,9 +7,11 @@
 #include <glm/vec2.hpp>                 
 #include <glm/vec4.hpp>                 
 #include <glm/mat4x4.hpp>  
-#include "../Camera.hpp"             
+#include "../Camera.hpp"     
+#include "../Observer.hpp"        
 class Camera;
-class ShaderProgram
+
+class ShaderProgram : public Observer
 {
 private:
     GLuint shaderProgram;
@@ -21,7 +23,7 @@ public:
     
     bool setShaderProgram(); 
     void use();
-    void update();
+    void notify();
     void setModelMatrix(const glm::mat4& modelMatrix);
     // Overloaded uniform setters
     void setUniform(const char* name, float value);

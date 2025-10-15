@@ -9,10 +9,10 @@ ShaderProgram::ShaderProgram(const Shader& vertexShader,const Shader& fragmentSh
 void ShaderProgram::use(){
     glUseProgram(this->shaderProgram);
     GLint idModelTransform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
-    update();
+    notify();
 }
 
-void ShaderProgram::update(){
+void ShaderProgram::notify(){
     if(!camera ) return;
 
     GLint viewLoc = glGetUniformLocation(this->shaderProgram,"viewMatrix");

@@ -30,7 +30,7 @@ void Camera::setEye(const glm::vec3 &eye)
     this->eye = eye;
     std::cout << eye.x << " " << eye.y << " " << eye.z << std::endl;
     update();
-    notifyObservers();
+    notifyAll();
 }
 void Camera::setAngels(float alpha, float fi)
 {
@@ -38,19 +38,9 @@ void Camera::setAngels(float alpha, float fi)
     this->fi = fi;
     std::cout << alpha << " | " << fi << std::endl;
     update();
-    notifyObservers();
+    notifyAll();
 }
-void Camera::addObserver(ShaderProgram *observer)
-{
-    this->observers.push_back(observer);
-}
-void Camera::notifyObservers()
-{
-    for (auto o : this->observers)
-    {
-        o->update();
-    }
-}
+
 glm::vec3 Camera::getPosition() const
 {
     return eye;

@@ -3,11 +3,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <iostream>
+#include "Subject.hpp"
 #include "shaderProgram/ShaderProgram.hpp"
 
 class ShaderProgram;
 
-class Camera
+class Camera : public Subject 
 {
 private:
     glm::vec3 eye; // Position
@@ -17,7 +18,6 @@ private:
     float alpha;
     float fi;
 
-    std::vector<ShaderProgram *> observers;
     void update();
 
 public:
@@ -35,6 +35,4 @@ public:
 
     void setEye(const glm::vec3 &eye);
     void setAngels(float alpha, float fi);
-    void addObserver(ShaderProgram *observer);
-    void notifyObservers();
 };
