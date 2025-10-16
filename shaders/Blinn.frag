@@ -1,3 +1,4 @@
+
 #version 400 core
 in vec3 worldPosition;
 in vec3 worldNormal;
@@ -13,10 +14,10 @@ void main(){
     vec3 norm = normalize(worldNormal);
     vec3 viewDir = normalize(viewPos - worldPosition);
     vec3 reflectDir = reflect(-lightDir,norm);
-    
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     vec3 ambient = vec3(0.1, 0.1, 0.1) * objectColor;
    
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
 
     float diff = max(dot(norm, lightDir), 0.0);
     

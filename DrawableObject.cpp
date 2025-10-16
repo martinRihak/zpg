@@ -11,6 +11,7 @@ DrawableObject::~DrawableObject()
 void DrawableObject::draw(float dt)
 {
     shader->use();
+    shader->setUniform("viewPos",shader->getCameraPos());
     update(dt);
     this->shader->setModelMatrix(tranformation.getModelMatrix());
     model->draw();

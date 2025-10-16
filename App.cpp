@@ -90,21 +90,28 @@ void App::run()
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-    Shader *fragmentShader = new Shader();
-    Shader *vertex02 = new Shader();
-    vertex02->createShaderFromFile(GL_VERTEX_SHADER,"../shaders/vert.vert");
-    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER,"../shaders/Lambert.frag");
+    Shader *LambertFrag = new Shader("../shaders/Lambert.frag",GL_FRAGMENT_SHADER);
+    Shader *constantFrag= new Shader("../shaders/Constant.frag",GL_FRAGMENT_SHADER);
+    Shader *PhongFrag= new Shader("../shaders/Phong.frag",GL_FRAGMENT_SHADER);
+    Shader *BlinnFrag= new Shader("../shaders/Blinn.frag",GL_FRAGMENT_SHADER);
+    Shader *vertex02 = new Shader("../shaders/vert.vert",GL_VERTEX_SHADER);
 
-    ShaderProgram *shaderProgram02 = new ShaderProgram(*vertex02, *fragmentShader, this->camera);
-    this->addShaderProgram(shaderProgram02);
+    ShaderProgram *LambertShader = new ShaderProgram(*vertex02, *LambertFrag, this->camera);
+    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
+    ShaderProgram *PhongShader = new ShaderProgram(*vertex02, *PhongFrag, this->camera);
+    ShaderProgram *BlinnShader = new ShaderProgram(*vertex02, *BlinnFrag, this->camera);
+    this->addShaderProgram(LambertShader);
+    this->addShaderProgram(constantShader);
+    this->addShaderProgram(PhongShader);
+    this->addShaderProgram(BlinnShader);
 
-    DrawableObject *triangleObject = new DrawableObject(triangleModel, shaderProgram02);
-    DrawableObject *bushesObject = new DrawableObject(bush, shaderProgram02);
-    DrawableObject *treeObject = new DrawableObject(treeModel, shaderProgram02);
-    DrawableObject *sphere1 = new DrawableObject(sphereModel, shaderProgram02);
-    DrawableObject *sphere2 = new DrawableObject(sphereModel, shaderProgram02);
-    DrawableObject *sphere3 = new DrawableObject(sphereModel, shaderProgram02);
-    DrawableObject *sphere4 = new DrawableObject(sphereModel, shaderProgram02);
+    DrawableObject *triangleObject = new DrawableObject(triangleModel, LambertShader);
+    DrawableObject *bushesObject = new DrawableObject(bush, LambertShader);
+    DrawableObject *treeObject = new DrawableObject(treeModel, LambertShader);
+    DrawableObject *sphere1 = new DrawableObject(sphereModel, constantShader);
+    DrawableObject *sphere2 = new DrawableObject(sphereModel, LambertShader);
+    DrawableObject *sphere3 = new DrawableObject(sphereModel, PhongShader);
+    DrawableObject *sphere4 = new DrawableObject(sphereModel, BlinnShader);
 
     sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));

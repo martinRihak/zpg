@@ -10,9 +10,6 @@
 - Vytvorit Tridu Light a posilat podle pocize a intenzity informace do fragmentShaderu.
 - 
 
-
-
-
 ## Discord popis
 
 Ahoj, nepochopil jsem jak chce Němec tu Transform třídu a ty ostatní třídy Translate Rotate Scale

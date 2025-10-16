@@ -28,7 +28,6 @@ void Camera::update()
 void Camera::setEye(const glm::vec3 &eye)
 {
     this->eye = eye;
-    std::cout << eye.x << " " << eye.y << " " << eye.z << std::endl;
     update();
     notifyAll();
 }
@@ -36,12 +35,11 @@ void Camera::setAngels(float alpha, float fi)
 {
     this->alpha = glm::clamp(alpha, -89.0f, 89.0f);
     this->fi = fi;
-    std::cout << alpha << " | " << fi << std::endl;
     update();
     notifyAll();
 }
 
-glm::vec3 Camera::getPosition() const
+glm::vec3 Camera::getPosition() const 
 {
     return eye;
 }

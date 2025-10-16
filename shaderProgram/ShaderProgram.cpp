@@ -22,7 +22,9 @@ void ShaderProgram::notify(){
     glUniformMatrix4fv(procLoc,1,GL_FALSE,&camera->getProjectionMatrix(aspectRatio)[0][0]);
     
 }
-
+glm::vec3 ShaderProgram::getCameraPos(){
+    return camera->getPosition();
+}
 ShaderProgram::~ShaderProgram(){
     glDeleteProgram(this->shaderProgram);
 }
@@ -51,8 +53,12 @@ void ShaderProgram::setUniform(const char* name, bool value) {
 }
 
 void ShaderProgram::setUniform(const char* name, const glm::vec3& value) {
+
+    //std::cout << &value[0] << std::endl;
     GLint loc = glGetUniformLocation(this->shaderProgram, name);
-    if (loc == -1) return;
+    if (loc == -1) {
+        return;
+    }
     glUniform3fv(loc, 1, &value[0]);
 }
 

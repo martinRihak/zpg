@@ -23,6 +23,7 @@ public:
     
     bool setShaderProgram(); 
     void use();
+    glm::vec3 getCameraPos();
     void notify();
     void setModelMatrix(const glm::mat4& modelMatrix);
     // Overloaded uniform setters
