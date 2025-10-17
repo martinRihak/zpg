@@ -14,7 +14,28 @@ find_package(GLEW REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
 
-add_executable(main main.cpp Model.cpp App.cpp Camera.cpp Scene.cpp DrawableObject.cpp Transformation.cpp Transformation/ITransformation.cpp shaderProgram/Shader.cpp shaderProgram/ShaderProgram.cpp Controller.cpp )
+set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+set(SHADER_DIR "${CMAKE_SOURCE_DIR}/shaders")
 
-target_include_directories(main PRIVATE ${GLM_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS})
-target_link_libraries(main PRIVATE glfw GLEW::GLEW OpenGL::GL)
+file(GLOB_RECURSE SOURCE_FILES
+    "${SOURCE_DIR}/*.cpp"
+    "${SOURCE_DIR}/*.hpp"
+)
+file(GLOB SHADER_FILES "${SHADER_DIR}/*.frag" "${SHADER_DIR}/*.vert" "${SHADER_DIR}/*.glsl")
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
+foreach(SHADER ${SHADER_FILES})
+    get_filename_component(SHADER_NAME ${SHADER} NAME)
+    configure_file(${SHADER} ${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME} COPYONLY)
+endforeach()
+
+# Přidání spustitelného souboru (předpokládám main.cpp v src/)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${SOURCE_DIR}
+    ${GLM_INCLUDE_DIRS} 
+    ${OPENGL_INCLUDE_DIR} 
+    ${GLEW_INCLUDE_DIRS} # Pokud GLM není systémové, přidejte explicitní cestu
+)
+# Linkování knihoven
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw GLEW::GLEW OpenGL::GL)

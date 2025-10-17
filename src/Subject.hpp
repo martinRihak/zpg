@@ -24,4 +24,8 @@ public:
             o->notify();
         }
     }
+//    void notifyAllLight(){
+        //for(Observer *o : observers){
+        //}
+    //}
 };

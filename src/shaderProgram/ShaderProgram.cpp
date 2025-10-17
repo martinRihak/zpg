@@ -19,8 +19,7 @@ void ShaderProgram::notify(){
     GLint procLoc = glGetUniformLocation(this->shaderProgram,"projectMatrix");
     glUniformMatrix4fv(viewLoc,1,GL_FALSE,&camera->getCamera()[0][0]);
     float aspectRatio = 4.0f/3.0f;
-    glUniformMatrix4fv(procLoc,1,GL_FALSE,&camera->getProjectionMatrix(aspectRatio)[0][0]);
-    
+    glUniformMatrix4fv(procLoc,1,GL_FALSE,&camera->getProjectionMatrix(aspectRatio)[0][0]); 
 }
 glm::vec3 ShaderProgram::getCameraPos(){
     return camera->getPosition();

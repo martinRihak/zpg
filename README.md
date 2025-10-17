@@ -8,7 +8,9 @@
 - Neposilat cas do vsech DrawableObject a vypocitavat cas primo v objektech (mozna teda)
 - Zjednodušit správu a vytváření scén, nemusim vytvaret sceny, ale automaticky vytvorit scenu pokud scena neexistuje.
 - Vytvorit Tridu Light a posilat podle pocize a intenzity informace do fragmentShaderu.
-- 
+- Trida Light je Subject ktery informuje Observer/ shader Program, že Light změnilo svou pozici. 
+
+- Scéna má vector shaderProgramu, kteří se přidávají automaticky po přidání DrawableObjectu do scény, automaticky se kontroluje, jestli daný shaderProgram, který ma object se už ve scéně nachází, pokud ne, přidá ho. Scena bude  Mít i vector vsech svetel, a tyto světla při změně pozice informují všechny shaderProgramy, že změnili polohu.
 
 ## Discord popis
 

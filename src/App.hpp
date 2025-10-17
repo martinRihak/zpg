@@ -12,15 +12,7 @@
 #include "Scene.hpp"
 #include "Camera.hpp"
 //Model
-#include "Models/bushes.h"
-// Add explicit includes for each required model header file below:
-#include "Models/tree.h"
-#include "Models/gift.h"
-#include "Models/suzi_flat.h"
-#include "Models/plain.h"
-#include "Models/sphere.h"
-
-// #include "Models/another_model.hpp" // Add more as needed
+#include "../Models/AllModels.hpp"
 
 class App
 {
