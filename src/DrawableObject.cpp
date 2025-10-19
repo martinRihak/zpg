@@ -16,10 +16,15 @@ void DrawableObject::draw(float dt)
     this->shader->setModelMatrix(tranformation.getModelMatrix());
     model->draw();
 }
-void DrawableObject::createRotarion(float speedDegPerSec, glm::vec3 axis){
+void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis){
     this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis);
     this->animated = true;
 }
+void DrawableObject::createOrbit(DrawableObject* center, float radius, float speedDegPerSec, float initialAngleDeg) {
+    animator = std::make_unique<OrbitAnimator>(center, radius, speedDegPerSec, initialAngleDeg);
+    setAnimated(true);
+}
+
 Transformation &DrawableObject::getTransformation()
 {
     return this->tranformation;

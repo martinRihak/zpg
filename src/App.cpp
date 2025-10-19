@@ -84,17 +84,16 @@ void App::run()
         -1.f, -0.3f, 0.f  // Bottom left
     };
 
-
     Model *squareModel = new Model(square, sizeof(square), 6);
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-    Shader *LambertFrag = new Shader("../shaders/Lambert.frag",GL_FRAGMENT_SHADER);
-    Shader *constantFrag= new Shader("../shaders/Constant.frag",GL_FRAGMENT_SHADER);
-    Shader *PhongFrag= new Shader("../shaders/Phong.frag",GL_FRAGMENT_SHADER);
-    Shader *BlinnFrag= new Shader("../shaders/Blinn.frag",GL_FRAGMENT_SHADER);
-    Shader *vertex02 = new Shader("../shaders/vert.vert",GL_VERTEX_SHADER);
+    Shader *LambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
+    Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
+    Shader *PhongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
+    Shader *BlinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
+    Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
 
     ShaderProgram *LambertShader = new ShaderProgram(*vertex02, *LambertFrag, this->camera);
     ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
@@ -135,6 +134,17 @@ void App::run()
 
     this->createScene();
     this->scenes[2]->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
+
+    this->createScene();
+
+
+    DrawableObject *sun = new DrawableObject(sphereModel, PhongShader);
+    DrawableObject *earth = new DrawableObject(sphereModel, PhongShader);
+    earth->getTransformation().setScale(glm::vec3(0.3f));
+    earth->createOrbit(sun, 5.0f, 30.0f, 0.0f);
+    this->addObjectToScene(sun,3);
+    this->addObjectToScene(earth, 3);
+
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))

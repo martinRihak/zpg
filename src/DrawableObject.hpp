@@ -12,6 +12,7 @@
 #include "Transformation/Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
 #include "Transformation/ITransformation.hpp"
+
 class DrawableObject {
 private:
     Model* model;
@@ -25,7 +26,8 @@ public:
     DrawableObject(Model* model, ShaderProgram* shader);
     ~DrawableObject();
     void draw(float dt);
-    void createRotarion(float speedDegPerSec, glm::vec3 axis); 
+    void createRotation(float speedDegPerSec, glm::vec3 axis); // Opravený název
+    void createOrbit(DrawableObject* center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f); 
     Transformation& getTransformation();
     void update(float dt);
     IAnimator* getAnimator() const;
@@ -33,7 +35,5 @@ public:
     bool isAnimated() const;
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
-
-
     DrawableObject* clone() const;
 };
