@@ -6,18 +6,45 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    for (DrawableObject *obj : objects)
+    {
+        delete obj;
+    }
+    for (Light *light : lights)
+    {
+        delete light;
+    }
 }
 void Scene::addObject(DrawableObject *obj)
 {
     this->objects.push_back(obj);
 }
-
+void Scene::addLight(Light *light)
+{
+    lights.push_back(light);
+   /* for (DrawableObject *obj : objects)
+    {
+        light->attach(obj->getShaderProgram());
+    }*/
+}
 void Scene::render(float dt)
 {
     for (DrawableObject *o : this->objects)
     {
-        o->draw(dt);
+        if (lights.empty())
+        {
+            o->draw(dt);
+        }
+        else
+        {
+            o->drwaw(dt, this->lights);
+            //std::cout << "Su tu" << std::endl;
+        }
     }
+}
+const std::vector<Light *> &Scene::getLights() const
+{
+    return lights;
 }
 
 void Scene::randomForest(glm::vec3 center, int radius, const std::vector<std::pair<DrawableObject *, int>> &objectsToSpawn)

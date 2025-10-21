@@ -112,16 +112,21 @@ void App::run()
     DrawableObject *sphere3 = new DrawableObject(sphereModel, PhongShader);
     DrawableObject *sphere4 = new DrawableObject(sphereModel, BlinnShader);
 
-    sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
+
+//Lights
+
+    Light* centerLight = new Light(glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f),glm::vec3(1.0f,1.0f,1.0f));
+    Light* leftLight= new Light(glm::vec3(-3.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f),glm::vec3(1.0f,1.0f,1.0f));
+    sphere1->getTransformation().setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
 
-    sphere2->getTransformation().setPosition(glm::vec3(-0.7f, 0.0f, 0.0f));
+    sphere2->getTransformation().setPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
     sphere2->getTransformation().setScale(glm::vec3(0.3f));
 
-    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 0.7f, 0.0f));
+    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 2.0f, 0.0f));
     sphere3->getTransformation().setScale(glm::vec3(0.3f));
 
-    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -0.7f, 0.0f));
+    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -2.0f, 0.0f));
     sphere4->getTransformation().setScale(glm::vec3(0.3f));
     this->createScene();
     this->addObjectToScene(triangleObject, 0);
@@ -130,6 +135,8 @@ void App::run()
     this->addObjectToScene(sphere3, 1);
     this->addObjectToScene(sphere2, 1);
     this->addObjectToScene(sphere4, 1);
+    this->scenes[1]->addLight(centerLight);
+    this->scenes[1]->addLight(leftLight);
     std::vector<std::pair<DrawableObject *, int>> forest = {{treeObject, 50}, {bushesObject, 50}};
 
     this->createScene();

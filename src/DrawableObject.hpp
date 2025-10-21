@@ -26,6 +26,7 @@ public:
     DrawableObject(Model* model, ShaderProgram* shader);
     ~DrawableObject();
     void draw(float dt);
+    void draw(float dt,const std::vector<Light*>& lights);
     void createRotation(float speedDegPerSec, glm::vec3 axis); // Opravený název
     void createOrbit(DrawableObject* center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f); 
     Transformation& getTransformation();
@@ -35,5 +36,6 @@ public:
     bool isAnimated() const;
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
+    ShaderProgram* getShaderProgram() const;
     DrawableObject* clone() const;
 };

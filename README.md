@@ -10,8 +10,8 @@
 - Vytvorit Tridu Light a posilat podle pocize a intenzity informace do fragmentShaderu.
 - Trida Light je Subject ktery informuje Observer/ shader Program, že Light změnilo svou pozici. 
 
-- Scéna má vector shaderProgramu, kteří se přidávají automaticky po přidání DrawableObjectu do scény, automaticky se kontroluje, jestli daný shaderProgram, který ma object se už ve scéně nachází, pokud ne, přidá ho. Scena bude  Mít i vector vsech svetel, a tyto světla při změně pozice informují všechny shaderProgramy, že změnili polohu.
 
+- Pokusit se preformulovat dotaz, aby light bylo ulozeno ve scene a ovlinvovalo jen jeji objekty, aby kdyz se přepne scéna, a v jine scene neni svetlo, ale je tam treba objekt, který má stejný shaderProgram, tak se prenastavili hodnoty pro dane svetla v konkretni scene, pokud tam nejake jsou, pokud ne, tak se nastavi nulove hodnoty. Abych mohlpotom stejny koncept pridat na camery, ze by mela jedna scena vice kamer, mezi kterýma bych přepínal.
 ## Discord popis
 
 Ahoj, nepochopil jsem jak chce Němec tu Transform třídu a ty ostatní třídy Translate Rotate Scale

@@ -1,24 +1,43 @@
 #include "Transformation.hpp"
 
 Transformation::Transformation()
-    : position(0.0f), scale(1.0f), rotationAxis(0.0f, 1.0f, 0.0f), rotationAngle(0.0f) {
+    : move(std::make_shared<Move>()), rotate(std::make_shared<Rotate>()), scale(std::make_shared<Scale>()) {
     updateModelMatrix();
+}
+
+void Transformation::updateModelMatrix() {
+    modelMatrix = scale->getModelMatrix() * rotate->getModelMatrix() * move->getModelMatrix();
 }
 
 void Transformation::setPosition(const glm::vec3& pos) {
-    position = pos;
+    move->setPosition(pos);
     updateModelMatrix();
+}
+
+glm::vec3 Transformation::getPosition() const {
+    return move->getPosition();
 }
 
 void Transformation::setRotation(float angle, const glm::vec3& axis) {
-    rotationAngle = angle;
-    rotationAxis = axis;
+    rotate->setRotation(angle, axis);
     updateModelMatrix();
 }
 
+float Transformation::getRotationAngle() const {
+    return rotate->getAngle();
+}
+
+glm::vec3 Transformation::getRotationAxis() const {
+    return rotate->getAxis();
+}
+
 void Transformation::setScale(const glm::vec3& scl) {
-    scale = scl;
+    scale->setScale(scl);
     updateModelMatrix();
+}
+
+glm::vec3 Transformation::getScale() const {
+    return scale->getScale();
 }
 
 glm::mat4 Transformation::getModelMatrix() const {
@@ -27,12 +46,4 @@ glm::mat4 Transformation::getModelMatrix() const {
 
 void Transformation::setModelMatrix(const glm::mat4& mat) {
     modelMatrix = mat;
-    // optionally decompose mat into position/rotation/scale if needed later
-}
-
-void Transformation::updateModelMatrix() {
-    modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, position);
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngle), rotationAxis);
-    modelMatrix = glm::scale(modelMatrix, scale);
 }

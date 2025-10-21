@@ -35,4 +35,5 @@ public:
 
     void setEye(const glm::vec3 &eye);
     void setAngels(float alpha, float fi);
+    SubjectType getSubType() const override{return SubjectType::CAMERA;}
 };

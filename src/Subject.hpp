@@ -3,6 +3,11 @@
 #include "Observer.hpp"
 #include <vector>
 #include <algorithm>
+
+enum class SubjectType{
+    CAMERA,
+    LIGHT
+};
 class Subject
 {
 private:
@@ -21,11 +26,8 @@ public:
     {
         for (Observer *o : observers)
         {
-            o->notify();
+            o->notify(this);
         }
     }
-//    void notifyAllLight(){
-        //for(Observer *o : observers){
-        //}
-    //}
+    virtual SubjectType getSubType() const = 0;
 };

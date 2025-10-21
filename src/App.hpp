@@ -11,6 +11,7 @@
 #include "App.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
+#include "Light.hpp"
 //Model
 #include "../Models/AllModels.hpp"
 
@@ -29,9 +30,6 @@ public:
     ~App();
     void createScene();
     void addObjectToScene(DrawableObject* obj, int8_t id);
-    
-    //void createShaderProgram(const char* vertexShader,const char* fragmentShader);
-    //void createShaderProgram(Shader* vertexShader,Shader* fragmentShader);
     void addShaderProgram(ShaderProgram* program);
     Scene* getScene(int i);
     int8_t getSceneCount();

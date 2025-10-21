@@ -2,12 +2,28 @@
 in vec3 worldPosition;
 in vec3 worldNormal;
 out vec4 frag_color;
-void main(){
-    vec3 lightPosition = vec3(0.0, 0.0, 0.0);
-    vec3 lightDirection = normalize(lightPosition - worldPosition);
-    float diff = max(dot(normalize(lightDirection), normalize(worldNormal)), 0.0);
+uniform vec3 viewPos;
+uniform int lightCount;
 
-    vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
-    vec4 objectColor = vec4(0.385, 0.647, 0.812, 1.0);
-    frag_color = ambient + (diff * objectColor);
+struct Light{
+    vec3 position;
+    vec3 diff;
+    vec3 spec;
+};
+uniform Light lights[4];
+void main() {
+    vec3 objectColor = vec3(0.385, 0.647, 0.812);
+    vec3 norm = normalize(worldNormal);
+    vec3 viewDir = normalize(viewPos - worldPosition);
+    vec3 ambient = vec3(0.1, 0.1, 0.1) * objectColor;
+    vec3 diffuse = vec3(0.0);
+
+    for (int i = 0; i < lightCount; ++i) {
+        vec3 lightDir = normalize(lights[i].position - worldPosition);
+        float diff = max(dot(norm, lightDir), 0.0);
+        diffuse += diff * lights[i].diff * objectColor;
+    }
+
+    vec3 result = ambient + diffuse;
+    frag_color = vec4(result, 1.0);
 }
