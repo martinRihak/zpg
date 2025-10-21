@@ -19,7 +19,6 @@ void SceneBuilder::registerShader(const std::string &name, ShaderProgram *shader
 void SceneBuilder::createScene(Scene *scene)
 {
     this->scenes.push_back(scene);
-
 }
 DrawableObject *SceneBuilder::createObject(const std::string &modelName, const std::string &shaderName)
 {
@@ -42,20 +41,20 @@ void SceneBuilder::createTriangle()
 void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
-    DrawableObject *sphere1 = createObject("sphere", "phong");
-    DrawableObject *sphere2 = createObject("sphere", "phong");
+    DrawableObject *sphere1 = createObject("sphere", "constant");
+    DrawableObject *sphere2 = createObject("sphere", "lambert");
     DrawableObject *sphere3 = createObject("sphere", "phong");
-    DrawableObject *sphere4 = createObject("sphere", "phong");
-    Light *centerLight = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    DrawableObject *sphere4 = createObject("sphere", "blinn");
+    Light *centerLight = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f,0.8f), glm::vec3(1.0f, 1.0f, 1.0f));
     Light *leftLight = new Light(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     lights.push_back(centerLight);
-    sphere1->getTransformation().setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
+    sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
-    sphere2->getTransformation().setPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
+    sphere2->getTransformation().setPosition(glm::vec3(-0.7f, 0.0f, 0.0f));
     sphere2->getTransformation().setScale(glm::vec3(0.3f));
-    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 2.0f, 0.0f));
+    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 0.7f, 0.0f));
     sphere3->getTransformation().setScale(glm::vec3(0.3f));
-    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -2.0f, 0.0f));
+    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -0.7f, 0.0f));
     sphere4->getTransformation().setScale(glm::vec3(0.3f));
 
     scene->addObject(sphere1);
@@ -80,14 +79,19 @@ void SceneBuilder::createForest()
 }
 void SceneBuilder::createSunSystem()
 {
-    Scene* scene = new Scene();
+    Scene *scene = new Scene();
     DrawableObject *sun = createObject("sphere", "phong");
     DrawableObject *earth = createObject("sphere", "phong");
+    DrawableObject *moon = createObject("sphere", "phong");
+    sun->getTransformation().setScale(glm::vec3(1.0f));
+    sun->getTransformation().setPosition(glm::vec3(0.0f,0.0f,0.f));
     earth->getTransformation().setScale(glm::vec3(0.3f));
-    earth->createOrbit(sun, 5.0f, 30.0f, 0.0f);
-
+    earth->createOrbit(sun, 2.0f, 30.0f, 0.0f);
+    moon->getTransformation().setScale(glm::vec3(0.05f));
+    moon->createOrbit(earth, 0.5f, 60.0f, 0.0f);
     scene->addLight(this->lights[0]);
     scene->addObject(sun);
+    scene->addObject(moon);
     scene->addObject(earth);
     this->createScene(scene);
 }

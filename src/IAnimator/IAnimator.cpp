@@ -23,11 +23,16 @@ void OrbitAnimator::update(Transformation &t, float dt) {
     angle += speed * dt;
 
     glm::mat4 centerMatrix = center->getTransformation().getModelMatrix();
-    glm::vec3 centerPos(centerMatrix[3]);
+    glm::vec3 centerPos(centerMatrix[3][0], centerMatrix[3][1], centerMatrix[3][2]);
+
+    // Debug: Log center position to verify it's updating
+    //std::cout << "Center position: (" << centerPos.x << ", " << centerPos.y << ", " << centerPos.z << ")" << std::endl;
+
 
     float rad = glm::radians(angle);
     glm::vec3 offset(radius * cos(rad), 0.0f, radius * sin(rad));
     glm::vec3 newPos = centerPos + offset;
 
+   // std::cout << "New position: (" << newPos.x << ", " << newPos.y << ", " << newPos.z << ")" << std::endl;
     t.setPosition(newPos);
 }

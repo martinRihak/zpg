@@ -27,7 +27,7 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
         shader->updateLight(i, lights[i]);
     }
     shader->setUniform("viewPos", shader->getCameraPos());
-    //update(dt);
+    update(dt);
     shader->setModelMatrix(tranformation.getModelMatrix());
     model->draw();
 }

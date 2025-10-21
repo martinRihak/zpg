@@ -6,7 +6,8 @@ Transformation::Transformation()
 }
 
 void Transformation::updateModelMatrix() {
-    modelMatrix = scale->getModelMatrix() * rotate->getModelMatrix() * move->getModelMatrix();
+
+    modelMatrix = move->getModelMatrix() * rotate->getModelMatrix() * scale->getModelMatrix();
 }
 
 void Transformation::setPosition(const glm::vec3& pos) {
