@@ -9,7 +9,7 @@
 #include "Model.hpp"
 #include "DrawableObject.hpp"
 #include "App.hpp"
-#include "Scene.hpp"
+#include "Scenes/SceneBuilder.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
 //Model

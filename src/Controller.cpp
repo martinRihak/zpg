@@ -7,8 +7,8 @@ Controller::Controller()
 }
 
 Controller::~Controller() {}
-
-void Controller::processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t& active, int8_t sceneCount, Camera* camera,float dt) {
+int8_t Controller::getActiveScene(){return active;}
+void Controller::processInput(GLFWwindow* window, int8_t sceneCount, Camera* camera,float dt) {
     float cameraSpeed = 0.05f ;
     float mouseSensitivity = 0.1f; 
     if (!window)

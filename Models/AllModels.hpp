@@ -8,3 +8,4 @@
 #include "suzi_flat.h"
 #include "suzi_smooth.h"
 #include "tree.h"
+#include "triangle.h"

@@ -37,7 +37,7 @@ void Scene::render(float dt)
         }
         else
         {
-            o->drwaw(dt, this->lights);
+            o->draw(dt, this->lights);
             //std::cout << "Su tu" << std::endl;
         }
     }

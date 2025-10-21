@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <cstdint>
-#include "Scene.hpp"
+#include "Scenes/Scene.hpp"
 #include "Camera.hpp"
 class Scene;
 
@@ -11,11 +11,12 @@ public:
     Controller();
     ~Controller();
 
-    void processInput(GLFWwindow* window, std::vector<Scene*>& scenes, int8_t &active, int8_t sceneCount,Camera* camera,float dt);
-
+    void processInput(GLFWwindow* window, int8_t sceneCount,Camera* camera,float dt);
+    int8_t getActiveScene();
 private:
     // simple debounce state for keys 1..9
     bool prevKeyState[9];
     float lastX, lastY;
     bool isRightMouseButtonPressed = false;
+    int8_t active = 0;
 };

@@ -27,6 +27,7 @@ App::App(int width, int height) : width(width), height(height)
     float ratio = width / (float)height;
     glViewport(0, 0, width, height);
     this->camera = new Camera();
+    this->controller = new Controller();
 }
 App::~App()
 {
@@ -67,91 +68,39 @@ void App::addShaderProgram(ShaderProgram *program)
 }
 void App::run()
 {
-    float triangle[] = {
 
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // Top vertex
-        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f // Bottom left
-    };
-
-    float square[] = {
-        -1.f, -0.3f, 0.f, // Bottom left
-        -1.f, 0.3f, 0.f,  // Top left
-        1.f, 0.3f, 0.f,   // Top right
-                          // Second triangle
-        1.f, 0.3f, 0.f,   // Top right
-        1.f, -0.3f, 0.f,  // Bottom right
-        -1.f, -0.3f, 0.f  // Bottom left
-    };
-
-    Model *squareModel = new Model(square, sizeof(square), 6);
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-    Shader *LambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
+
+    // Initialize shaders
+    Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
-    Shader *PhongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
-    Shader *BlinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
+    Shader *phongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
+    Shader *blinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
     Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
 
-    ShaderProgram *LambertShader = new ShaderProgram(*vertex02, *LambertFrag, this->camera);
+    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag, this->camera);
     ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
-    ShaderProgram *PhongShader = new ShaderProgram(*vertex02, *PhongFrag, this->camera);
-    ShaderProgram *BlinnShader = new ShaderProgram(*vertex02, *BlinnFrag, this->camera);
-    this->addShaderProgram(LambertShader);
-    this->addShaderProgram(constantShader);
-    this->addShaderProgram(PhongShader);
-    this->addShaderProgram(BlinnShader);
+    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag, this->camera);
+    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
 
-    DrawableObject *triangleObject = new DrawableObject(triangleModel, LambertShader);
-    DrawableObject *bushesObject = new DrawableObject(bush, LambertShader);
-    DrawableObject *treeObject = new DrawableObject(treeModel, LambertShader);
-    DrawableObject *sphere1 = new DrawableObject(sphereModel, constantShader);
-    DrawableObject *sphere2 = new DrawableObject(sphereModel, LambertShader);
-    DrawableObject *sphere3 = new DrawableObject(sphereModel, PhongShader);
-    DrawableObject *sphere4 = new DrawableObject(sphereModel, BlinnShader);
+    SceneBuilder builder(this->camera);
+    builder.registerModel("triangle", triangleModel);
+    builder.registerModel("bush", bush);
+    builder.registerModel("sphere", sphereModel);
+    builder.registerModel("tree", treeModel);
+    builder.registerShader("lambert", lambertShader);
+    builder.registerShader("constant", constantShader);
+    builder.registerShader("phong", phongShader);
+    builder.registerShader("blinn", blinnShader);
 
 
-//Lights
-
-    Light* centerLight = new Light(glm::vec3(0.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f),glm::vec3(1.0f,1.0f,1.0f));
-    Light* leftLight= new Light(glm::vec3(-3.0f,0.0f,0.0f),glm::vec3(1.0f,1.0f,1.0f),glm::vec3(1.0f,1.0f,1.0f));
-    sphere1->getTransformation().setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
-    sphere1->getTransformation().setScale(glm::vec3(0.3f));
-
-    sphere2->getTransformation().setPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
-    sphere2->getTransformation().setScale(glm::vec3(0.3f));
-
-    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 2.0f, 0.0f));
-    sphere3->getTransformation().setScale(glm::vec3(0.3f));
-
-    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -2.0f, 0.0f));
-    sphere4->getTransformation().setScale(glm::vec3(0.3f));
-    this->createScene();
-    this->addObjectToScene(triangleObject, 0);
-    this->createScene();
-    this->addObjectToScene(sphere1, 1);
-    this->addObjectToScene(sphere3, 1);
-    this->addObjectToScene(sphere2, 1);
-    this->addObjectToScene(sphere4, 1);
-    this->scenes[1]->addLight(centerLight);
-    this->scenes[1]->addLight(leftLight);
-    std::vector<std::pair<DrawableObject *, int>> forest = {{treeObject, 50}, {bushesObject, 50}};
-
-    this->createScene();
-    this->scenes[2]->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
-
-    this->createScene();
-
-
-    DrawableObject *sun = new DrawableObject(sphereModel, PhongShader);
-    DrawableObject *earth = new DrawableObject(sphereModel, PhongShader);
-    earth->getTransformation().setScale(glm::vec3(0.3f));
-    earth->createOrbit(sun, 5.0f, 30.0f, 0.0f);
-    this->addObjectToScene(sun,3);
-    this->addObjectToScene(earth, 3);
-
+    builder.createTriangle();
+    builder.create4Spheres();
+    builder.createForest();
+    builder.createSunSystem();
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
@@ -160,13 +109,19 @@ void App::run()
         double currentTime = glfwGetTime();
         float dt = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
-        if (this->controller)
-            this->controller->processInput(this->window, this->scenes, this->active, this->sceneCount, this->camera, dt);
 
-        if (!this->scenes.empty() && this->active >= 0 && this->active < this->sceneCount)
+        if (this->controller)
         {
-            this->scenes[this->active]->render(dt);
+            this->controller->processInput(this->window, builder.getSceneCount(), this->camera, dt);
+            builder.setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
         }
+
+        Scene *activeScene = builder.getScene(builder.getActiveSceneIndex());
+        if (activeScene)
+        {
+            activeScene->render(dt);
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
