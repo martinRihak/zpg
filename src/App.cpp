@@ -17,6 +17,7 @@ App::App(int width, int height) : width(width), height(height)
     }
 
     glfwMakeContextCurrent(window);
+    glfwSetWindowUserPointer(this->window, this);
     glfwSwapInterval(1);
 
     glewExperimental = GL_TRUE;
@@ -27,7 +28,9 @@ App::App(int width, int height) : width(width), height(height)
     float ratio = width / (float)height;
     glViewport(0, 0, width, height);
     this->camera = new Camera();
+    camera->setAspectRatio(ratio);
     this->controller = new Controller();
+    this->callbackHandler = new CallbackHandler(this->window, this);
 }
 App::~App()
 {
@@ -37,6 +40,10 @@ App::~App()
     }
     if (this->controller)
         delete this->controller;
+    if (this->callbackHandler)
+    {
+        delete this->callbackHandler;
+    }
     glfwDestroyWindow(this->window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
@@ -95,7 +102,6 @@ void App::run()
     builder.registerShader("constant", constantShader);
     builder.registerShader("phong", phongShader);
     builder.registerShader("blinn", blinnShader);
-
 
     builder.createTriangle();
     builder.create4Spheres();

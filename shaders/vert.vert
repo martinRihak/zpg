@@ -9,5 +9,5 @@ layout(location=1) in vec3 vn;
 void main(){
     gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);
     worldPosition = vec3(modelMatrix * vec4(vp, 1.0));
-    worldNormal = vn;
+    worldNormal = normalize(transpose(inverse(mat3(modelMatrix))) * vn);
 }

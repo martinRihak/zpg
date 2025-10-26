@@ -12,7 +12,9 @@
 #include "Transformation/Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
 #include "Transformation/ITransformation.hpp"
-
+#include "Light.hpp"
+class Light;
+class ShaderProgram;
 class DrawableObject {
 private:
     Model* model;

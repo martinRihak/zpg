@@ -24,7 +24,9 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     shader->setUniform("lightCount", static_cast<int>(lights.size()));
     for (int i = 0; i < lights.size() && i < 8; i++)
     {
+        lights[i]->update(dt);
         shader->updateLight(i, lights[i]);
+
     }
     shader->setUniform("viewPos", shader->getCameraPos());
     update(dt);

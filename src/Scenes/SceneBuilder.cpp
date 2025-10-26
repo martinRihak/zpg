@@ -46,7 +46,7 @@ void SceneBuilder::create4Spheres()
     DrawableObject *sphere3 = createObject("sphere", "phong");
     DrawableObject *sphere4 = createObject("sphere", "blinn");
     Light *centerLight = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f,0.8f), glm::vec3(1.0f, 1.0f, 1.0f));
-    Light *leftLight = new Light(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    //Light *leftLight = new Light(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     lights.push_back(centerLight);
     sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
@@ -63,7 +63,7 @@ void SceneBuilder::create4Spheres()
     scene->addObject(sphere4);
 
     scene->addLight(centerLight);
-    scene->addLight(leftLight);
+   // scene->addLight(leftLight);
 
     this->createScene(scene);
 }
@@ -72,9 +72,17 @@ void SceneBuilder::createForest()
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     DrawableObject *bush = createObject("bush", "phong");
+    Light* firefly = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.032f));
+    Light* firefly2 = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.032f));
+    firefly->createRandomMovement(0.1f,14.5f);
+    firefly2->createRandomMovement(0.1f,14.5f);
+    firefly2->getTransformation().setScale(glm::vec3(0.2f));
+    firefly->getTransformation().setScale(glm::vec3(0.2f));
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
 
+    scene->addLight(firefly);
+    scene->addLight(firefly2);
     this->createScene(scene);
 }
 void SceneBuilder::createSunSystem()

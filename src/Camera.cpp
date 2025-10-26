@@ -12,11 +12,10 @@ glm::mat4 Camera::getCamera() const
 {
     return glm::lookAt(eye, eye + target, up);
 }
-glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const
+glm::mat4 Camera::getProjectionMatrix() const
 {
-    return glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(90.0f), this->aspectRatio, 0.1f, 100.0f);
 }
-
 void Camera::update()
 {
     target.x = sin(glm::radians(alpha)) * cos(glm::radians(fi));
@@ -24,7 +23,10 @@ void Camera::update()
     target.z = sin(glm::radians(alpha)) * sin(glm::radians(fi));
     target = glm::normalize(target);
 }
-
+void Camera::setAspectRatio(float ar) {
+    this->aspectRatio = ar;
+    notifyAll();  // Notifikuje všechny připojené ShaderProgramy (observers)
+}
 void Camera::setEye(const glm::vec3 &eye)
 {
     this->eye = eye;

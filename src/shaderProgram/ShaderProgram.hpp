@@ -11,6 +11,7 @@
 #include "../Observer.hpp"
 #include "../Light.hpp"
 class Camera;
+class Light;
 
 class ShaderProgram : public Observer
 {

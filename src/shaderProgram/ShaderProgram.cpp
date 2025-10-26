@@ -38,8 +38,7 @@ void ShaderProgram::updateCamera(Camera *camera)
     GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
     GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &camera->getCamera()[0][0]);
-    float aspectRatio = 4.0f / 3.0f;
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &camera->getProjectionMatrix(aspectRatio)[0][0]);
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
 }
 
 void ShaderProgram::updateLight(int index, Light *light)
@@ -49,9 +48,16 @@ void ShaderProgram::updateLight(int index, Light *light)
     std::string posName = "lights[" + std::to_string(index) + "].position";
     std::string diffName = "lights[" + std::to_string(index) + "].diff";
     std::string specName = "lights[" + std::to_string(index) + "].spec";
+    std::string constant = "lights["+ std::to_string(index) + "].constant";
+    std::string linear = "lights["+ std::to_string(index) + "].linear";
+    std::string quad = "lights["+ std::to_string(index) + "].quadratic";
+
     setUniform(posName.c_str(), light->getPosition());
     setUniform(diffName.c_str(), light->getDiff());
     setUniform(specName.c_str(), light->getSpec());
+    setUniform(constant.c_str(), light->getAtt().x);
+    setUniform(linear.c_str(), light->getAtt().y);
+    setUniform(quad.c_str(), light->getAtt().z);;
 }
 
 glm::vec3 ShaderProgram::getCameraPos()

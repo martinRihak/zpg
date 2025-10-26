@@ -17,6 +17,7 @@ private:
 
     float alpha;
     float fi;
+    float aspectRatio;
 
     void update();
 
@@ -30,8 +31,9 @@ public:
     float getAlpha() const;
     float getFi() const;
 
+    void setAspectRatio(float ar);
     glm::mat4 getCamera() const;
-    glm::mat4 getProjectionMatrix(float aspectRatio) const;
+    glm::mat4 getProjectionMatrix() const;
 
     void setEye(const glm::vec3 &eye);
     void setAngels(float alpha, float fi);

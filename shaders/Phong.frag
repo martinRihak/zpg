@@ -5,13 +5,15 @@ out vec4 frag_color;
 uniform vec3 viewPos;
 uniform int lightCount;
 
-struct Light{
+struct Light {
     vec3 position;
     vec3 diff;
     vec3 spec;
+    float constant;   
+    float linear;     
+    float quadratic;  
 };
-uniform Light lights[4];
-
+uniform Light lights[8];  
 
 void main() {
     vec3 objectColor = vec3(0.385, 0.647, 0.812);
@@ -25,9 +27,13 @@ void main() {
         vec3 lightDir = normalize(lights[i].position - worldPosition);
         vec3 reflectDir = reflect(-lightDir, norm);
         float diff = max(dot(norm, lightDir), 0.0);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-        diffuse += diff * lights[i].diff * objectColor;
-        specular += spec * lights[i].spec;
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
+        
+        float distance = length(lights[i].position - worldPosition);
+        float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance + lights[i].quadratic * (distance * distance));
+        
+        diffuse += diff * lights[i].diff * objectColor * attenuation;
+        specular += spec * lights[i].spec * attenuation;
     }
 
     vec3 result = ambient + diffuse + specular;
