@@ -31,7 +31,6 @@ public:
     Transformation &getTransformation();
     SubjectType getSubType() const override { return SubjectType::LIGHT; }
 
-    // Nové metody pro animaci
     void createRotation(float speedDegPerSec, glm::vec3 axis);
     void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void createRandomMovement(float speed, float baseInterval);

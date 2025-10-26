@@ -26,7 +26,7 @@ void ShaderProgram::notify(Subject *subject)
         updateCamera(dynamic_cast<Camera *>(subject));
         break;
     case SubjectType::LIGHT:
-        updateLight(0, dynamic_cast<Light *>(subject)); // Index se nastavuje v DrawableObject
+        updateLight(0, dynamic_cast<Light *>(subject)); 
         break;
     }
 }

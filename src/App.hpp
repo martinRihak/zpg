@@ -19,24 +19,16 @@ class CallbackHandler;
 class App
 {
 private:
-    std::vector<Scene *> scenes;
     GLFWwindow *window;
+    SceneBuilder* builder;
     int width, height;
-    int8_t active = 0;
-    int8_t sceneCount = 0;
     class Controller *controller = nullptr;
     class Camera *camera = nullptr;
     CallbackHandler *callbackHandler;
-
+    void createScenes();
 public:
     App(int width, int height);
     ~App();
-    void createScene();
-    void addObjectToScene(DrawableObject *obj, int8_t id);
-    void addShaderProgram(ShaderProgram *program);
     Camera *getCamera() { return this->camera; }
-    Scene *getScene(int i);
-    int8_t getSceneCount();
-    int8_t activeScene();
     void run();
 };

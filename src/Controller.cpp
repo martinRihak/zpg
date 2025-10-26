@@ -41,14 +41,12 @@ void Controller::processInput(GLFWwindow* window, int8_t sceneCount, Camera* cam
 
         camera->setAngels(newAlpha, newFi);
 
-        // Update last position
         lastX = xpos;
         lastY = ypos;
     } else {
         isRightMouseButtonPressed = false;
     }
 
-    // Handle scene switching (1-9 keys)
     for (int i = 0; i < 9; ++i) {
         int key = GLFW_KEY_1 + i;
         int state = glfwGetKey(window, key);

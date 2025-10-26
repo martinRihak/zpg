@@ -41,20 +41,20 @@ void SceneBuilder::createTriangle()
 void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
-    DrawableObject *sphere1 = createObject("sphere", "constant");
-    DrawableObject *sphere2 = createObject("sphere", "lambert");
+    DrawableObject *sphere1 = createObject("sphere", "phong");
+    DrawableObject *sphere2 = createObject("sphere", "phong");
     DrawableObject *sphere3 = createObject("sphere", "phong");
-    DrawableObject *sphere4 = createObject("sphere", "blinn");
-    Light *centerLight = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f,0.8f), glm::vec3(1.0f, 1.0f, 1.0f));
+    DrawableObject *sphere4 = createObject("sphere", "phong");
+    Light *centerLight = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f,1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     //Light *leftLight = new Light(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     lights.push_back(centerLight);
     sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
     sphere2->getTransformation().setPosition(glm::vec3(-0.7f, 0.0f, 0.0f));
     sphere2->getTransformation().setScale(glm::vec3(0.3f));
-    sphere3->getTransformation().setPosition(glm::vec3(0.0f, 0.7f, 0.0f));
+    sphere3->getTransformation().setPosition(glm::vec3(0.0f, -0.7f, 0.0f));
     sphere3->getTransformation().setScale(glm::vec3(0.3f));
-    sphere4->getTransformation().setPosition(glm::vec3(0.0f, -0.7f, 0.0f));
+    sphere4->getTransformation().setPosition(glm::vec3(0.0f, 0.7f, 0.0f));
     sphere4->getTransformation().setScale(glm::vec3(0.3f));
 
     scene->addObject(sphere1);
@@ -72,8 +72,8 @@ void SceneBuilder::createForest()
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     DrawableObject *bush = createObject("bush", "phong");
-    Light* firefly = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.032f));
-    Light* firefly2 = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.032f));
+    Light* firefly = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.44f));
+    Light* firefly2 = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.44f));
     firefly->createRandomMovement(0.1f,14.5f);
     firefly2->createRandomMovement(0.1f,14.5f);
     firefly2->getTransformation().setScale(glm::vec3(0.2f));

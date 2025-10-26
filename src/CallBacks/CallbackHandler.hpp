@@ -1,16 +1,15 @@
 #pragma once
 
 #include <vector>
-#include "../App.hpp"  // Pro přístup k App (window, camera, shaderPrograms)
-#include "../shaderProgram/ShaderProgram.hpp"  // Pro ShaderProgram
+#include "../App.hpp" 
+#include "../shaderProgram/ShaderProgram.hpp" 
 class App;
 class CallbackHandler {
 private:
     GLFWwindow* window;
-    App* app;  
 
 public:
-    CallbackHandler(GLFWwindow* win, App* application);
+    CallbackHandler(GLFWwindow* win);
     ~CallbackHandler();
 
     static void error_callback(int error, const char* description);

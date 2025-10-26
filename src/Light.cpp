@@ -38,7 +38,6 @@ Transformation &Light::getTransformation()
     return transformation;
 }
 
-// Nové metody pro animaci
 void Light::createRotation(float speedDegPerSec, glm::vec3 axis)
 {
     this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis);

@@ -34,14 +34,22 @@ void OrbitAnimator::update(Transformation &t, float dt) {
     t.setPosition(newPos);
 }
 
-RandomMovementAnimator::RandomMovementAnimator(float speed, float baseChangeInterval)
-    : speed(speed), timeSinceLastChange(0.0f), baseChangeInterval(baseChangeInterval) {
+RandomMovementAnimator::RandomMovementAnimator(float speed, float baseChangeInterval, 
+                                             glm::vec3 minBounds, glm::vec3 maxBounds)
+    : speed(speed), timeSinceLastChange(0.0f), baseChangeInterval(baseChangeInterval),
+      minBounds(minBounds), maxBounds(maxBounds) {
     static bool seeded = false;
     if (!seeded) {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));  
         seeded = true;
     }
     randomizeDirection();  
+}
+
+bool RandomMovementAnimator::isInBounds(const glm::vec3& position) const {
+    return position.x >= minBounds.x && position.x <= maxBounds.x &&
+           position.y >= minBounds.y && position.y <= maxBounds.y &&
+           position.z >= minBounds.z && position.z <= maxBounds.z;
 }
 
 void RandomMovementAnimator::randomizeDirection() {
@@ -55,12 +63,21 @@ void RandomMovementAnimator::randomizeDirection() {
 void RandomMovementAnimator::update(Transformation &t, float dt) {
     timeSinceLastChange += dt;
     
-    float effectiveInterval = baseChangeInterval + (static_cast<float>(std::rand()) / RAND_MAX - 0.5f) * 0.5f;  // ±25% variace
+    float effectiveInterval = baseChangeInterval + (static_cast<float>(std::rand()) / RAND_MAX - 0.5f) * 0.5f;
     if (timeSinceLastChange > effectiveInterval) {
         randomizeDirection();
         timeSinceLastChange = 0.0f;
     }
-    
     glm::vec3 delta = direction * speed * dt;
-    t.setPosition(t.getPosition() + delta);
+    glm::vec3 newPosition = t.getPosition() + delta;
+    
+    if (!isInBounds(newPosition)) {
+        randomizeDirection();
+        if (newPosition.x < minBounds.x || newPosition.x > maxBounds.x) direction.x *= -1;
+        if (newPosition.y < minBounds.y || newPosition.y > maxBounds.y) direction.y *= -1;
+        if (newPosition.z < minBounds.z || newPosition.z > maxBounds.z) direction.z *= -1;
+        newPosition = glm::clamp(newPosition, minBounds, maxBounds);
+    }
+    
+    t.setPosition(newPosition);
 }

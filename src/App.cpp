@@ -30,14 +30,10 @@ App::App(int width, int height) : width(width), height(height)
     this->camera = new Camera();
     camera->setAspectRatio(ratio);
     this->controller = new Controller();
-    this->callbackHandler = new CallbackHandler(this->window, this);
+    this->callbackHandler = new CallbackHandler(this->window);
 }
 App::~App()
 {
-    for (auto *a : this->scenes)
-    {
-        delete a;
-    }
     if (this->controller)
         delete this->controller;
     if (this->callbackHandler)
@@ -49,31 +45,7 @@ App::~App()
     exit(EXIT_SUCCESS);
 }
 
-void App::addObjectToScene(DrawableObject *obj, int8_t id)
-{
-    this->scenes[id]->addObject(obj);
-}
-int8_t App::getSceneCount()
-{
-    return this->sceneCount;
-}
-int8_t App::activeScene()
-{
-    return this->active;
-}
-void App::createScene()
-{
-    this->scenes.push_back(new Scene());
-    this->sceneCount = static_cast<int8_t>(this->scenes.size());
-    if (!this->controller)
-        this->controller = new Controller();
-}
-
-void App::addShaderProgram(ShaderProgram *program)
-{
-    this->camera->attach(program);
-}
-void App::run()
+void App::createScenes()
 {
 
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
@@ -93,20 +65,25 @@ void App::run()
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag, this->camera);
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
 
-    SceneBuilder builder(this->camera);
-    builder.registerModel("triangle", triangleModel);
-    builder.registerModel("bush", bush);
-    builder.registerModel("sphere", sphereModel);
-    builder.registerModel("tree", treeModel);
-    builder.registerShader("lambert", lambertShader);
-    builder.registerShader("constant", constantShader);
-    builder.registerShader("phong", phongShader);
-    builder.registerShader("blinn", blinnShader);
+    this->builder = new SceneBuilder(this->camera);
+    builder->registerModel("triangle", triangleModel);
+    builder->registerModel("bush", bush);
+    builder->registerModel("sphere", sphereModel);
+    builder->registerModel("tree", treeModel);
+    builder->registerShader("lambert", lambertShader);
+    builder->registerShader("constant", constantShader);
+    builder->registerShader("phong", phongShader);
+    builder->registerShader("blinn", blinnShader);
 
-    builder.createTriangle();
-    builder.create4Spheres();
-    builder.createForest();
-    builder.createSunSystem();
+    builder->createTriangle();
+    builder->create4Spheres();
+    builder->createForest();
+    builder->createSunSystem();
+}
+void App::run()
+{
+    createScenes();
+    
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
@@ -118,11 +95,11 @@ void App::run()
 
         if (this->controller)
         {
-            this->controller->processInput(this->window, builder.getSceneCount(), this->camera, dt);
-            builder.setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
+            this->controller->processInput(this->window, builder->getSceneCount(), this->camera, dt);
+            builder->setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
         }
 
-        Scene *activeScene = builder.getScene(builder.getActiveSceneIndex());
+        Scene *activeScene = builder->getScene(builder->getActiveSceneIndex());
         if (activeScene)
         {
             activeScene->render(dt);

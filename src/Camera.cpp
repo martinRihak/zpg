@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
 Camera::Camera()
-    : eye(0.0f, 0.0f, -0.5f), // V�choz� pozice kamery
+    : eye(0.0f, 0.0f, -0.5f), 
       up(0.0f, 1.0f, 0.0f),
       alpha(85.0f),
       fi(-90.0f)
@@ -14,7 +14,7 @@ glm::mat4 Camera::getCamera() const
 }
 glm::mat4 Camera::getProjectionMatrix() const
 {
-    return glm::perspective(glm::radians(90.0f), this->aspectRatio, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(45.0f), this->aspectRatio, 0.1f, 100.0f);
 }
 void Camera::update()
 {
@@ -25,7 +25,7 @@ void Camera::update()
 }
 void Camera::setAspectRatio(float ar) {
     this->aspectRatio = ar;
-    notifyAll();  // Notifikuje všechny připojené ShaderProgramy (observers)
+    notifyAll(); 
 }
 void Camera::setEye(const glm::vec3 &eye)
 {

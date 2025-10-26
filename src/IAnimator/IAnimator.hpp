@@ -37,13 +37,19 @@ private:
 
 
 class RandomMovementAnimator : public IAnimator {
-public:
-    RandomMovementAnimator(float speed, float baseChangeInterval);
-    void update(Transformation &t, float dt) override;
 private:
-    float speed;                  
-    glm::vec3 direction;          
-    float timeSinceLastChange;    
-    float baseChangeInterval;     
-    void randomizeDirection();    
+    float speed;
+    float timeSinceLastChange;
+    float baseChangeInterval;
+    glm::vec3 direction;
+    glm::vec3 maxBounds;  
+    glm::vec3 minBounds;  
+    void randomizeDirection();
+    bool isInBounds(const glm::vec3& position) const;
+public:
+    RandomMovementAnimator(float speed, float baseChangeInterval, 
+                          glm::vec3 minBounds = glm::vec3(-5.0f), 
+                          glm::vec3 maxBounds = glm::vec3(5.0f));
+    void update(Transformation& t, float dt) override;
+
 };

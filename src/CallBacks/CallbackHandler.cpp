@@ -1,8 +1,8 @@
 #include "CallbackHandler.hpp"
-#include <cstdio>  // Pro printf
+#include <cstdio>  
 
-CallbackHandler::CallbackHandler(GLFWwindow* win, App* application) : window(win), app(application) {
-    // Registrace callbacků
+CallbackHandler::CallbackHandler(GLFWwindow* win) : window(win) {
+   
     glfwSetErrorCallback(error_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
@@ -34,12 +34,12 @@ void CallbackHandler::window_size_callback(GLFWwindow* window, int width, int he
     
     float newAspectRatio = static_cast<float>(width) / static_cast<float>(height);
     
-    // Získat App z user pointer
+   
     App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
     if (app) {
-        Camera* camera = app->getCamera();  // Předpokládám, že máš getter getCamera()
+        Camera* camera = app->getCamera();  
         if (camera) {
-            camera->setAspectRatio(newAspectRatio);  // Nastaví aspect a notifikuje shadery
+            camera->setAspectRatio(newAspectRatio);  
         }
     }
 }

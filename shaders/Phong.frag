@@ -30,10 +30,11 @@ void main() {
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
         
         float distance = length(lights[i].position - worldPosition);
-        float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance + lights[i].quadratic * (distance * distance));
+        float attenuation =  1.0 / (lights[i].constant + (lights[i].linear * distance) + lights[i].quadratic * (distance * distance));
         
         diffuse += diff * lights[i].diff * objectColor * attenuation;
         specular += spec * lights[i].spec * attenuation;
+
     }
 
     vec3 result = ambient + diffuse + specular;
