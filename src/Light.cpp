@@ -38,39 +38,4 @@ Transformation &Light::getTransformation()
     return transformation;
 }
 
-void Light::createRotation(float speedDegPerSec, glm::vec3 axis)
-{
-    this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis);
-    this->animated = true;
-}
 
-void Light::createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg)
-{
-    this->animator = std::make_unique<OrbitAnimator>(center, radius, speedDegPerSec, initialAngleDeg);
-    this->animated = true;
-}
-
-void Light::createRandomMovement(float speed, float baseInterval){
-    this->animator = std::make_unique<RandomMovementAnimator>(speed,baseInterval);
-    this->animated = true;
-}
-void Light::update(float dt)
-{
-    if (animated && animator)
-    {
-        animator->update(transformation, dt);
-        notifyAll();
-    }
-}
-
-void Light::setAnimated(bool enabled)
-{
-    this->animated = enabled;
-}
-
-bool Light::isAnimated() const
-{
-    return this->animated;
-}
-
-Light::~Light() {}

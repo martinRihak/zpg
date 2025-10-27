@@ -15,9 +15,6 @@ private:
     glm::vec3 diff;
     glm::vec3 spec;
     glm::vec3 att;
-    std::unique_ptr<IAnimator>animator;
-    bool animated = false;
-
 public:
     Light(glm::vec3 pos, glm::vec3 d, glm::vec3 s);
     Light(glm::vec3 pos, glm::vec3 d, glm::vec3 s,glm::vec3 a);
@@ -31,12 +28,7 @@ public:
     Transformation &getTransformation();
     SubjectType getSubType() const override { return SubjectType::LIGHT; }
 
-    void createRotation(float speedDegPerSec, glm::vec3 axis);
-    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
-    void createRandomMovement(float speed, float baseInterval);
-    void update(float dt);
-    void setAnimated(bool enabled);
-    bool isAnimated() const;
+    virtual void update(float dt);
 
-    ~Light();
+    virtual ~Light() = default;
 };
