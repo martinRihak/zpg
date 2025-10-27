@@ -9,11 +9,12 @@ endif()
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-find_package(GLEW REQUIRED)  
+find_package(GLEW REQUIRED) 
+
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
-
+pkg_check_modules(assimp REQUIRED assimp)
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(SHADER_DIR "${CMAKE_SOURCE_DIR}/shaders")
 
@@ -36,6 +37,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${GLM_INCLUDE_DIRS} 
     ${OPENGL_INCLUDE_DIR} 
     ${GLEW_INCLUDE_DIRS} # Pokud GLM není systémové, přidejte explicitní cestu
+    ${assimp_INCLUDE_DIRS}
 )
 # Linkování knihoven
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw GLEW::GLEW OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw GLEW::GLEW OpenGL::GL ${assimp_LIBRARIES})

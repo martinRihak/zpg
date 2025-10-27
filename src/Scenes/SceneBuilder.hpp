@@ -27,6 +27,7 @@ public:
     void create4Spheres();
     void createForest();
     void createSunSystem();
+    void createTestScene();
     // Accessors
     Scene* getScene(int8_t index) const;
     int8_t getSceneCount() const;

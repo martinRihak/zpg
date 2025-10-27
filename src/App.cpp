@@ -52,33 +52,39 @@ void App::createScenes()
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-
+    Model *formula = new Model("../Models/assets/formula1.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
     Shader *phongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
     Shader *blinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
     Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
+    Shader *assimpVertex = new Shader("../shaders/Assimp.vert",GL_VERTEX_SHADER); 
 
     ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag, this->camera);
     ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag, this->camera);
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
 
+    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex,*phongFrag,this->camera);
+
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
+    builder->registerModel("formula",formula);
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
+    builder->registerShader("assimpPhong",assimpPhong);
 
     builder->createTriangle();
     builder->create4Spheres();
     builder->createForest();
     builder->createSunSystem();
+    builder->createTestScene();
 }
 void App::run()
 {

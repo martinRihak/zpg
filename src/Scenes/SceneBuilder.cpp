@@ -103,6 +103,18 @@ void SceneBuilder::createSunSystem()
     scene->addObject(earth);
     this->createScene(scene);
 }
+void SceneBuilder::createTestScene(){
+    Scene* scena = new Scene();
+    DrawableObject* formula = createObject("formula","assimpPhong");
+    
+    formula->getTransformation().setScale(glm::vec3(0.2f));
+    formula->getTransformation().setPosition(glm::vec3(0.0f,0.f,-2.0f));
+    formula->createRotation(12.f,glm::vec3(0,1,0));
+    scena->addObject(formula);
+    scena->addLight(this->lights[0]);
+    this->createScene(scena);
+
+}
 Scene *SceneBuilder::getScene(int8_t index) const
 {
     if (index >= 0 && index < scenes.size())

@@ -10,6 +10,7 @@ private:
     int vertexCount;
 public:
     Model(const float* model,size_t size, int vertexCount);
+    Model(const char* name);
     ~Model();
 
     void draw();
