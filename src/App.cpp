@@ -53,6 +53,7 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *formula = new Model("../Models/assets/formula1.obj");
+    Model *house= new Model("../Models/assets/house.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -74,6 +75,7 @@ void App::createScenes()
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("formula",formula);
+    builder->registerModel("house",house);
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);

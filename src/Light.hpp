@@ -7,7 +7,11 @@
 #include "Transformation/Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
 #include "DrawableObject.hpp"
-
+enum class LightType{
+    POINTLIGHT,
+    REFLECTOR,
+    DIRECTIONAL
+};
 class Light : public Subject
 {
 private:
@@ -28,7 +32,7 @@ public:
     Transformation &getTransformation();
     SubjectType getSubType() const override { return SubjectType::LIGHT; }
 
-    virtual void update(float dt);
-
+    virtual void update(float dt) = 0;
+    virtual LightType getType() const = 0;
     virtual ~Light() = default;
 };

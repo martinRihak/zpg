@@ -1,7 +1,8 @@
 #include "ShaderProgram.hpp"
 #include "Light.hpp"
 #include "Camera.hpp"
-
+#include "Reflector.hpp"
+#include "Directional.hpp"
 ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera) : camera(camera)
 {
     this->shaderProgram = glCreateProgram();
@@ -26,7 +27,7 @@ void ShaderProgram::notify(Subject *subject)
         updateCamera(dynamic_cast<Camera *>(subject));
         break;
     case SubjectType::LIGHT:
-        updateLight(0, dynamic_cast<Light *>(subject)); 
+        updateLight(0, dynamic_cast<Light *>(subject));
         break;
     }
 }
@@ -48,16 +49,34 @@ void ShaderProgram::updateLight(int index, Light *light)
     std::string posName = "lights[" + std::to_string(index) + "].position";
     std::string diffName = "lights[" + std::to_string(index) + "].diff";
     std::string specName = "lights[" + std::to_string(index) + "].spec";
-    std::string constant = "lights["+ std::to_string(index) + "].constant";
-    std::string linear = "lights["+ std::to_string(index) + "].linear";
-    std::string quad = "lights["+ std::to_string(index) + "].quadratic";
-
+    std::string constant = "lights[" + std::to_string(index) + "].constant";
+    std::string linear = "lights[" + std::to_string(index) + "].linear";
+    std::string quad = "lights[" + std::to_string(index) + "].quadratic";
+    if (light->getType() == LightType::REFLECTOR)
+    {
+        Reflector *light = dynamic_cast<Reflector *>(light);
+        std::string direction = "lights[" + std::to_string(index) + "].direction";
+        std::string cutOff = "lights[" + std::to_string(index) + "].cutOff";
+        std::string outterCutoff = "lights[" + std::to_string(index) + "].outterCutOff";
+        setUniform(direction.c_str(), light->getDirection());
+        setUniform(cutOff.c_str(), light->getCutOff());
+        setUniform(outterCutoff.c_str(), light->getOutterCutOff());
+        setUniform("lightType", 1);
+    }
+    else if (light->getType() == LightType::DIRECTIONAL)
+    {
+        Directional *light = dynamic_cast<Directional *>(light);
+        std::string direction = "lights[" + std::to_string(index) + "].direction";
+        setUniform(direction.c_str(), light->getDirection());
+        setUniform("lightType", 2);
+    }
     setUniform(posName.c_str(), light->getPosition());
     setUniform(diffName.c_str(), light->getDiff());
     setUniform(specName.c_str(), light->getSpec());
     setUniform(constant.c_str(), light->getAtt().x);
     setUniform(linear.c_str(), light->getAtt().y);
-    setUniform(quad.c_str(), light->getAtt().z);;
+    setUniform(quad.c_str(), light->getAtt().z);
+    ;
 }
 
 glm::vec3 ShaderProgram::getCameraPos()

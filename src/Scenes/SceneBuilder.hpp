@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 #include "../PointLight.hpp"
+#include "../Reflector.hpp"
+#include "../Directional.hpp"
 class SceneBuilder
 {
 private:

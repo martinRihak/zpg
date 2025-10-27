@@ -1,9 +1,9 @@
 #include "Camera.hpp"
 
 Camera::Camera()
-    : eye(0.0f, 0.0f, -0.5f), 
+    : eye(0.0f, 0.0f, -0.5f),
       up(0.0f, 1.0f, 0.0f),
-      alpha(85.0f),
+      alpha(0.0f),
       fi(-90.0f)
 {
     update();
@@ -18,14 +18,15 @@ glm::mat4 Camera::getProjectionMatrix() const
 }
 void Camera::update()
 {
-    target.x = sin(glm::radians(alpha)) * cos(glm::radians(fi));
-    target.y = cos(glm::radians(alpha));
-    target.z = sin(glm::radians(alpha)) * sin(glm::radians(fi));
+    target.x = cos(glm::radians(fi)) * cos(glm::radians(alpha));
+    target.y = sin(glm::radians(alpha));
+    target.z = sin(glm::radians(fi)) * cos(glm::radians(alpha));
     target = glm::normalize(target);
 }
-void Camera::setAspectRatio(float ar) {
+void Camera::setAspectRatio(float ar)
+{
     this->aspectRatio = ar;
-    notifyAll(); 
+    notifyAll();
 }
 void Camera::setEye(const glm::vec3 &eye)
 {
@@ -41,7 +42,7 @@ void Camera::setAngels(float alpha, float fi)
     notifyAll();
 }
 
-glm::vec3 Camera::getPosition() const 
+glm::vec3 Camera::getPosition() const
 {
     return eye;
 }

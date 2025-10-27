@@ -46,7 +46,7 @@ void SceneBuilder::create4Spheres()
     DrawableObject *sphere3 = createObject("sphere", "phong");
     DrawableObject *sphere4 = createObject("sphere", "phong");
     PointLight *centerLight = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f,1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    //Light *leftLight = new Light(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Reflector *reflector = new Reflector(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f),glm::vec3(0.0,-1.0,0.0),20.0,50.0);
     lights.push_back(centerLight);
     sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
@@ -63,7 +63,8 @@ void SceneBuilder::create4Spheres()
     scene->addObject(sphere4);
 
     scene->addLight(centerLight);
-   // scene->addLight(leftLight);
+    scene->addLight(reflector);
+    lights.push_back(reflector);
 
     this->createScene(scene);
 }
@@ -106,12 +107,17 @@ void SceneBuilder::createSunSystem()
 void SceneBuilder::createTestScene(){
     Scene* scena = new Scene();
     DrawableObject* formula = createObject("formula","assimpPhong");
-    
+    DrawableObject* house = createObject("house","phong");
+    //house->getTransformation().setScale(glm::vec3(0.8f));
+    house->getTransformation().setPosition(glm::vec3(-2.0,0.0,8.0));
     formula->getTransformation().setScale(glm::vec3(0.2f));
-    formula->getTransformation().setPosition(glm::vec3(0.0f,0.f,-2.0f));
-    formula->createRotation(12.f,glm::vec3(0,1,0));
+    formula->createRotation(20.f,glm::vec3(0,1,0));
+    house->createOrbit(formula,20.0,40.0,0.0);
     scena->addObject(formula);
-    scena->addLight(this->lights[0]);
+    scena->addObject(house);
+    
+    Directional* light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f),glm::vec3(0.0f, -1.0f, 0.0f));
+    scena->addLight(light);
     this->createScene(scena);
 
 }

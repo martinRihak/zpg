@@ -19,4 +19,5 @@ public:
     bool isAnimated() const;
 
     void update(float dt) override;
+    LightType getType() const override{return LightType::POINTLIGHT;}
 };

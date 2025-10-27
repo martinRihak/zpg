@@ -34,7 +34,7 @@ void Controller::processInput(GLFWwindow* window, int8_t sceneCount, Camera* cam
         }
 
         float xoffset = (xpos - lastX) * mouseSensitivity;
-        float yoffset = (lastY - ypos) * mouseSensitivity; 
+        float yoffset = (ypos- lastY) * mouseSensitivity; 
      
         float newAlpha = camera->getAlpha() + yoffset; 
         float newFi = camera->getFi() + xoffset;       
