@@ -29,7 +29,7 @@ public:
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt,const std::vector<Light*>& lights);
-    void createRotation(float speedDegPerSec, glm::vec3 axis); // Opravený název
+    void createRotation(float speedDegPerSec, glm::vec3 axis,int dir); // Opravený název
     void createOrbit(DrawableObject* center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f); 
     Transformation& getTransformation();
     void update(float dt);

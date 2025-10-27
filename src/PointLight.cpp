@@ -1,9 +1,9 @@
 #include "PointLight.hpp"
 PointLight::PointLight(glm::vec3 pos, glm::vec3 d, glm::vec3 s) : Light(pos,d,s,glm::vec3(1.0f, 0.0f, 0.0f)){}
 PointLight::PointLight(glm::vec3 pos, glm::vec3 d, glm::vec3 s,glm::vec3 a) : Light(pos,d,s,a){}
-void PointLight::createRotation(float speedDegPerSec, glm::vec3 axis)
+void PointLight::createRotation(float speedDegPerSec, glm::vec3 axis,int dir)
 {
-    this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis);
+    this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis,dir);
     this->animated = true;
 }
 

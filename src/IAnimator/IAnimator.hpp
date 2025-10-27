@@ -16,10 +16,11 @@ public:
 
 class RotateAnimator : public IAnimator {
 public:
-    RotateAnimator(float speedDegPerSec, glm::vec3 axis);
+    RotateAnimator(float speedDegPerSec, glm::vec3 axis,int dir);
     void update(Transformation &t, float dt) override;
 private:
     float speed;
+    int dir;
     glm::vec3 axis;
     float angle;
 };

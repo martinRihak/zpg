@@ -33,9 +33,9 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     shader->setModelMatrix(tranformation.getModelMatrix());
     model->draw();
 }
-void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis)
+void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis,int dir)
 {
-    this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis);
+    this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis,dir);
     this->animated = true;
 }
 void DrawableObject::createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg)

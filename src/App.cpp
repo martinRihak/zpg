@@ -54,6 +54,8 @@ void App::createScenes()
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house= new Model("../Models/assets/house.obj");
+    Model* Koen = new Model("../Models/assets/Koenigsegg.obj");
+    Model* Ferarri= new Model("../Models/assets/Humvee.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -71,11 +73,13 @@ void App::createScenes()
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
+    builder->registerModel("ferarri",Ferarri);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("formula",formula);
     builder->registerModel("house",house);
+    builder->registerModel("koen",Koen);
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);

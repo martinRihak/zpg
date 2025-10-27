@@ -45,8 +45,8 @@ void SceneBuilder::create4Spheres()
     DrawableObject *sphere2 = createObject("sphere", "phong");
     DrawableObject *sphere3 = createObject("sphere", "phong");
     DrawableObject *sphere4 = createObject("sphere", "phong");
-    PointLight *centerLight = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f,1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    Reflector *reflector = new Reflector(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f),glm::vec3(0.0,-1.0,0.0),20.0,50.0);
+    PointLight *centerLight = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Reflector *reflector = new Reflector(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, -1.0, 0.0), 20.0, 50.0);
     lights.push_back(centerLight);
     sphere1->getTransformation().setPosition(glm::vec3(0.7f, 0.0f, 0.0f));
     sphere1->getTransformation().setScale(glm::vec3(0.3f));
@@ -73,10 +73,10 @@ void SceneBuilder::createForest()
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     DrawableObject *bush = createObject("bush", "phong");
-    PointLight* firefly = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.44f));
-    PointLight* firefly2 = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f,0.0f), glm::vec3(1.0f, 0.9f, 0.0f),glm::vec3(1.0f, 0.09f, 0.44f));
-    firefly->createRandomMovement(0.1f,14.5f);
-    firefly2->createRandomMovement(0.1f,14.5f);
+    PointLight *firefly = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.09f, 0.44f));
+    PointLight *firefly2 = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.09f, 0.44f));
+    firefly->createRandomMovement(0.1f, 14.5f);
+    firefly2->createRandomMovement(0.1f, 14.5f);
     firefly2->getTransformation().setScale(glm::vec3(0.2f));
     firefly->getTransformation().setScale(glm::vec3(0.2f));
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
@@ -93,7 +93,7 @@ void SceneBuilder::createSunSystem()
     DrawableObject *earth = createObject("sphere", "phong");
     DrawableObject *moon = createObject("sphere", "phong");
     sun->getTransformation().setScale(glm::vec3(1.0f));
-    sun->getTransformation().setPosition(glm::vec3(0.0f,0.0f,0.f));
+    sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.f));
     earth->getTransformation().setScale(glm::vec3(0.3f));
     earth->createOrbit(sun, 2.0f, 30.0f, 0.0f);
     moon->getTransformation().setScale(glm::vec3(0.05f));
@@ -104,22 +104,32 @@ void SceneBuilder::createSunSystem()
     scene->addObject(earth);
     this->createScene(scene);
 }
-void SceneBuilder::createTestScene(){
-    Scene* scena = new Scene();
-    DrawableObject* formula = createObject("formula","assimpPhong");
-    DrawableObject* house = createObject("house","phong");
-    //house->getTransformation().setScale(glm::vec3(0.8f));
-    house->getTransformation().setPosition(glm::vec3(-2.0,0.0,8.0));
+void SceneBuilder::createTestScene()
+{
+    Scene *scena = new Scene();
+    DrawableObject *formula = createObject("formula", "assimpPhong");
+    DrawableObject *house = createObject("house", "phong");
+    DrawableObject *Koen = createObject("koen", "phong");
+    DrawableObject *ferarri = createObject("ferarri", "phong");
+    // house->getTransformation().setScale(glm::vec3(0.8f));
+    house->getTransformation().setPosition(glm::vec3(-2.0, 0.0, 8.0));
     formula->getTransformation().setScale(glm::vec3(0.2f));
-    formula->createRotation(20.f,glm::vec3(0,1,0));
-    house->createOrbit(formula,20.0,40.0,0.0);
+    Koen->getTransformation().setPosition(glm::vec3(0.0, 3.0, 0.0));
+    Koen->getTransformation().setScale(glm::vec3(0.2f));
+    ferarri->getTransformation().setPosition(glm::vec3(0.0, -3.0, 0.0));
+    ferarri->getTransformation().setScale(glm::vec3(0.015f));
+
+    formula->createRotation(20.f, glm::vec3(0, 1, 0), -1);
+    Koen->createRotation(30.f, glm::vec3(0, 1, 0), 1);
+    ferarri->createRotation(25.f,glm::vec3(0,1,0),1);
+    house->createOrbit(formula, 9.0, 40.0, 0.0);
     scena->addObject(formula);
     scena->addObject(house);
-    
-    Directional* light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f),glm::vec3(0.0f, -1.0f, 0.0f));
+    scena->addObject(Koen);
+    scena->addObject(ferarri);
+    Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scena->addLight(light);
     this->createScene(scena);
-
 }
 Scene *SceneBuilder::getScene(int8_t index) const
 {

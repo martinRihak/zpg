@@ -8,11 +8,11 @@ void NullAnimator::update(Transformation &t, float dt) {
 
 }
 
-RotateAnimator::RotateAnimator(float speedDegPerSec, glm::vec3 axis)
-    : speed(speedDegPerSec), axis(axis), angle(0.f) {}
+RotateAnimator::RotateAnimator(float speedDegPerSec, glm::vec3 axis,int dir)
+    : speed(speedDegPerSec), axis(axis), angle(0.f), dir(dir){}
 
 void RotateAnimator::update(Transformation &t, float dt) {
-    angle += speed * dt;
+    angle += (speed * dt) * dir;
     t.setRotation(angle, axis);
 }
 
