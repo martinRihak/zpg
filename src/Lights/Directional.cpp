@@ -12,7 +12,6 @@ glm::vec3 Directional::getDirection() const {return this->direction;}
 
 void Directional::setDirection(const glm::vec3 &dir) {
     direction = glm::normalize(dir);
-    // Mapujeme na position v transformation (pro kompatibilitu se shaderem, často se používá -direction)
-    this->getTransformation().setPosition(-direction);  // Negativní pro standardní konvenci světla (směr od zdroje)
+    this->getTransformation().setPosition(-direction);  
 
 }

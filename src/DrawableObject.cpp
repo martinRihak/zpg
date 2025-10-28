@@ -1,6 +1,6 @@
 #include "DrawableObject.hpp"
 #include "Transformation/ITransformation.hpp"
-#include "PointLight.hpp"
+#include "Lights/PointLight.hpp"
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader), material(new Material())
 {
@@ -20,6 +20,7 @@ void DrawableObject::draw(float dt)
     this->shader->setModelMatrix(tranformation->getModelMatrix());
 
     model->draw();
+    glUseProgram(0);
 }
 
 void DrawableObject::createRandomMovement(float speed, float baseInterval)

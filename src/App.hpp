@@ -12,7 +12,7 @@
 #include "App.hpp"
 #include "Scenes/SceneBuilder.hpp"
 #include "Camera.hpp"
-#include "Light.hpp"
+#include "Lights/Light.hpp"
 // Model
 #include "../Models/AllModels.hpp"
 class CallbackHandler;

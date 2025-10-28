@@ -6,7 +6,7 @@
 #include <random>
 #include <vector>
 #include "DrawableObject.hpp"
-#include "Light.hpp"
+#include "../Lights/Light.hpp"
 class Scene
 {
 private:

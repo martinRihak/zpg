@@ -1,8 +1,8 @@
 #include "ShaderProgram.hpp"
-#include "Light.hpp"
 #include "Camera.hpp"
-#include "Reflector.hpp"
-#include "Directional.hpp"
+#include "Lights/Reflector.hpp"
+#include "Lights/Light.hpp"
+#include "Lights/Directional.hpp"
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader)
 {

@@ -9,7 +9,7 @@
 #include <glm/mat4x4.hpp>
 #include "../Camera.hpp"
 #include "../Observer.hpp"
-#include "../Light.hpp"
+#include "../Lights/Light.hpp"
 #include "../Material.hpp"
 class Camera;
 class Light;

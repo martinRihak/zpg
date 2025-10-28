@@ -53,13 +53,10 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *formula = new Model("../Models/assets/formula1.obj");
-    Model *house= new Model("../Models/assets/house.obj");
-    Model* Koen = new Model("../Models/assets/Koenigsegg.obj");
-    Model* Ferarri= new Model("../Models/assets/Humvee.obj");
-    Model* lostEmpire = new Model("../Models/assets/lost_empire.obj");
-    
-
-
+    Model *house = new Model("../Models/assets/house.obj");
+    Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
+    Model *Ferarri = new Model("../Models/assets/Humvee.obj");
+    Model *lostEmpire = new Model("../Models/assets/lost_empire.obj");
 
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
@@ -67,30 +64,30 @@ void App::createScenes()
     Shader *phongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
     Shader *blinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
     Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
-    Shader *assimpVertex = new Shader("../shaders/Assimp.vert",GL_VERTEX_SHADER); 
+    Shader *assimpVertex = new Shader("../shaders/Assimp.vert", GL_VERTEX_SHADER);
 
     ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag);
     ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag);
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag);
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag);
 
-    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex,*phongFrag);
+    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex, *phongFrag);
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
-    builder->registerModel("ferarri",Ferarri);
-    builder->registerModel("lostEmpire",lostEmpire);
+    builder->registerModel("ferarri", Ferarri);
+    builder->registerModel("lostEmpire", lostEmpire);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
-    builder->registerModel("formula",formula);
-    builder->registerModel("house",house);
-    builder->registerModel("koen",Koen);
+    builder->registerModel("formula", formula);
+    builder->registerModel("house", house);
+    builder->registerModel("koen", Koen);
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
-    builder->registerShader("assimpPhong",assimpPhong);
+    builder->registerShader("assimpPhong", assimpPhong);
 
     builder->createTriangle();
     builder->create4Spheres();
@@ -101,7 +98,7 @@ void App::createScenes()
 void App::run()
 {
     createScenes();
-    
+
     double lastTime = glfwGetTime();
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
@@ -122,9 +119,7 @@ void App::run()
         {
             activeScene->render(dt);
         }
-
         glfwSwapBuffers(window);
         glfwPollEvents();
-        glUseProgram(0);
     }
 }

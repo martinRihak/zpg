@@ -1,5 +1,5 @@
 #include "Camera.hpp"
-#include "Reflector.hpp"
+#include "Lights/Reflector.hpp"
 
 Camera::Camera()
     : eye(0.0f, 0.0f, -0.5f),

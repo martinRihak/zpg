@@ -77,12 +77,7 @@ void SceneBuilder::createForest()
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
-    /*tree->createMaterial(
-        glm::vec3(0.1f, 0.1f, 0.1f), // ambient: tmavší zelená
-        glm::vec3(0.2f, 0.6f, 0.1f), // diffuse: zelená barva stromu
-        glm::vec3(0.1f, 0.1f, 0.1f), // specular: nízký, šedý (bez barevného zkreslení)
-        64.0f                         // shininess: nízký pro matný vzhled (stromy nejsou lesklé)
-    );*/
+
     DrawableObject *bush = createObject("bush", "phong");
 
     DrawableObject *firefly = createObject("sphere", "phong");
@@ -99,12 +94,6 @@ void SceneBuilder::createForest()
     firefly->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly->createRandomMovement(1.5f,1.0f);
     firefly2->createRandomMovement(1.5f,1.0f);
-    // PointLight *firefly = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.09f, 0.44f));
-    // PointLight *firefly2 = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.9f, 0.0f), glm::vec3(1.0f, 0.09f, 0.44f));
-    // firefly->createRandomMovement(0.1f, 14.5f);
-    // firefly2->createRandomMovement(0.1f, 14.5f);
-    // firefly2->getTransformation().setScale(glm::vec3(0.2f));
-    // firefly->getTransformation().setScale(glm::vec3(0.2f));
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
 

@@ -2,11 +2,11 @@
 
 #include <glm/glm.hpp>
 #include <iostream>
-#include "Subject.hpp"
+#include "../Subject.hpp"
 #include <memory>
-#include "Transformation/Transformation.hpp"
-#include "IAnimator/IAnimator.hpp"
-#include "DrawableObject.hpp"
+#include "../Transformation/Transformation.hpp"
+#include "../IAnimator/IAnimator.hpp"
+#include "../DrawableObject.hpp"
 enum class LightType{
     POINTLIGHT,
     REFLECTOR,

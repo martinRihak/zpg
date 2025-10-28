@@ -4,9 +4,9 @@
 #include <map>
 #include <memory>
 #include <vector>
-#include "../PointLight.hpp"
-#include "../Reflector.hpp"
-#include "../Directional.hpp"
+#include "../Lights/PointLight.hpp"
+#include "../Lights/Reflector.hpp"
+#include "../Lights/Directional.hpp"
 class SceneBuilder
 {
 private:
