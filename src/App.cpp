@@ -56,6 +56,11 @@ void App::createScenes()
     Model *house= new Model("../Models/assets/house.obj");
     Model* Koen = new Model("../Models/assets/Koenigsegg.obj");
     Model* Ferarri= new Model("../Models/assets/Humvee.obj");
+    Model* lostEmpire = new Model("../Models/assets/lost_empire.obj");
+    
+
+
+
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -64,16 +69,17 @@ void App::createScenes()
     Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
     Shader *assimpVertex = new Shader("../shaders/Assimp.vert",GL_VERTEX_SHADER); 
 
-    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag, this->camera);
-    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
-    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag, this->camera);
-    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
+    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag);
+    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag);
+    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag);
+    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag);
 
-    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex,*phongFrag,this->camera);
+    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex,*phongFrag);
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
     builder->registerModel("ferarri",Ferarri);
+    builder->registerModel("lostEmpire",lostEmpire);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);

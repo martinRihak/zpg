@@ -1,6 +1,8 @@
 #include "SceneBuilder.hpp"
 
-SceneBuilder::SceneBuilder(Camera *camera) : camera(camera), activeSceneIndex(0) {}
+SceneBuilder::SceneBuilder(Camera *camera) : camera(camera), activeSceneIndex(0) {
+    this->camera->createFlashLight();
+}
 
 SceneBuilder::~SceneBuilder()
 {
@@ -18,6 +20,7 @@ void SceneBuilder::registerShader(const std::string &name, ShaderProgram *shader
 }
 void SceneBuilder::createScene(Scene *scene)
 {
+    scene->addLight(camera->getFlashLight());
     this->scenes.push_back(scene);
 }
 DrawableObject *SceneBuilder::createObject(const std::string &modelName, const std::string &shaderName)
@@ -62,8 +65,8 @@ void SceneBuilder::create4Spheres()
     scene->addObject(sphere3);
     scene->addObject(sphere4);
 
-    scene->addLight(centerLight);
-    scene->addLight(reflector);
+   // scene->addLight(centerLight);
+   // scene->addLight(reflector);
     lights.push_back(reflector);
 
     this->createScene(scene);
@@ -94,11 +97,12 @@ void SceneBuilder::createSunSystem()
     DrawableObject *moon = createObject("sphere", "phong");
     sun->getTransformation().setScale(glm::vec3(1.0f));
     sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.f));
+    sun->createLight(glm::vec3(1),glm::vec3(1),glm::vec3(1,0.09,0.032));
+    scene->addLight(sun->getLight());
     earth->getTransformation().setScale(glm::vec3(0.3f));
     earth->createOrbit(sun, 2.0f, 30.0f, 0.0f);
     moon->getTransformation().setScale(glm::vec3(0.05f));
     moon->createOrbit(earth, 0.5f, 60.0f, 0.0f);
-    scene->addLight(this->lights[0]);
     scene->addObject(sun);
     scene->addObject(moon);
     scene->addObject(earth);
@@ -107,7 +111,7 @@ void SceneBuilder::createSunSystem()
 void SceneBuilder::createTestScene()
 {
     Scene *scena = new Scene();
-    DrawableObject *formula = createObject("formula", "assimpPhong");
+    DrawableObject *formula = createObject("formula", "phong");
     DrawableObject *house = createObject("house", "phong");
     DrawableObject *Koen = createObject("koen", "phong");
     DrawableObject *ferarri = createObject("ferarri", "phong");
@@ -128,8 +132,18 @@ void SceneBuilder::createTestScene()
     scena->addObject(Koen);
     scena->addObject(ferarri);
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    scena->addLight(light);
+    //scena->addLight(light);
     this->createScene(scena);
+
+    Scene* scena2 = new Scene();
+
+    DrawableObject* lostEmpire = createObject("lostEmpire","phong");
+    //lostEmpire->getMaterial()->loadTexture("../../Models/assets/Ferarri_texture.blend");
+    lostEmpire->getTransformation().setPosition(glm::vec3(0,-15,0));
+
+    scena2->addObject(lostEmpire);
+    scena2->addLight(light);
+    this->createScene(scena2);
 }
 Scene *SceneBuilder::getScene(int8_t index) const
 {

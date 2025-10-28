@@ -12,7 +12,7 @@ enum class LightType{
     REFLECTOR,
     DIRECTIONAL
 };
-class Light : public Subject
+class Light 
 {
 private:
     Transformation transformation;
@@ -30,8 +30,7 @@ public:
     void setSpec(const glm::vec3 &s);
     glm::vec3 getAtt() const;
     Transformation &getTransformation();
-    SubjectType getSubType() const override { return SubjectType::LIGHT; }
-
+    void attachTransformation(Transformation& trans);
     virtual void update(float dt) = 0;
     virtual LightType getType() const = 0;
     virtual ~Light() = default;

@@ -5,6 +5,7 @@ out vec4 frag_color;
 uniform vec3 viewPos;
 uniform int lightCount;
 
+
 struct Light {
     vec3 position;
     vec3 diff;
@@ -15,15 +16,25 @@ struct Light {
     vec3 direction;
     float cutOff;
     float outterCutOff;
-    int lightType;    // NOVÉ: 0 = point, 1 = spot, 2 = directional
+    int lightType;    // 0 = point, 1 = spot, 2 = directional
 };
 uniform Light lights[8];  
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 objectColor;
+    float shininess;
+    bool hasTexture;
+    sampler2D diffuseMap;
+};
+uniform Material material;
+
 void main() {
-    vec3 objectColor = vec3(0.385, 0.647, 0.812);
     vec3 norm = normalize(worldNormal);
     vec3 viewDir = normalize(viewPos - worldPosition);
-    vec3 ambient = vec3(0.1, 0.1, 0.1) * objectColor;
+    vec3 ambient = vec3(0.1, 0.1, 0.1) * material.ambient ;
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
 
@@ -31,7 +42,7 @@ void main() {
         vec3 lightDir;
         float attenuation;
 
-        if (lights[i].lightType == 2) {  // Directional light – NOVÁ PODMÍNKA
+        if (lights[i].lightType == 2) {  
             lightDir = normalize(-lights[i].direction);  // Směr je rovnoběžný, žádná pozice
             attenuation = 1.0;  // Žádný útlum
         } else {
@@ -42,10 +53,10 @@ void main() {
 
         float diff = max(dot(norm, lightDir), 0.0);
         vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
         
         // Přidání do diffuse a specular – stejné jako dříve, ale s attenuation
-        vec3 currentDiffuse = diff * lights[i].diff * objectColor * attenuation;
+        vec3 currentDiffuse = diff * lights[i].diff * material.objectColor * attenuation;
         vec3 currentSpecular = spec * lights[i].spec * attenuation;
 
         if (lights[i].lightType == 1) {  
@@ -62,8 +73,8 @@ void main() {
             }
         }  
 
-        diffuse += currentDiffuse;
-        specular += currentSpecular;
+        diffuse += currentDiffuse  ;
+        specular += currentSpecular * material.specular;
     }
 
     vec3 result = ambient + diffuse + specular;

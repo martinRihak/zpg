@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+#include "Reflector.hpp"
 
 Camera::Camera()
     : eye(0.0f, 0.0f, -0.5f),
@@ -8,6 +9,18 @@ Camera::Camera()
 {
     update();
 }
+void Camera::createFlashLight()
+{
+    this->flashLight = new Reflector(
+        this->eye,
+        glm::vec3(1, 1.0, 1),
+        glm::vec3(1, 1.0, 1),
+        glm::vec3(1.f,0.09f,0.032f),
+        this->target,
+        12.5f, 17.5f);
+}
+void Camera::switchFlash(){this->flashLight->switchLight();}
+Reflector *Camera::getFlashLight() const { return this->flashLight; }
 glm::mat4 Camera::getCamera() const
 {
     return glm::lookAt(eye, eye + target, up);
@@ -31,6 +44,7 @@ void Camera::setAspectRatio(float ar)
 void Camera::setEye(const glm::vec3 &eye)
 {
     this->eye = eye;
+    flashLight->FlashMovement(this);
     update();
     notifyAll();
 }
@@ -38,6 +52,7 @@ void Camera::setAngels(float alpha, float fi)
 {
     this->alpha = glm::clamp(alpha, -89.0f, 89.0f);
     this->fi = fi;
+    flashLight->FlashMovement(this);
     update();
     notifyAll();
 }
@@ -63,3 +78,4 @@ float Camera::getFi() const
 {
     return fi;
 }
+float Camera::getAspectRatio() const { return this->aspectRatio; }

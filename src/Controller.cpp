@@ -21,7 +21,8 @@ void Controller::processInput(GLFWwindow* window, int8_t sceneCount, Camera* cam
         camera->setEye(camera->getPosition() - glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera->setEye(camera->getPosition() + glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
-
+    if(glfwGetKey(window,GLFW_KEY_F) == GLFW_PRESS)
+        camera->switchFlash(); 
 
     if (glfwGetWindowAttrib(window, GLFW_FOCUSED) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         double xpos, ypos;

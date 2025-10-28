@@ -22,10 +22,6 @@ void Scene::addObject(DrawableObject *obj)
 void Scene::addLight(Light *light)
 {
     lights.push_back(light);
-   /* for (DrawableObject *obj : objects)
-    {
-        light->attach(obj->getShaderProgram());
-    }*/
 }
 void Scene::render(float dt)
 {

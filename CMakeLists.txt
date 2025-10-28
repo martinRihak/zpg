@@ -11,6 +11,13 @@ find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED) 
 
+# Find SOIL
+find_path(SOIL_INCLUDE_DIR SOIL.h PATH_SUFFIXES SOIL)
+find_library(SOIL_LIBRARY SOIL)
+
+if(NOT SOIL_INCLUDE_DIR OR NOT SOIL_LIBRARY)
+    message(FATAL_ERROR "SOIL not found. Please install libsoil-dev")
+endif()
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
@@ -34,10 +41,18 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${SOURCE_DIR}
-    ${GLM_INCLUDE_DIRS} 
     ${OPENGL_INCLUDE_DIR} 
-    ${GLEW_INCLUDE_DIRS} # Pokud GLM není systémové, přidejte explicitní cestu
+    ${GLEW_INCLUDE_DIRS}
+    ${GLM_INCLUDE_DIRS}
     ${assimp_INCLUDE_DIRS}
+    ${SOIL_INCLUDE_DIR}
 )
+
 # Linkování knihoven
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw GLEW::GLEW OpenGL::GL ${assimp_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    glfw
+    GLEW::GLEW
+    OpenGL::GL
+    ${assimp_LIBRARIES}
+    ${SOIL_LIBRARY}
+)

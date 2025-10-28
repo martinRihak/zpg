@@ -22,8 +22,7 @@ void PointLight::update(float dt)
     if (animated && animator)
     {
         animator->update(this->getTransformation(), dt);
-        notifyAll();
-    }
+    } 
 }
 
 void PointLight::setAnimated(bool enabled)

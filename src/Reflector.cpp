@@ -1,7 +1,13 @@
 #include "Reflector.hpp"
 
-Reflector::Reflector(glm::vec3 pos, glm::vec3 diff, glm::vec3 att, glm::vec3 dir, float cutOff, float outterCutOff)
-: Light(pos,diff,att), direction(dir)
+Reflector::Reflector(glm::vec3 pos, glm::vec3 diff, glm::vec3 spe, glm::vec3 dir, float cutOff, float outterCutOff)
+: Light(pos,diff,spe), direction(dir)
+{
+    this->cutOff = glm::cos(glm::radians(cutOff));
+    this->outterCutOff = glm::cos(glm::radians(outterCutOff));
+}
+Reflector::Reflector(glm::vec3 pos, glm::vec3 diff,glm::vec3 spe ,glm::vec3 att, glm::vec3 dir, float cutOff, float outterCutOff)
+: Light(pos,diff,spe,att), direction(dir)
 {
     this->cutOff = glm::cos(glm::radians(cutOff));
     this->outterCutOff = glm::cos(glm::radians(outterCutOff));
@@ -9,11 +15,21 @@ Reflector::Reflector(glm::vec3 pos, glm::vec3 diff, glm::vec3 att, glm::vec3 dir
 Reflector::~Reflector()
 {
 }
-
+bool Reflector::getIsOn()const {return isOn;}
+void Reflector::switchLight(){isOn = !isOn;}
 void Reflector::update(float dt)
 {
-    notifyAll();
 }
 glm::vec3 Reflector::getDirection() const{return this->direction;}
 float Reflector::getCutOff() const{return this->cutOff;}
 float Reflector::getOutterCutOff() const{return this->outterCutOff;}
+void Reflector::FlashMovement(Camera* camera){
+    float offsetDistance = 0.5f;
+    glm::vec3 lightPos = camera->getPosition() + camera->getTarget() * offsetDistance;
+//    std::cout << lightPos.x << " | " << lightPos.y << " | "<< lightPos.z<< std::endl;
+    setPosition(lightPos);
+    direction = camera->getTarget();
+    //float fovRadians = glm::radians(camera->getAspectRatio());
+    //this->cutOff = glm::cos(fovRadians/2);
+    // this->outterCutOff  =glm::cos(fovRadians/2 + outterCutOff);
+}

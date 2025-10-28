@@ -3,7 +3,8 @@
 #include "Camera.hpp"
 #include "Reflector.hpp"
 #include "Directional.hpp"
-ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera) : camera(camera)
+
+ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader)
 {
     this->shaderProgram = glCreateProgram();
     glAttachShader(this->shaderProgram, vertexShader.getID());
@@ -14,22 +15,12 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentS
 void ShaderProgram::use()
 {
     glUseProgram(this->shaderProgram);
-    updateCamera(this->camera);
+    // updateCamera(this->camera);
 }
 
 void ShaderProgram::notify(Subject *subject)
 {
-    if (!subject)
-        return;
-    switch (subject->getSubType())
-    {
-    case SubjectType::CAMERA:
-        updateCamera(dynamic_cast<Camera *>(subject));
-        break;
-    case SubjectType::LIGHT:
-        updateLight(0, dynamic_cast<Light *>(subject));
-        break;
-    }
+    updateCamera(dynamic_cast<Camera *>(subject));
 }
 
 void ShaderProgram::updateCamera(Camera *camera)
@@ -40,48 +31,49 @@ void ShaderProgram::updateCamera(Camera *camera)
     GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &camera->getCamera()[0][0]);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
+    setUniform("viewPos", camera->getPosition());
 }
 
 void ShaderProgram::updateLight(int index, Light *light)
 {
     if (!light || index < 0 || index >= 8)
         return;
-    std::string posName = "lights[" + std::to_string(index) + "].position";
-    std::string diffName = "lights[" + std::to_string(index) + "].diff";
-    std::string specName = "lights[" + std::to_string(index) + "].spec";
-    std::string constant = "lights[" + std::to_string(index) + "].constant";
-    std::string linear = "lights[" + std::to_string(index) + "].linear";
-    std::string quad = "lights[" + std::to_string(index) + "].quadratic";
+    std::string base = "lights[" + std::to_string(index) + "].";
     if (light->getType() == LightType::REFLECTOR)
     {
-        Reflector *light = dynamic_cast<Reflector *>(light);
-        std::string direction = "lights[" + std::to_string(index) + "].direction";
-        std::string cutOff = "lights[" + std::to_string(index) + "].cutOff";
-        std::string outterCutoff = "lights[" + std::to_string(index) + "].outterCutOff";
-        setUniform(direction.c_str(), light->getDirection());
-        setUniform(cutOff.c_str(), light->getCutOff());
-        setUniform(outterCutoff.c_str(), light->getOutterCutOff());
-        setUniform("lightType", 1);
+        Reflector *refl = dynamic_cast<Reflector *>(light);
+        if (refl->getIsOn() == false)
+        {
+            setUniform((base + "diff").c_str(), glm::vec3(0));
+            setUniform((base + "spec").c_str(), glm::vec3(0));
+            return;
+        }
+        setUniform((base + "direction").c_str(), refl->getDirection());
+        setUniform((base + "cutOff").c_str(), refl->getCutOff());
+        setUniform((base + "outterCutOff").c_str(), refl->getOutterCutOff());
+        setUniform((base + "lightType").c_str(), 1); // Oprav: s indexem!
     }
+
     else if (light->getType() == LightType::DIRECTIONAL)
     {
-        Directional *light = dynamic_cast<Directional *>(light);
-        std::string direction = "lights[" + std::to_string(index) + "].direction";
-        setUniform(direction.c_str(), light->getDirection());
-        setUniform("lightType", 2);
+        Directional *dir = dynamic_cast<Directional *>(light);
+        setUniform((base + "direction").c_str(), dir->getDirection());
+        setUniform((base + "lightType").c_str(), 2); // Oprav: s indexem!
     }
-    setUniform(posName.c_str(), light->getPosition());
-    setUniform(diffName.c_str(), light->getDiff());
-    setUniform(specName.c_str(), light->getSpec());
-    setUniform(constant.c_str(), light->getAtt().x);
-    setUniform(linear.c_str(), light->getAtt().y);
-    setUniform(quad.c_str(), light->getAtt().z);
-    ;
+    else
+    {
+        setUniform((base + "lightType").c_str(), 0);
+    }
+    setUniform((base + "position").c_str(), light->getPosition());
+    setUniform((base + "diff").c_str(), light->getDiff());
+    setUniform((base + "spec").c_str(), light->getSpec());
+    setUniform((base + "constant").c_str(), light->getAtt().x);
+    setUniform((base + "linear").c_str(), light->getAtt().y);
+    setUniform((base + "quadratic").c_str(), light->getAtt().z);
 }
 
 glm::vec3 ShaderProgram::getCameraPos()
 {
-    return camera->getPosition();
 }
 
 ShaderProgram::~ShaderProgram()
@@ -149,4 +141,19 @@ void ShaderProgram::setUniform(const char *name, const glm::mat4 &value)
     if (loc == -1)
         return;
     glUniformMatrix4fv(loc, 1, GL_FALSE, &value[0][0]);
+}
+void ShaderProgram::updateMaterial(Material *mat)
+{
+    setUniform("material.ambient", mat->getAmbient());
+    setUniform("material.diffuse", mat->getDiffuse());
+    setUniform("material.specular", mat->getSpecular());
+    setUniform("material.shininess", mat->getShininess());
+    setUniform("material.objectColor", mat->getObjectColor());
+    setUniform("material.hasTexture", mat->getHasTexture() ? 1 : 0);
+    if (mat->getHasTexture())
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
+        setUniform("material.diffuseMap", 0);
+    }
 }

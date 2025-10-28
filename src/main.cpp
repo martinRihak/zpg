@@ -14,21 +14,9 @@
 #include <stdio.h>
 #include "App.hpp"
 
-static void error_callback(int error, const char *description) { fputs(description, stderr); }
-static void window_size_callback(GLFWwindow *window, int width, int height)
-{
-    printf("resize %d, %d \n", width, height);
-    glViewport(0, 0, width, height);
-}
-static void button_callback(GLFWwindow *window, int button, int action, int mode)
-{
-    if (action == GLFW_PRESS)
-        printf("button_callback [%d,%d,%d]\n", button, action, mode);
-}
-// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 int main(void)
 {
-    App* app = new App(800,600);
+    App* app = new App(1280,720);
     app->run();
 
 }

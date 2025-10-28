@@ -10,6 +10,7 @@
 #include "../Camera.hpp"
 #include "../Observer.hpp"
 #include "../Light.hpp"
+#include "../Material.hpp"
 class Camera;
 class Light;
 
@@ -17,20 +18,19 @@ class ShaderProgram : public Observer
 {
 private:
     GLuint shaderProgram;
-    Camera *camera;
-
     void updateCamera(Camera *camera);
 
 public:
-    ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera);
+    ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader);
     ~ShaderProgram();
 
     void use();
     glm::vec3 getCameraPos();
-    void notify(Subject *subject) override;
+    void notify(Subject* subject) override;
     void setModelMatrix(const glm::mat4 &modelMatrix);
 
     void updateLight(int id, Light *light);
+    void updateMaterial(Material* mat);
     // Overloaded uniform setters
     void setUniform(const char *name, float value);
     void setUniform(const char *name, int value);
