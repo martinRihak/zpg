@@ -6,40 +6,32 @@
 #include <vector>
 #include <assimp/material.h>
 
-class Material {
+class Material
+{
 private:
-    glm::vec3 ambient;   // Ka
-    glm::vec3 diffuse;   // Kd
-    glm::vec3 specular;  // Ks
-    float shininess;     // Ns (exponent)
-
-    GLuint textureID = 0; // OpenGL texture handle
-    bool hasTexture = false;
+    glm::vec3 ambient;  // Ka
+    glm::vec3 diffuse;  // Kd
+    glm::vec3 specular; // Ks
+    glm::vec3 objectColor;
+    float shininess; // Ns (exponent)
+    glm::vec3 emission;
 
 public:
     Material();
+    Material(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
     ~Material();
 
-    // Gettery
-    const glm::vec3& getAmbient() const { return ambient; }
-    const glm::vec3& getDiffuse() const { return diffuse; }
-    const glm::vec3& getSpecular() const { return specular; }
+    const glm::vec3 &getAmbient() const { return ambient; }
+    const glm::vec3 &getDiffuse() const { return diffuse; }
+    const glm::vec3 &getSpecular() const { return specular; }
+    const glm::vec3 &getObjectColor() const { return objectColor; }
+    const glm::vec3 &getEmission() const { return emission;}
     float getShininess() const { return shininess; }
-    GLuint getTextureID() const { return textureID; }
-    bool hasTexture() const { return hasTexture; }
 
-    // Settery
-    void setAmbient(const glm::vec3& a) { ambient = a; }
-    void setDiffuse(const glm::vec3& d) { diffuse = d; }
-    void setSpecular(const glm::vec3& s) { specular = s; }
+    void setAmbient(const glm::vec3 &a) { ambient = a; }
+    void setDiffuse(const glm::vec3 &d) { diffuse = d; }
+    void setSpecular(const glm::vec3 &s) { specular = s; }
+    void setObjectColor(const glm::vec3 &c) { objectColor = c; }
+    void setEmission(const glm::vec3 &e) { emission = e; }
     void setShininess(float s) { shininess = s; }
-
-    // Načtení materiálu z Assimp
-    void loadFromAssimp(const aiMaterial* mtl, const std::string& modelDir);
-
-    // Načtení textury (volitelné ruční)
-    void loadTexture(const std::string& path);
-
-private:
-    GLuint loadTextureGL(const std::string& path);
 };

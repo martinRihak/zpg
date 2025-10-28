@@ -72,10 +72,6 @@ void ShaderProgram::updateLight(int index, Light *light)
     setUniform((base + "quadratic").c_str(), light->getAtt().z);
 }
 
-glm::vec3 ShaderProgram::getCameraPos()
-{
-}
-
 ShaderProgram::~ShaderProgram()
 {
     glDeleteProgram(this->shaderProgram);
@@ -149,11 +145,6 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.specular", mat->getSpecular());
     setUniform("material.shininess", mat->getShininess());
     setUniform("material.objectColor", mat->getObjectColor());
-    setUniform("material.hasTexture", mat->getHasTexture() ? 1 : 0);
-    if (mat->getHasTexture())
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
-        setUniform("material.diffuseMap", 0);
-    }
+    setUniform("material.emission", mat->getEmission());
+
 }

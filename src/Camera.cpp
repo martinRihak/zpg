@@ -13,8 +13,8 @@ void Camera::createFlashLight()
 {
     this->flashLight = new Reflector(
         this->eye,
-        glm::vec3(1, 1.0, 1),
-        glm::vec3(1, 1.0, 1),
+        glm::vec3(0.3, 0.3, 0.3),
+        glm::vec3(0.4, 0.4, 0.4),
         glm::vec3(1.f,0.09f,0.032f),
         this->target,
         12.5f, 17.5f);

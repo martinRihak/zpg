@@ -25,7 +25,7 @@ public:
     ~ShaderProgram();
 
     void use();
-    glm::vec3 getCameraPos();
+
     void notify(Subject* subject) override;
     void setModelMatrix(const glm::mat4 &modelMatrix);
 

@@ -15,18 +15,18 @@ void DrawableObject::draw(float dt)
 {
     shader->use();
     shader->setUniform("lightCount", 0);
-    shader->updateMaterial(this->material);
     update(dt);
+    shader->updateMaterial(this->material);
     this->shader->setModelMatrix(tranformation->getModelMatrix());
-    if (this->material->getHasTexture())
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, material->getTextureID());
-        shader->setUniform("material.diffuseMap", 0);
-    }
+
     model->draw();
 }
 
+void DrawableObject::createRandomMovement(float speed, float baseInterval)
+{
+    this->animator = std::make_unique<RandomMovementAnimator>(speed, baseInterval);
+    this->animated = true;
+}
 void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
 {
     shader->use();
@@ -39,14 +39,9 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     }
     update(dt);
     shader->setModelMatrix(tranformation->getModelMatrix());
-    if (this->material->getHasTexture())
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, material->getTextureID());
-        shader->setUniform("material.diffuseMap", 0);
-    }
+    this->shader->updateMaterial(this->material);
     model->draw();
-    glBindTexture(GL_TEXTURE_2D, 0);
+    
 }
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)
 {
@@ -102,6 +97,7 @@ DrawableObject *DrawableObject::clone() const
 {
 
     DrawableObject *newObj = new DrawableObject(this->model, this->shader);
+    newObj->setMaterial(this->material);
     return newObj;
 }
 

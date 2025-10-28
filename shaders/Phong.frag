@@ -26,6 +26,7 @@ struct Material {
     vec3 specular;
     vec3 objectColor;
     float shininess;
+    vec3 emission;
     bool hasTexture;
     sampler2D diffuseMap;
 };
@@ -77,6 +78,6 @@ void main() {
         specular += currentSpecular * material.specular;
     }
 
-    vec3 result = ambient + diffuse + specular;
+    vec3 result = ambient + diffuse + specular + material.emission;
     frag_color = vec4(result, 1.0);
 }

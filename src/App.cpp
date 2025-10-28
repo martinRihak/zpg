@@ -125,5 +125,6 @@ void App::run()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+        glUseProgram(0);
     }
 }

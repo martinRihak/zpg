@@ -47,6 +47,7 @@ public:
     ShaderProgram *getShaderProgram() const;
     DrawableObject *clone() const;
 
+    void createRandomMovement(float speed, float baseInterval);
     bool getHasLight() const;
     PointLight *getLight() const;
     void createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att);
