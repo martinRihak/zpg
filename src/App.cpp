@@ -22,7 +22,6 @@ App::App(int width, int height) : width(width), height(height)
 
     glewExperimental = GL_TRUE;
     glewInit();
-
     glfwGetFramebufferSize(window, &width, &height);
     glEnable(GL_DEPTH_TEST);
     float ratio = width / (float)height;

@@ -1,0 +1,12 @@
+Světlušky jsou vytvořeny jako instance trídy DrawableObject, které jsem pridal proměnnou PointLight, která se definuje pomocí funkce createLight() kde se vytvoří instance Light,
+která přijímá pointer na instanci Transformation z objektu, takže sdílí stejné transoframce jako objekt. Tudíž se při pohybu objektu mění i pozice světla. DrawableObject 
+má promněnnou IAnimator, která má funkci createRandomMovement, která mění transforamce objektu a přidává jí náhodný pohyb ve scéne v určitém rozsahu.Světlušky jsou vytvořeny jako 
+instance třídy DrawableObject, které mají proměnnou PointLight *light, jež se inicializuje pomocí funkce createLight(), kde se vytvoří instance PointLight (podtřída Light) .
+s počáteční pozicí z transformace objektu a následně se přiřadí reference na instanci Transformation z objektu prostřednictvím attachTransformation, takže sdílejí stejné 
+transformace. Díky tomu se při pohybu objektu mění i pozice světla. DrawableObject má proměnnou std::unique_ptr<IAnimator> animator, a funkce createRandomMovement 
+v DrawableObject vytváří instanci RandomMovementAnimator, která mění transformace objektu a přidává mu náhodný pohyb ve scéně v určitém rozsahu (definovaném v animátoru). 
+Po vytvoření objektu se jeho světlo a objekt vloží do konkrétní scény, která je posléze vykresluje.
+
+Difuzní složka (1.0, 0.9, 0.3) vytváří teplou žlutou barvu pro podobu se světluškama
+Speculární je slabší (0.4, 0.4, 0.3) pro slabší a neutrální odlesky na povrchu
+Koeficient útlumu (constant=1.0, linear=0.7, quadratic=1.8) zajištujě rychlý pokles intenzity s vzdáleností díky vyšší kvadratické složce, což omezuje dosah světla.

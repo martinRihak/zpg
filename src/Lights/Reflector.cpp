@@ -26,10 +26,6 @@ float Reflector::getOutterCutOff() const{return this->outterCutOff;}
 void Reflector::FlashMovement(Camera* camera){
     float offsetDistance = 0.5f;
     glm::vec3 lightPos = camera->getPosition() + camera->getTarget() * offsetDistance;
-//    std::cout << lightPos.x << " | " << lightPos.y << " | "<< lightPos.z<< std::endl;
     setPosition(lightPos);
     direction = camera->getTarget();
-    //float fovRadians = glm::radians(camera->getAspectRatio());
-    //this->cutOff = glm::cos(fovRadians/2);
-    // this->outterCutOff  =glm::cos(fovRadians/2 + outterCutOff);
 }

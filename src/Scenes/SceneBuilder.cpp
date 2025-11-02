@@ -66,8 +66,8 @@ void SceneBuilder::create4Spheres()
     scene->addObject(sphere3);
     scene->addObject(sphere4);
 
-    // scene->addLight(centerLight);
-    // scene->addLight(reflector);
+    scene->addLight(centerLight);
+    scene->addLight(reflector);
     lights.push_back(reflector);
 
     this->createScene(scene);
@@ -85,13 +85,13 @@ void SceneBuilder::createForest()
     firefly->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
     firefly->getTransformation().setScale(glm::vec3(0.1f));
     firefly->getTransformation().setPosition(glm::vec3(0.0, -2, 0));
-    firefly2->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
-    firefly2->getTransformation().setScale(glm::vec3(0.1f));
     firefly->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
 
+    firefly2->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
+    firefly2->getTransformation().setScale(glm::vec3(0.1f));
     firefly2->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
-    firefly->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
+    firefly2->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
     firefly->createRandomMovement(1.5f,1.0f);
     firefly2->createRandomMovement(1.5f,1.0f);
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
@@ -136,7 +136,9 @@ void SceneBuilder::createTestScene()
     Koen->getTransformation().setScale(glm::vec3(0.2f));
     ferarri->getTransformation().setPosition(glm::vec3(0.0, -3.0, 0.0));
     ferarri->getTransformation().setScale(glm::vec3(0.015f));
-
+    ferarri->getMaterial()->setObjectColor(glm::vec3(0,1,0));
+    Koen->getMaterial()->setObjectColor(glm::vec3(0,0,1));
+    formula->getMaterial()->setObjectColor(glm::vec3(1,0,0));
     formula->createRotation(20.f, glm::vec3(0, 1, 0), -1);
     Koen->createRotation(30.f, glm::vec3(0, 1, 0), 1);
     ferarri->createRotation(25.f, glm::vec3(0, 1, 0), 1);
@@ -147,6 +149,7 @@ void SceneBuilder::createTestScene()
     scena->addObject(ferarri);
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     // scena->addLight(light);
+    scena->addLight(light);
     this->createScene(scena);
 
     Scene *scena2 = new Scene();

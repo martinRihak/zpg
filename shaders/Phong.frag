@@ -44,10 +44,10 @@ void main() {
         float attenuation;
 
         if (lights[i].lightType == 2) {  
-            lightDir = normalize(-lights[i].direction);  // Směr je rovnoběžný, žádná pozice
-            attenuation = 1.0;  // Žádný útlum
+            lightDir = normalize(-lights[i].direction);  
+            attenuation = 1.0; 
         } else {
-            lightDir = normalize(lights[i].position - worldPosition);  // Pro point/spot
+            lightDir = normalize(lights[i].position - worldPosition); 
             float distance = length(lights[i].position - worldPosition);
             attenuation = 1.0 / (lights[i].constant + (lights[i].linear * distance) + lights[i].quadratic * (distance * distance));
         }
@@ -56,7 +56,7 @@ void main() {
         vec3 reflectDir = reflect(-lightDir, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
         
-        // Přidání do diffuse a specular – stejné jako dříve, ale s attenuation
+        
         vec3 currentDiffuse = diff * lights[i].diff * material.objectColor * attenuation;
         vec3 currentSpecular = spec * lights[i].spec * attenuation;
 
@@ -64,7 +64,7 @@ void main() {
             float theta = dot(lightDir, normalize(-lights[i].direction));
             if (theta > lights[i].outterCutOff) { 
                 float epsilon = lights[i].cutOff - lights[i].outterCutOff;
-                float intensity = clamp((theta - lights[i].outterCutOff) / epsilon, 0.0, 1.0);  // OPRAVA: clamp a správné dělení
+                float intensity = clamp((theta - lights[i].outterCutOff) / epsilon, 0.0, 1.0);  
                 
                 currentDiffuse *= intensity;
                 currentSpecular *= intensity;

@@ -28,7 +28,7 @@ private:
     bool animated = false;
     CompositeTransformation queuedTransforms;
     bool hasLight = false;
-    PointLight *light;
+    PointLight *light = nullptr;
     
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
