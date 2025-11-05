@@ -36,8 +36,13 @@ DrawableObject *SceneBuilder::createObject(const std::string &modelName, const s
 }
 void SceneBuilder::createTriangle()
 {
+
+
     Scene *scene = new Scene();
-    DrawableObject *triangle = createObject("triangle", "phong");
+    DrawableObject *triangle = createObject("model", "shader");
+    triangle->getMaterial()->loadTexture("../src/wooden_fence.png");
+   // DrawableObject *triangle = createObject("triangle", "phong");
+    //scene->addObject(triangle);
     scene->addObject(triangle);
     this->createScene(scene);
 }
@@ -92,8 +97,8 @@ void SceneBuilder::createForest()
     firefly2->getTransformation().setScale(glm::vec3(0.1f));
     firefly2->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly2->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
-    firefly->createRandomMovement(1.5f,1.0f);
-    firefly2->createRandomMovement(1.5f,1.0f);
+    firefly->createRandomMovement(1.5f, 1.0f);
+    firefly2->createRandomMovement(1.5f, 1.0f);
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
 
@@ -136,9 +141,9 @@ void SceneBuilder::createTestScene()
     Koen->getTransformation().setScale(glm::vec3(0.2f));
     ferarri->getTransformation().setPosition(glm::vec3(0.0, -3.0, 0.0));
     ferarri->getTransformation().setScale(glm::vec3(0.015f));
-    ferarri->getMaterial()->setObjectColor(glm::vec3(0,1,0));
-    Koen->getMaterial()->setObjectColor(glm::vec3(0,0,1));
-    formula->getMaterial()->setObjectColor(glm::vec3(1,0,0));
+    ferarri->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
+    Koen->getMaterial()->setObjectColor(glm::vec3(0, 0, 1));
+    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
     formula->createRotation(20.f, glm::vec3(0, 1, 0), -1);
     Koen->createRotation(30.f, glm::vec3(0, 1, 0), 1);
     ferarri->createRotation(25.f, glm::vec3(0, 1, 0), 1);

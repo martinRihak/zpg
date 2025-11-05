@@ -18,7 +18,18 @@ find_library(SOIL_LIBRARY SOIL)
 if(NOT SOIL_INCLUDE_DIR OR NOT SOIL_LIBRARY)
     message(FATAL_ERROR "SOIL not found. Please install libsoil-dev")
 endif()
+# Přidej cestu k include složce stb-master přímo (relativně k CMakeLists.txt)
 
+
+# Pokud chceš použít find_path pro větší flexibilitu (např. pro budoucí změny)
+find_path(STB_INCLUDE_DIR stb_image.h
+    PATHS ${CMAKE_SOURCE_DIR}/stb-master  # Hledej v této složce
+    NO_DEFAULT_PATH  # Ignoruj systémové cesty, abys to udržel lokální
+)
+
+if(NOT STB_INCLUDE_DIR)
+    message(FATAL_ERROR "Nepodařilo se najít stb_image.h! Zkontroluj složku stb-master.")
+endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
 pkg_check_modules(assimp REQUIRED assimp)
@@ -46,6 +57,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${GLM_INCLUDE_DIRS}
     ${assimp_INCLUDE_DIRS}
     ${SOIL_INCLUDE_DIR}
+    ${STB_INCLUDE_DIR}
 )
 
 # Linkování knihoven

@@ -6,15 +6,21 @@
 #include <vector>
 #include <assimp/material.h>
 
+
 class Material
 {
 private:
-    glm::vec3 ambient;  // Ka
+    glm::vec3 ambient;  // Kbool hasUva
     glm::vec3 diffuse;  // Kd
     glm::vec3 specular; // Ks
     glm::vec3 objectColor;
     float shininess; // Ns (exponent)
     glm::vec3 emission;
+
+    bool texture = false;
+    GLuint textureID;
+
+    std::vector<std::string> faces;
 
 public:
     Material();
@@ -25,7 +31,7 @@ public:
     const glm::vec3 &getDiffuse() const { return diffuse; }
     const glm::vec3 &getSpecular() const { return specular; }
     const glm::vec3 &getObjectColor() const { return objectColor; }
-    const glm::vec3 &getEmission() const { return emission;}
+    const glm::vec3 &getEmission() const { return emission; }
     float getShininess() const { return shininess; }
 
     void setAmbient(const glm::vec3 &a) { ambient = a; }
@@ -34,4 +40,8 @@ public:
     void setObjectColor(const glm::vec3 &c) { objectColor = c; }
     void setEmission(const glm::vec3 &e) { emission = e; }
     void setShininess(float s) { shininess = s; }
+    void loadTexture(const char* name);
+    void loadCubeMap();
+    bool hasTexture() const { return texture; }
+    GLuint getTextureID()  { return textureID; }
 };

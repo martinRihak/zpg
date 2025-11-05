@@ -1,9 +1,10 @@
 {
     "C_Cpp.default.compilerPath": "/usr/bin/g++-13",
     "files.associations": {
+        "*.dbclient-js": "javascript",
         "*.erd": "json",
         "*.vuerd": "json",
-        "*.dbclient-js": "javascript",
-        "vector": "cpp"
+        "vector": "cpp",
+        "iostream": "cpp"
     }
 }

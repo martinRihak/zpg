@@ -146,5 +146,4 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.shininess", mat->getShininess());
     setUniform("material.objectColor", mat->getObjectColor());
     setUniform("material.emission", mat->getEmission());
-
 }

@@ -30,6 +30,7 @@ App::App(int width, int height) : width(width), height(height)
     camera->setAspectRatio(ratio);
     this->controller = new Controller();
     this->callbackHandler = new CallbackHandler(this->window);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -46,6 +47,24 @@ App::~App()
 
 void App::createScenes()
 {
+    float points[] = {
+        0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
+        0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
+        -0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
+        -0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
+        0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
+        0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
+        0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
+        0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
+        0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
+        -0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
+        0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
+        0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f};
+
+    Shader *vertexShader = new Shader("../shaders/Texture.vert", GL_VERTEX_SHADER);
+    Shader *fragmentShader = new Shader("../shaders/Texture.frag", GL_FRAGMENT_SHADER);
+    ShaderProgram *shader = new ShaderProgram(*vertexShader, *fragmentShader);
+    Model *model = new Model(points, sizeof(points), 12, true);
 
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
@@ -74,6 +93,7 @@ void App::createScenes()
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
+    builder->registerModel("model", model);
     builder->registerModel("ferarri", Ferarri);
     builder->registerModel("lostEmpire", lostEmpire);
     builder->registerModel("bush", bush);
@@ -87,6 +107,7 @@ void App::createScenes()
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("assimpPhong", assimpPhong);
+    builder->registerShader("shader", shader);
 
     builder->createTriangle();
     builder->create4Spheres();
@@ -118,7 +139,7 @@ void App::run()
         {
             activeScene->render(dt);
         }
-        glfwSwapBuffers(window);
         glfwPollEvents();
+        glfwSwapBuffers(window);
     }
 }

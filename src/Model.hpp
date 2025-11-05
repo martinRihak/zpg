@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/glew.h>
+
 #include <iostream>
 
 
@@ -11,6 +12,9 @@ private:
 public:
     Model(const float* model,size_t size, int vertexCount);
     Model(const char* name);
+    Model(const float* model,size_t size, int vertexCount,bool hasUv);
+
+
     ~Model();
 
     void draw();

@@ -98,6 +98,26 @@ Model::Model(const char *name)
     glEnableVertexAttribArray(2); // Texcoords
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 }
+Model::Model(const float *model, size_t size, int vertexCount,bool hasUv)
+{
+    glGenBuffers(1, &VBO); // generate the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, size, model, GL_STATIC_DRAW);
+
+    // Vertex Array Object (VAO)
+    glGenVertexArrays(1, &VAO); // generate the VAO
+    glBindVertexArray(VAO);     // bind the VAO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // enable vertex attributes
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid *)(sizeof(float) * 3));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid *)(sizeof(float) * 6));
+    this->vertexCount = vertexCount;
+}
 Model::~Model()
 {
     glDeleteVertexArrays(1, &VAO);

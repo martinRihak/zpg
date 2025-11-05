@@ -16,7 +16,9 @@ Reflector::~Reflector()
 {
 }
 bool Reflector::getIsOn()const {return isOn;}
-void Reflector::switchLight(){isOn = !isOn;}
+void Reflector::switchLight(){isOn = !isOn;
+    std::cout << isOn << std::endl;
+}
 void Reflector::update(float dt)
 {
 }
