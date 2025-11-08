@@ -9,10 +9,10 @@ layout(location = 1) in vec3 vn;  // normal
 layout(location = 2) in vec2 vt;  // texture space
 layout(location = 3) in vec3 ts;  // tangent space
 
-out vec2 uv;
+out vec2 texCoords;
 
 void main () {
-	uv = vt;
+	texCoords = vt;
     gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);
     worldPosition = vec3(modelMatrix * vec4(vp, 1.0));
     worldNormal = normalize(transpose(inverse(mat3(modelMatrix))) * vn);

@@ -4,6 +4,7 @@
 #include "bushes.h"
 #include "gift.h"
 #include "plain.h"
+#include "plane.h"
 #include "sphere.h"
 #include "suzi_flat.h"
 #include "suzi_smooth.h"

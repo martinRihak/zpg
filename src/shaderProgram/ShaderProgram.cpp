@@ -146,4 +146,11 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.shininess", mat->getShininess());
     setUniform("material.objectColor", mat->getObjectColor());
     setUniform("material.emission", mat->getEmission());
+    setUniform("material.hasTexture", mat->hasTexture());
+    if (mat->hasTexture())
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
+        this->setUniform("textureUnitID", 0);
+    }
 }

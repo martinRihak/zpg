@@ -17,7 +17,7 @@ private:
     float shininess; // Ns (exponent)
     glm::vec3 emission;
 
-    bool texture = false;
+    bool texture ;
     GLuint textureID;
 
     std::vector<std::string> faces;

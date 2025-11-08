@@ -1,6 +1,7 @@
-#version 400 core
+#version 450 core
 in vec3 worldPosition;
 in vec3 worldNormal;
+in vec2 texCoords;
 out vec4 frag_color;
 uniform vec3 viewPos;
 uniform int lightCount;
@@ -28,7 +29,7 @@ struct Material {
     float shininess;
     vec3 emission;
     bool hasTexture;
-    sampler2D diffuseMap;
+    sampler2D ourTexture;
 };
 uniform Material material;
 
@@ -38,6 +39,11 @@ void main() {
     vec3 ambient = vec3(0.1, 0.1, 0.1) * material.ambient ;
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
+    vec3 color;
+    if(material.hasTexture == true)
+        color = texture(material.ourTexture, texCoords).rgb;
+    else
+        color = material.objectColor;
 
     for (int i = 0; i < lightCount; ++i) {
         vec3 lightDir;
@@ -57,7 +63,7 @@ void main() {
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
         
         
-        vec3 currentDiffuse = diff * lights[i].diff * material.objectColor * attenuation;
+        vec3 currentDiffuse = diff * lights[i].diff * color * attenuation;
         vec3 currentSpecular = spec * lights[i].spec * attenuation;
 
         if (lights[i].lightType == 1) {  

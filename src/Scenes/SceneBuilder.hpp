@@ -30,6 +30,7 @@ public:
     void createForest();
     void createSunSystem();
     void createTestScene();
+    void createShrek();
     // Accessors
     Scene* getScene(int8_t index) const;
     int8_t getSceneCount() const;

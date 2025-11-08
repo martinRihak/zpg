@@ -19,9 +19,7 @@ void DrawableObject::draw(float dt)
     shader->updateMaterial(this->material);
     this->shader->setModelMatrix(tranformation->getModelMatrix());
     if(this->material->hasTexture() == true){
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, this->material->getTextureID());
-        this->shader->setUniform("textureUnitID", 0);
+
     }
     model->draw();
     glUseProgram(0);
@@ -44,13 +42,6 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     }
     update(dt);
     shader->setModelMatrix(tranformation->getModelMatrix());
-    if(this->material->hasTexture() == true){
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, this->material->getTextureID());
-        this->shader->setUniform("textureUnitID", 0);
-        std::cout << "Su tu" << std::endl; 
-    }
-
     model->draw();
     glBindTexture(GL_TEXTURE_2D, 0);
 }
