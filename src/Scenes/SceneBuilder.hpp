@@ -32,6 +32,10 @@ public:
     void createTestScene();
     void createShrek();
     // Accessors
+
+    Model* getModel(const std::string& name) {return models[name];}
+    ShaderProgram* getShader(const std::string& name) const;
+
     Scene* getScene(int8_t index) const;
     int8_t getSceneCount() const;
     int8_t getActiveSceneIndex() const;

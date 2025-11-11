@@ -30,7 +30,7 @@ App::App(int width, int height) : width(width), height(height)
     camera->setAspectRatio(ratio);
     this->controller = new Controller();
     this->callbackHandler = new CallbackHandler(this->window);
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {

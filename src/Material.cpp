@@ -13,7 +13,6 @@ Material::~Material() {}
 void Material::loadTexture(const char *name)
 { // Přidej parametr pro cestu, abys neměl pevně zakódovaný soubor
     int text_width, text_height, channels;
-    stbi_set_flip_vertically_on_load(true); // To je OK, flipuje texturu pro OpenGL (nahoru dolů)
     unsigned char *data = stbi_load(name, &text_width, &text_height, &channels, 4);
 
     if (!data)

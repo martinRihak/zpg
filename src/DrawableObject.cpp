@@ -18,9 +18,6 @@ void DrawableObject::draw(float dt)
     update(dt);
     shader->updateMaterial(this->material);
     this->shader->setModelMatrix(tranformation->getModelMatrix());
-    if(this->material->hasTexture() == true){
-
-    }
     model->draw();
     glUseProgram(0);
 }

@@ -42,9 +42,9 @@ void SceneBuilder::createTriangle()
 
     Scene *scene = new Scene();
     DrawableObject *triangleObj = createObject("triangle3DModel", "TexturePhong");
-    triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
+    //triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
     DrawableObject *triangleObj2 = createObject("triangle3DModel", "TexturePhong");
-    triangleObj2->getMaterial()->loadTexture("../src/grass.png");
+    //triangleObj2->getMaterial()->loadTexture("../src/grass.png");
     triangleObj2->getTransformation().setPosition(glm::vec3(3,0,0));
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
