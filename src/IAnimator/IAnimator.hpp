@@ -49,7 +49,7 @@ private:
     bool isInBounds(const glm::vec3& position) const;
 public:
     RandomMovementAnimator(float speed, float baseChangeInterval, 
-                          glm::vec3 minBounds = glm::vec3(-5.0f), 
+                          glm::vec3 minBounds = glm::vec3(-5.0f,0.0f,-5.0f), 
                           glm::vec3 maxBounds = glm::vec3(5.0f));
     void update(Transformation& t, float dt) override;
 

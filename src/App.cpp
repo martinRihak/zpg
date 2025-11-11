@@ -30,7 +30,7 @@ App::App(int width, int height) : width(width), height(height)
     camera->setAspectRatio(ratio);
     this->controller = new Controller();
     this->callbackHandler = new CallbackHandler(this->window);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -73,10 +73,10 @@ float triangle3D[] = {
     Model *house = new Model("../Models/assets/house.obj");
     Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
     Model *Ferarri = new Model("../Models/assets/Humvee.obj");
-    Model *lostEmpire = new Model("../Models/assets/lost_empire.obj");
     Model *planeModel = new Model(plane, sizeof(plane), 6,true);
     Model* shrekModel = new Model("../Models/assets/shrek/shrek.obj");
-
+    Model* fionaModel = new Model("../Models/assets/shrek/fiona.obj");
+    Model* toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -99,7 +99,6 @@ float triangle3D[] = {
     builder->registerModel("triangle3DModel", triandel3DModel);
     builder->registerModel("plane", planeModel);
     builder->registerModel("ferarri", Ferarri);
-    builder->registerModel("lostEmpire", lostEmpire);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
@@ -108,6 +107,10 @@ float triangle3D[] = {
     builder->registerModel("koen", Koen);
 
     builder->registerModel("shrek", shrekModel);
+    builder->registerModel("fiona", fionaModel);
+    builder->registerModel("toiled", toiledModel);
+    
+
 
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
@@ -117,11 +120,10 @@ float triangle3D[] = {
     builder->registerShader("TexturePhong", TextureShader);
 
     builder->createTriangle();
-    builder->create4Spheres();
+   // builder->create4Spheres();
     builder->createForest();
-    builder->createSunSystem();
+    //builder->createSunSystem();
     //builder->createTestScene();
-    builder->createShrek();
 }
 void App::run()
 {

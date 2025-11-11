@@ -84,6 +84,6 @@ void main() {
         specular += currentSpecular * material.specular;
     }
 
-    vec3 result = ambient + diffuse + specular + material.emission;
+    vec3 result =  ambient + diffuse + specular + material.emission;
     frag_color = vec4(result, 1.0);
 }

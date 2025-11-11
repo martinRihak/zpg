@@ -15,16 +15,18 @@ private:
         void createVBO(const float *vertices, size_t size);
         void createEBO(const unsigned int *indices, size_t size);
         void configAttributes(int stride,int posOffset,int normOffset,int uvOffset);
-        Mesh() : VAO(0), VBO(0), EBO(0), indexCount(0) {} // Konstruktor pro inicializaci
+        Mesh() : VAO(0), VBO(0), EBO(0), indexCount(0) {} 
         ~Mesh()
         { // Destruktor pro čištění bufferů
             glDeleteVertexArrays(1, &VAO);
+            std::cout << "Destructor called" << std::endl;
+            if (VBO != 0)
             glDeleteBuffers(1, &VBO);
             if (EBO != 0)
                 glDeleteBuffers(1, &EBO);
         }
     };
-    std::vector<Mesh> meshes;
+    std::vector<Mesh*> meshes;
 
 public:
     Model(const float *model, size_t size, int vertexCount);

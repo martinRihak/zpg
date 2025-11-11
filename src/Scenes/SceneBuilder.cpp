@@ -28,8 +28,7 @@ DrawableObject *SceneBuilder::createObject(const std::string &modelName, const s
 {
     auto modelIt = models.find(modelName);
 
-    auto shaderIt = shaders.find(shaderName)
-;
+    auto shaderIt = shaders.find(shaderName);
     if (modelIt != models.end() && shaderIt != shaders.end())
     {
         return new DrawableObject(modelIt->second, shaderIt->second);
@@ -39,18 +38,15 @@ DrawableObject *SceneBuilder::createObject(const std::string &modelName, const s
 void SceneBuilder::createTriangle()
 {
 
-
     Scene *scene = new Scene();
     DrawableObject *triangleObj = createObject("triangle3DModel", "TexturePhong");
-    //triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
+    triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
+    triangleObj->getTransformation().setPosition(glm::vec3(-1, 0, 0));
     DrawableObject *triangleObj2 = createObject("triangle3DModel", "TexturePhong");
-    //triangleObj2->getMaterial()->loadTexture("../src/grass.png");
-    triangleObj2->getTransformation().setPosition(glm::vec3(3,0,0));
-    Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    scene->addLight(light);
+    triangleObj2->getMaterial()->loadTexture("../src/grass.png");
+    triangleObj2->getTransformation().setPosition(glm::vec3(1, 0, 0));
     scene->addObject(triangleObj);
     scene->addObject(triangleObj2);
-
 
     this->createScene(scene);
 }
@@ -91,30 +87,45 @@ void SceneBuilder::createForest()
     DrawableObject *tree = createObject("tree", "phong");
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
 
+    DrawableObject *shrek = createObject("shrek", "phong");
+    shrek->getMaterial()->loadTexture("../Models/assets/shrek/shrek.png");
+    shrek->getTransformation().setPosition(glm::vec3(5, 0, 0));
+    DrawableObject *fiona = createObject("fiona", "phong");
+    fiona->getMaterial()->loadTexture("../Models/assets/shrek/fiona.png");
+    fiona->getTransformation().setPosition(glm::vec3(7, 0, 0));
+    DrawableObject *toiled = createObject("toiled", "phong");
+    toiled->getMaterial()->loadTexture("../Models/assets/shrek/toiled.jpg");
+    toiled->getTransformation().setPosition(glm::vec3(6, 0, -3));
+    toiled->getTransformation().setRotation(45.0f, glm::vec3(0, 1, 0));
+
     DrawableObject *bush = createObject("bush", "phong");
     DrawableObject *plane = createObject("plane", "phong");
     plane->getMaterial()->loadTexture("../src/grass.png");
-    plane->getTransformation().setPosition(glm::vec3(0, -1, 0));
+    plane->getTransformation().setPosition(glm::vec3(0, 0, 0));
     DrawableObject *plane2 = createObject("plane", "phong");
+    plane2->getTransformation().setPosition(glm::vec3(20, 0, 0));
     plane2->getMaterial()->loadTexture("../src/grass.png");
-    plane2->getTransformation().setPosition(glm::vec3(0, -1, 0));
+    plane2->getTransformation().setPosition(glm::vec3(0, 0, 0));
     DrawableObject *firefly = createObject("sphere", "phong");
     DrawableObject *firefly2 = createObject("sphere", "phong");
     firefly->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
-    firefly->getTransformation().setScale(glm::vec3(0.1f));
+    firefly->getTransformation().setScale(glm::vec3(0.05f));
     firefly->getTransformation().setPosition(glm::vec3(0.0, -2, 0));
     firefly->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
 
     firefly2->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
-    firefly2->getTransformation().setScale(glm::vec3(0.1f));
+    firefly2->getTransformation().setScale(glm::vec3(0.05f));
     firefly2->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly2->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
     firefly->createRandomMovement(1.5f, 1.0f);
     firefly2->createRandomMovement(1.5f, 1.0f);
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
-    scene->randomForest(glm::vec3(0.0f, -1.0f, 0.0f), 5, forest);
+    scene->randomForest(glm::vec3(-5.0f, 0.0f, 0.0f), 10, forest);
     scene->addObject(plane);
+    scene->addObject(shrek);
+    scene->addObject(fiona);
+    scene->addObject(toiled);
     scene->addObject(plane2);
     scene->addLight(firefly->getLight());
     scene->addLight(firefly2->getLight());
@@ -170,26 +181,6 @@ void SceneBuilder::createTestScene()
     // scena->addLight(light);
     scena->addLight(light);
     this->createScene(scena);
-
-    Scene *scena2 = new Scene();
-
-    DrawableObject *lostEmpire = createObject("lostEmpire", "phong");
-    // lostEmpire->getMaterial()->loadTexture("../../Models/assets/Ferarri_texture.blend");
-    lostEmpire->getTransformation().setPosition(glm::vec3(0, -15, 0));
-
-    scena2->addObject(lostEmpire);
-    scena2->addLight(light);
-    this->createScene(scena2);
-}
-void SceneBuilder::createShrek()
-{
-    Scene *scene = new Scene();
-    DrawableObject *shrek = createObject("shrek", "TexturePhong");
-    shrek->getMaterial()->loadTexture("../Models/assets/shrek/shrek.png");
-    Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    scene->addLight(light);
-    scene->addObject(shrek);
-    this->createScene(scene);
 }
 Scene *SceneBuilder::getScene(int8_t index) const
 {

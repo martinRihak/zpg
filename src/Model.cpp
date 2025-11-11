@@ -2,7 +2,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/material.h> // Pro extrakci textury
+#include <assimp/material.h> 
 #include <stdexcept>
 #include <vector>
 
@@ -32,7 +32,7 @@ void Model::Mesh::configAttributes(int stride, int posOffset, int normOffset, in
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(normOffset));
     if (uvOffset >= 0)
-    { // Podmínka pro UV
+    { 
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(uvOffset));
     }
@@ -40,26 +40,27 @@ void Model::Mesh::configAttributes(int stride, int posOffset, int normOffset, in
 
 Model::Model(const float *model, size_t size, int vertexCount)
 {
-    Mesh mesh;
-    mesh.createVBO(model, size);                                        // Bind VBO
-    mesh.createVAO();                                                   // Bind VAO
-    mesh.configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1); // Bez UV
-    mesh.indexCount = 0;
-    mesh.vertexCount = vertexCount;
+    Mesh* mesh = new Mesh();
+
+    mesh->createVBO(model, size);                                        
+    mesh->createVAO();                                                  
+    mesh->configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1); 
+    mesh->indexCount = 0;
+    mesh->vertexCount = vertexCount;
     meshes.push_back(mesh);
-    glBindVertexArray(0); // Unbind
+    glBindVertexArray(0); 
 }
 
 Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 {
-    Mesh mesh;
-    mesh.createVBO(model, size);
-    mesh.createVAO();
+    Mesh* mesh = new Mesh();
+    mesh->createVBO(model, size);
+    mesh->createVAO();
     int stride = hasUv ? 8 * sizeof(float) : 6 * sizeof(float);
     int uvOffset = hasUv ? 6 * sizeof(float) : -1;
-    mesh.configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
-    mesh.vertexCount = vertexCount;
-    mesh.indexCount = 0;
+    mesh->configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
+    mesh->vertexCount = vertexCount;
+    mesh->indexCount = 0;
     meshes.push_back(mesh);
 
     glBindVertexArray(0);
@@ -77,9 +78,9 @@ Model::Model(const char *name)
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
     {
         aiMesh *aiMesh = scene->mMeshes[i];
-        Mesh mesh;
+        Mesh* mesh = new Mesh();
 
-        // Naplň vertex data (std::vector<float> vertices) - podobně jako dřív, ale per mesh
+        
         std::vector<float> vertices;
         std::vector<unsigned int> indices;
         for (unsigned int v = 0; v < aiMesh->mNumVertices; ++v)
@@ -123,19 +124,19 @@ Model::Model(const char *name)
                 indices.push_back(face.mIndices[indx]);
             }
         }
-        mesh.createVBO(vertices.data(), vertices.size() * sizeof(float));
-        mesh.createVAO();
-        mesh.createEBO(indices.data(), indices.size() * sizeof(unsigned int));
+        mesh->createVBO(vertices.data(), vertices.size() * sizeof(float));
+        mesh->createVAO();
+        mesh->createEBO(indices.data(), indices.size() * sizeof(unsigned int));
 
-        // Vypočítej stride podle přítomnosti UV
+       
         int stride = (aiMesh->HasTextureCoords(0) ? 8 : 6) * sizeof(float);
         int uvOffset = (aiMesh->HasTextureCoords(0) ? 6 * sizeof(float) : -1); // -1 znamená bez UV
-        mesh.configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
+        mesh->configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
 
-        mesh.indexCount = indices.size();
-        mesh.vertexCount = aiMesh->mNumVertices; // Přidej toto
+        mesh->indexCount = indices.size();
+        mesh->vertexCount = aiMesh->mNumVertices; 
         glBindVertexArray(0);
-        // Textura per mesh
+       
         meshes.push_back(mesh);
     }
 }
@@ -147,20 +148,16 @@ Model::~Model()
 
 void Model::draw()
 {
-    for (const Mesh &mesh : meshes)
+    for (const Mesh *mesh : meshes)
     {
-        glBindVertexArray(mesh.VAO);
-        if (mesh.indexCount > 0)
+        glBindVertexArray(mesh->VAO);
+        if (mesh->indexCount > 0)
         {
-            glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
-            std::cout << "test" << std::endl;
+            glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, 0);
         }
         else
         {
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertexCount);
-            std::cout << meshes.size() << std::endl;
-
-            //            std::cout << mesh.VAO<< std::endl;
+            glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
         }
         glBindVertexArray(0);
         GLenum err = glGetError();
@@ -172,7 +169,7 @@ const std::string &Model::getTexturePath(size_t meshIndex) const
 {
     if (meshIndex < meshes.size())
     {
-        return meshes[meshIndex].texturePath;
+        return meshes[meshIndex]->texturePath;
     }
     static std::string empty = "";
     return empty;
