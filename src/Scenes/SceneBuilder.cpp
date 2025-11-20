@@ -54,7 +54,7 @@ void SceneBuilder::createTriangle()
 void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
-    DrawableObject *sphere1 = createObject("sphere", "phong");
+    DrawableObject *sphere1 = createObject("sphere", "constant");
     DrawableObject *sphere2 = createObject("sphere", "phong");
     DrawableObject *sphere3 = createObject("sphere", "phong");
     DrawableObject *sphere4 = createObject("sphere", "phong");

@@ -84,16 +84,17 @@ void App::createScenes()
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     // Initialize shaders
-    Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
-    Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
-    Shader *phongFrag = new Shader("../shaders/Phong.frag", GL_FRAGMENT_SHADER);
-    Shader *blinnFrag = new Shader("../shaders/Blinn.frag", GL_FRAGMENT_SHADER);
-    Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
-    Shader *assimpVertex = new Shader("../shaders/Assimp.vert", GL_VERTEX_SHADER);
-    Shader *TextureVertex = new Shader("../shaders/Texture.vert", GL_VERTEX_SHADER);
+    Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
+    Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
+    Shader *phongFrag = new Shader("shaders/Phong.frag", GL_FRAGMENT_SHADER);
+    Shader *blinnFrag = new Shader("shaders/Blinn.frag", GL_FRAGMENT_SHADER);
+    Shader *vertex02 = new Shader("shaders/vert.vert", GL_VERTEX_SHADER);
+    Shader *assimpVertex = new Shader("shaders/Assimp.vert", GL_VERTEX_SHADER);
+    Shader *TextureVertex = new Shader("shaders/Texture.vert", GL_VERTEX_SHADER);
+    Shader* basicVertex = new  Shader("shaders/basicVertex.vert", GL_VERTEX_SHADER);
 
     ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag);
-    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag);
+    ShaderProgram *constantShader = new ShaderProgram(*basicVertex, *constantFrag);
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag);
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag);
 

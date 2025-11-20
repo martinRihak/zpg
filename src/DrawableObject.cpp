@@ -45,7 +45,7 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     update(dt);
     shader->setModelMatrix(tranformation->getModelMatrix());
     model->draw();
-    glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)
 {
