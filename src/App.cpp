@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -83,6 +83,7 @@ void App::createScenes()
     Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
+    Model *sphereOBJ = new Model("../Models/NASA/the_sphere.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -93,13 +94,13 @@ void App::createScenes()
     Shader *TextureVertex = new Shader("shaders/Texture.vert", GL_VERTEX_SHADER);
     Shader* basicVertex = new  Shader("shaders/basicVertex.vert", GL_VERTEX_SHADER);
 
-    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag);
-    ShaderProgram *constantShader = new ShaderProgram(*basicVertex, *constantFrag);
-    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag);
-    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag);
+    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag,this->camera);
+    ShaderProgram *constantShader = new ShaderProgram(*basicVertex, *constantFrag,this->camera);
+    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag,this->camera);
+    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag,this->camera);
 
-    ShaderProgram *TextureShader = new ShaderProgram(*TextureVertex, *phongFrag);
-    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex, *phongFrag);
+    ShaderProgram *TextureShader = new ShaderProgram(*TextureVertex, *phongFrag,this->camera);
+    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex, *phongFrag,this->camera);
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
@@ -117,6 +118,9 @@ void App::createScenes()
     builder->registerModel("fiona", fionaModel);
     builder->registerModel("toiled", toiledModel);
 
+
+    builder->registerModel("sphereOBJ", sphereOBJ);
+
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
@@ -124,10 +128,10 @@ void App::createScenes()
     builder->registerShader("assimpPhong", assimpPhong);
     builder->registerShader("TexturePhong", TextureShader);
 
-    builder->createTriangle();
-    builder->create4Spheres();
-    builder->createForest();
-    //builder->createSunSystem();
+    //builder->createTriangle();
+   // builder->create4Spheres();
+   // builder->createForest();
+    builder->createSunSystem();
     //builder->createTestScene();
 }
 void App::run()

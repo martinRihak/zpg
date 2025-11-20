@@ -4,18 +4,30 @@
 #include "Lights/Light.hpp"
 #include "Lights/Directional.hpp"
 
-ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader)
+ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera)
+    : camera(camera)
 {
     this->shaderProgram = glCreateProgram();
     glAttachShader(this->shaderProgram, vertexShader.getID());
     glAttachShader(this->shaderProgram, fragmentShader.getID());
     glLinkProgram(this->shaderProgram);
+  //  updateCamera(this->camera);
 }
 
 void ShaderProgram::use()
 {
     glUseProgram(this->shaderProgram);
-    // updateCamera(this->camera);
+    if (cameraDirty)
+    {
+        GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
+        GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
+        if (viewLoc != -1)
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &storedViewMatrix[0][0]);
+        if (projLoc != -1)
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, &storedProjMatrix[0][0]);
+        setUniform("viewPos", storedViewPos); // Použij tvou setUniform metodu
+        cameraDirty = false;
+    }
 }
 
 void ShaderProgram::notify(Subject *subject)
@@ -27,11 +39,10 @@ void ShaderProgram::updateCamera(Camera *camera)
 {
     if (!camera)
         return;
-    GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
-    GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &camera->getCamera()[0][0]);
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
-    setUniform("viewPos", camera->getPosition());
+    storedViewMatrix = camera->getCamera();
+    storedProjMatrix = camera->getProjectionMatrix();
+    storedViewPos = camera->getPosition();
+    cameraDirty = true; // Označ jako změněné
 }
 
 void ShaderProgram::updateLight(int index, Light *light)

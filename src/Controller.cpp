@@ -73,6 +73,7 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             if (i < sceneCount)
             {
                 active = static_cast<int8_t>(i);
+                camera->notifyAll();
             }
         }
         prevKeyState[i] = pressed;

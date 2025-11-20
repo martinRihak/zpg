@@ -19,18 +19,28 @@ class ShaderProgram : public Observer
 private:
     GLuint shaderProgram;
     void updateCamera(Camera *camera);
+    Camera *camera;
+
+    glm::mat4 storedViewMatrix;
+    glm::mat4 storedProjMatrix;
+    glm::vec3 storedViewPos;
+    bool cameraDirty = true;
 
 public:
-    ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader);
+    ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera);
     ~ShaderProgram();
 
     void use();
 
-    void notify(Subject* subject) override;
+    void notify(Subject *subject) override;
     void setModelMatrix(const glm::mat4 &modelMatrix);
 
     void updateLight(int id, Light *light);
-    void updateMaterial(Material* mat);
+    void updateMaterial(Material *mat);
+
+    void setCamera(Camera *camera) { this->camera = camera; }
+    Camera *getCamera() const { return this->camera; }
+
     // Overloaded uniform setters
     void setUniform(const char *name, float value);
     void setUniform(const char *name, int value);

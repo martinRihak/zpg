@@ -39,10 +39,10 @@ void SceneBuilder::createTriangle()
 {
 
     Scene *scene = new Scene();
-    DrawableObject *triangleObj = createObject("triangle3DModel", "TexturePhong");
+    DrawableObject *triangleObj = createObject("triangle3DModel", "phong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
     triangleObj->getTransformation().setPosition(glm::vec3(-1, 0, 0));
-    DrawableObject *triangleObj2 = createObject("triangle3DModel", "TexturePhong");
+    DrawableObject *triangleObj2 = createObject("triangle3DModel", "phong");
     triangleObj2->getMaterial()->loadTexture("../src/grass.png");
     triangleObj2->getTransformation().setPosition(glm::vec3(1, 0, 0));
     scene->addObject(triangleObj);
@@ -55,6 +55,8 @@ void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
     DrawableObject *sphere1 = createObject("sphere", "constant");
+    sphere1->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
+    
     DrawableObject *sphere2 = createObject("sphere", "phong");
     DrawableObject *sphere3 = createObject("sphere", "phong");
     DrawableObject *sphere4 = createObject("sphere", "phong");
@@ -136,12 +138,16 @@ void SceneBuilder::createForest()
 void SceneBuilder::createSunSystem()
 {
     Scene *scene = new Scene();
-    DrawableObject *sun = createObject("sphere", "phong");
-    DrawableObject *earth = createObject("sphere", "phong");
-    DrawableObject *moon = createObject("sphere", "phong");
+    DrawableObject *sun = createObject("sphereOBJ", "phong");
+    sun->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
+    
+    DrawableObject *earth = createObject("sphereOBJ", "phong");
+    earth->getMaterial()->loadTexture("../Models/NASA/2k_earth_daymap.jpg");
+    DrawableObject *moon = createObject("sphereOBJ", "phong");
+    moon->getMaterial()->loadTexture("../Models/NASA/2k_moon.jpg");
     sun->getTransformation().setScale(glm::vec3(1.0f));
     sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.f));
-    sun->createLight(glm::vec3(1), glm::vec3(1), glm::vec3(1, 0.09, 0.032));
+    sun->createLight(glm::vec3(2), glm::vec3(2), glm::vec3(1, 0.005, 0.015));
     scene->addLight(sun->getLight());
     earth->getTransformation().setScale(glm::vec3(0.3f));
     earth->createOrbit(sun, 2.0f, 30.0f, 0.0f);

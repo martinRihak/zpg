@@ -14,7 +14,7 @@ void Material::loadTexture(const char *name)
 { // Přidej parametr pro cestu, abys neměl pevně zakódovaný soubor
     int text_width, text_height, channels;
     unsigned char *data = stbi_load(name, &text_width, &text_height, &channels, 4);
-
+    printf("%d %d %d\n", text_width, text_height,channels);
     if (!data)
     {
         std::cerr << "Chyba při načítání textury: " << name << " – " << stbi_failure_reason() << std::endl;
@@ -24,11 +24,8 @@ void Material::loadTexture(const char *name)
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // Nastavení formátu podle kanálů (RGB nebo RGBA)
-    GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, text_width, text_height, 0, format, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, text_width, text_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-    // Generování mipmap pro lepší kvalitu
     glGenerateMipmap(GL_TEXTURE_2D);
 
     // Nastavení parametrů textury (opakování, filtr)
@@ -37,7 +34,6 @@ void Material::loadTexture(const char *name)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Uvolnění dat a unbind textury
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
     texture = true;
