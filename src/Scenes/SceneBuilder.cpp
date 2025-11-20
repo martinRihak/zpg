@@ -118,8 +118,8 @@ void SceneBuilder::createForest()
     firefly2->getTransformation().setScale(glm::vec3(0.05f));
     firefly2->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly2->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
-    firefly->createRandomMovement(1.5f, 1.0f);
-    firefly2->createRandomMovement(1.5f, 1.0f);
+    firefly->createRandomMovement(0.5f, 2.f);
+    firefly2->createRandomMovement(0.5f, 2.0f);
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(-5.0f, 0.0f, 0.0f), 10, forest);
     scene->addObject(plane);

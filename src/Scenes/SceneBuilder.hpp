@@ -16,9 +16,8 @@ private:
     Camera *camera;
     std::vector<Scene*> scenes;
     int8_t activeSceneIndex = 0;
-    void createScene(Scene* scene);
-    DrawableObject* createObject(const std::string& modelName, const std::string& shaderName);
-
+    
+    void createScene(Scene *scene);
 public:
     SceneBuilder(Camera *camera);
     ~SceneBuilder();
@@ -36,6 +35,7 @@ public:
     Model* getModel(const std::string& name) {return models[name];}
     ShaderProgram* getShader(const std::string& name) const;
 
+    DrawableObject* createObject(const std::string& modelName, const std::string& shaderName);
     Scene* getScene(int8_t index) const;
     int8_t getSceneCount() const;
     int8_t getActiveSceneIndex() const;

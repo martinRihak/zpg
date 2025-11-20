@@ -1,5 +1,6 @@
 #include "Scene.hpp"
-
+#include <glm/glm.hpp>
+#include <algorithm>
 Scene::Scene()
 {
 }
@@ -17,32 +18,62 @@ Scene::~Scene()
 }
 void Scene::addObject(DrawableObject *obj)
 {
+    obj->setID(countObjects++);
+    printf("%d \n", countObjects);
     this->objects.push_back(obj);
 }
 void Scene::addLight(Light *light)
 {
     lights.push_back(light);
 }
+DrawableObject* Scene::getObjectById(uint8_t id) {
+    for (DrawableObject* obj : objects) {
+        if (obj->getID() == id) return obj;
+    }
+    return nullptr;
+}
 void Scene::render(float dt)
 {
+glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
     for (DrawableObject *o : this->objects)
     {
-        if (lights.empty())
-        {
-            o->draw(dt);
-        }
-        else
-        {
-            o->draw(dt, this->lights);
-            //std::cout << "Su tu" << std::endl;
-        }
+        glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);  // Nastav ID pro objekt
+        o->draw(dt, this->lights);  // Kresli objekt (ale jen stencil)
     }
+
+    // Pass 2: Normální render s stencil testem (pokud potřebuješ, ale pro picking stačí pass 1 + read)
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);  // Ignoruj stencil pro normální render
+    for (DrawableObject *o : this->objects)
+    {
+        o->draw(dt, this->lights);
+    }
+
+    glDisable(GL_STENCIL_TEST);
 }
 const std::vector<Light *> &Scene::getLights() const
 {
     return lights;
 }
-
+DrawableObject *Scene::pickObject(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist)
+{
+    DrawableObject *closest = nullptr;
+    dist = std::numeric_limits<float>::max();
+    for (DrawableObject *obj : objects)
+    {
+        float tempDist = std::numeric_limits<float>::max();
+        if (obj->intersectsRay(rayOrigin, rayDir, tempDist))
+        {
+            if (tempDist < dist)
+            {
+                closest = obj;
+                dist = tempDist;
+            }
+        }
+    }
+    return closest;
+}
 void Scene::randomForest(glm::vec3 center, int radius, const std::vector<std::pair<DrawableObject *, int>> &objectsToSpawn)
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));

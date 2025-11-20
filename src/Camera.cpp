@@ -13,11 +13,11 @@ void Camera::createFlashLight()
 {
     this->flashLight = new Reflector(
         this->eye,
-        glm::vec3(0.4, 0.4, 0.4),
-        glm::vec3(0.5, 0.5, 0.5),
+        glm::vec3(0.6, 0.6, 0.6),
+        glm::vec3(0.7, 0.7, 0.7),
         glm::vec3(1.f,0.09f,0.032f),
         this->target,
-        17.5f, 21.5f);
+        21.5f, 29.5f);
 }
 void Camera::switchFlash(){this->flashLight->switchLight();}
 Reflector *Camera::getFlashLight() const { return this->flashLight; }

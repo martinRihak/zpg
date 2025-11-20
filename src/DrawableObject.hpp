@@ -29,7 +29,10 @@ private:
     CompositeTransformation queuedTransforms;
     bool hasLight = false;
     PointLight *light = nullptr;
-    
+
+    glm::vec3 minBounds, maxBounds;
+    bool selected = false;
+    uint8_t id ;   
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
     ~DrawableObject();
@@ -53,6 +56,16 @@ public:
     void createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att);
 
     Material *getMaterial() const { return material; }
-    void createMaterial(glm::vec3 a,glm::vec3 d,glm::vec3 s,float shiness);
+    void createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
     void setMaterial(Material *mat);
+
+    void computeBounds(); // Volat po vytvoření
+    bool intersectsRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir,float& dist) const;
+    void setSelected(bool selected) { this->selected = selected; }
+    bool isSelected() const { return selected; }
+
+    uint8_t getID() const { return id; }
+    void setID(uint8_t id) { this->id = id; }
+
+
 };

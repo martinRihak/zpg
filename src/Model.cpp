@@ -42,6 +42,15 @@ Model::Model(const float *model, size_t size, int vertexCount)
 {
     Mesh* mesh = new Mesh();
 
+    // --- NOVÉ: Výpočet bounds z vertexů ---
+    minBounds = glm::vec3(std::numeric_limits<float>::max());
+    maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
+    for (size_t i = 0; i < vertexCount * 6; i += 6) {  // Předpoklad: pozice + normála (bez UV)
+        glm::vec3 pos(model[i], model[i+1], model[i+2]);
+        minBounds = glm::min(minBounds, pos);
+        maxBounds = glm::max(maxBounds, pos);
+    }
+
     mesh->createVBO(model, size);                                        
     mesh->createVAO();                                                  
     mesh->configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1); 
@@ -54,17 +63,29 @@ Model::Model(const float *model, size_t size, int vertexCount)
 Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 {
     Mesh* mesh = new Mesh();
+
+    // --- NOVÉ: Výpočet bounds z vertexů ---
+    minBounds = glm::vec3(std::numeric_limits<float>::max());
+    maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
+    int stride = hasUv ? 8 : 6;
+    for (size_t i = 0; i < vertexCount * stride; i += stride) {
+        glm::vec3 pos(model[i], model[i+1], model[i+2]);
+        minBounds = glm::min(minBounds, pos);
+        maxBounds = glm::max(maxBounds, pos);
+    }
+
     mesh->createVBO(model, size);
     mesh->createVAO();
-    int stride = hasUv ? 8 * sizeof(float) : 6 * sizeof(float);
+    int glStride = hasUv ? 8 * sizeof(float) : 6 * sizeof(float);
     int uvOffset = hasUv ? 6 * sizeof(float) : -1;
-    mesh->configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
+    mesh->configAttributes(glStride, 0, 3 * sizeof(float), uvOffset);
     mesh->vertexCount = vertexCount;
     mesh->indexCount = 0;
     meshes.push_back(mesh);
 
     glBindVertexArray(0);
 }
+
 Model::Model(const char *name)
 {
     Assimp::Importer importer;
@@ -75,20 +96,31 @@ Model::Model(const char *name)
         throw std::runtime_error("Failed to load model with Assimp!");
     }
 
+    // --- NOVÉ: Inicializace globálních bounds ---
+    minBounds = glm::vec3(std::numeric_limits<float>::max());
+    maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
+
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
     {
         aiMesh *aiMesh = scene->mMeshes[i];
         Mesh* mesh = new Mesh();
 
-        
         std::vector<float> vertices;
         std::vector<unsigned int> indices;
         for (unsigned int v = 0; v < aiMesh->mNumVertices; ++v)
         {
             // Pozice
-            vertices.push_back(aiMesh->mVertices[v].x);
-            vertices.push_back(aiMesh->mVertices[v].y);
-            vertices.push_back(aiMesh->mVertices[v].z);
+            float x = aiMesh->mVertices[v].x;
+            float y = aiMesh->mVertices[v].y;
+            float z = aiMesh->mVertices[v].z;
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+
+            // --- NOVÉ: Update bounds z pozic ---
+            glm::vec3 pos(x, y, z);
+            minBounds = glm::min(minBounds, pos);
+            maxBounds = glm::max(maxBounds, pos);
 
             // Normály
             if (aiMesh->HasNormals())
@@ -128,7 +160,6 @@ Model::Model(const char *name)
         mesh->createVAO();
         mesh->createEBO(indices.data(), indices.size() * sizeof(unsigned int));
 
-       
         int stride = (aiMesh->HasTextureCoords(0) ? 8 : 6) * sizeof(float);
         int uvOffset = (aiMesh->HasTextureCoords(0) ? 6 * sizeof(float) : -1); // -1 znamená bez UV
         mesh->configAttributes(stride, 0, 3 * sizeof(float), uvOffset);

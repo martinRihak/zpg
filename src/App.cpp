@@ -30,7 +30,14 @@ App::App(int width, int height) : width(width), height(height)
     camera->setAspectRatio(ratio);
     this->controller = new Controller();
     this->callbackHandler = new CallbackHandler(this->window);
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glfwSetMouseButtonCallback(window, [](GLFWwindow *win, int button, int action, int mods)
+                               {
+        App* app = static_cast<App*>(glfwGetWindowUserPointer(win));
+        if (app) {
+            Scene* scene = app->builder->getScene(app->controller->getActiveScene());
+            app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
+        } });
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -47,36 +54,35 @@ App::~App()
 
 void App::createScenes()
 {
-  
-float triangle3D[] = {
-0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
-0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
--0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
--0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
-0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
-0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
-0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
-0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
-0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
--0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
-0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
-0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f
-};
 
-    //Model *model = new Model(points, sizeof(points), 12, true);
+    float triangle3D[] = {
+        0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
+        0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
+        -0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
+        -0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
+        0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
+        0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
+        0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
+        0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
+        0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
+        -0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
+        0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
+        0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f};
+
+    // Model *model = new Model(points, sizeof(points), 12, true);
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-    Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12,true);
+    Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
     Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house = new Model("../Models/assets/house.obj");
     Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
     Model *Ferarri = new Model("../Models/assets/Humvee.obj");
-    Model *planeModel = new Model(plane, sizeof(plane), 6,true);
-    Model* shrekModel = new Model("../Models/assets/shrek/shrek.obj");
-    Model* fionaModel = new Model("../Models/assets/shrek/fiona.obj");
-    Model* toiledModel = new Model("../Models/assets/shrek/toiled.obj");
+    Model *planeModel = new Model(plane, sizeof(plane), 6, true);
+    Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
+    Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
+    Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("../shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("../shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -85,7 +91,7 @@ float triangle3D[] = {
     Shader *vertex02 = new Shader("../shaders/vert.vert", GL_VERTEX_SHADER);
     Shader *assimpVertex = new Shader("../shaders/Assimp.vert", GL_VERTEX_SHADER);
     Shader *TextureVertex = new Shader("../shaders/Texture.vert", GL_VERTEX_SHADER);
-    
+
     ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag);
     ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag);
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag);
@@ -109,8 +115,6 @@ float triangle3D[] = {
     builder->registerModel("shrek", shrekModel);
     builder->registerModel("fiona", fionaModel);
     builder->registerModel("toiled", toiledModel);
-    
-
 
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
@@ -120,7 +124,7 @@ float triangle3D[] = {
     builder->registerShader("TexturePhong", TextureShader);
 
     builder->createTriangle();
-   // builder->create4Spheres();
+    builder->create4Spheres();
     builder->createForest();
     //builder->createSunSystem();
     //builder->createTestScene();
@@ -130,7 +134,6 @@ void App::run()
     createScenes();
 
     double lastTime = glfwGetTime();
-    glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,7 +143,7 @@ void App::run()
 
         if (this->controller)
         {
-            this->controller->processInput(this->window, builder->getSceneCount(), this->camera, dt);
+            this->controller->processInput(this->window, builder->getSceneCount(), this->camera, dt, getSceneBuilder());
             builder->setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
         }
 

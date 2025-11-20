@@ -31,5 +31,7 @@ public:
     App(int width, int height);
     ~App();
     Camera *getCamera() { return this->camera; }
+    SceneBuilder* getSceneBuilder() { return this->builder; }
+
     void run();
 };
