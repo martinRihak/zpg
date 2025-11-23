@@ -1,9 +1,9 @@
 #include "Model.hpp"
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"  // Nahrazeno Assimp za tinyobjloader
+#include "tiny_obj_loader.h"  
 #include <stdexcept>
 #include <vector>
-#include <limits>  // Pro numeric_limits
+#include <limits>  
 #include <iostream>
 
 void Model::Mesh::createVAO()
@@ -42,10 +42,9 @@ Model::Model(const float *model, size_t size, int vertexCount)
 {
     Mesh* mesh = new Mesh();
 
-    // --- NOVÉ: Výpočet bounds z vertexů ---
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
-    for (size_t i = 0; i < vertexCount * 6; i += 6) {  // Předpoklad: pozice + normála (bez UV)
+    for (size_t i = 0; i < vertexCount * 6; i += 6) {  
         glm::vec3 pos(model[i], model[i+1], model[i+2]);
         minBounds = glm::min(minBounds, pos);
         maxBounds = glm::max(maxBounds, pos);
@@ -89,13 +88,13 @@ Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 Model::Model(const char *name)
 {
     tinyobj::ObjReaderConfig reader_config;
-   reader_config.mtl_search_path = "";  // Cesta k MTL souborům (uprav podle potřeby)
+   reader_config.mtl_search_path = "";  
 
     tinyobj::ObjReader reader;
     if (!reader.ParseFromFile(name, reader_config)) {
         std::cerr << "TinyObjLoader error: " << reader.Error() << std::endl;
         std::cout << "Failed to load model: " << name << std::endl;
-        return;  // Nebo vyhoď výjimku
+        return; 
     }
 
     if (!reader.Warning().empty()) {
@@ -106,7 +105,6 @@ Model::Model(const char *name)
     auto& shapes = reader.GetShapes();
     auto& materials = reader.GetMaterials();
 
-    // Inicializace globálních bounds
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
 
@@ -125,7 +123,6 @@ Model::Model(const char *name)
             for (size_t v = 0; v < fv; ++v) {
                 tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
-                // Pozice (povinné)
                 float x = attrib.vertices[3 * idx.vertex_index + 0];
                 float y = attrib.vertices[3 * idx.vertex_index + 1];
                 float z = attrib.vertices[3 * idx.vertex_index + 2];
@@ -133,12 +130,10 @@ Model::Model(const char *name)
                 vertices.push_back(y);
                 vertices.push_back(z);
 
-                // Update bounds
                 glm::vec3 pos(x, y, z);
                 minBounds = glm::min(minBounds, pos);
                 maxBounds = glm::max(maxBounds, pos);
 
-                // Normály
                 if (idx.normal_index >= 0 && hasNormals) {
                     vertices.push_back(attrib.normals[3 * idx.normal_index + 0]);
                     vertices.push_back(attrib.normals[3 * idx.normal_index + 1]);
@@ -149,7 +144,6 @@ Model::Model(const char *name)
                     vertices.push_back(0.0f);
                 }
 
-                // Texturovací koordináty
                 if (idx.texcoord_index >= 0 && hasUVs) {
                     vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
                     vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
@@ -161,7 +155,6 @@ Model::Model(const char *name)
             index_offset += fv;
         }
 
-        // Indices: Pro drawElements – vytvoř 0..n, protože data jsou již triangulovaná
         for (size_t i = 0; i < vertices.size() / (hasUVs ? 8 : 6); ++i) {
             indices.push_back(static_cast<unsigned int>(i));
         }
@@ -181,7 +174,6 @@ Model::Model(const char *name)
 
         meshes.push_back(mesh);
 
-        // Volitelně: Textura z materiálu
         if (!shape.mesh.material_ids.empty() && shape.mesh.material_ids[0] >= 0) {
             const auto& mat = materials[shape.mesh.material_ids[0]];
             if (!mat.diffuse_texname.empty()) {

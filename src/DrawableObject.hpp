@@ -41,7 +41,7 @@ public:
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
     void drawSkybox(float dt);
-    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir); // Opravený název
+    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir); 
     void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     Transformation &getTransformation();
     void update(float dt);
@@ -62,7 +62,7 @@ public:
     void createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
     void setMaterial(Material *mat);
 
-    void computeBounds(); // Volat po vytvoření
+    void computeBounds();
     bool intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const;
     void setSelected(bool selected) { this->selected = selected; }
     bool isSelected() const { return selected; }

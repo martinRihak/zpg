@@ -128,7 +128,6 @@ void DrawableObject::createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float
     this->material = new Material(a, d, s, shiness);
 }
 
-// Nová metoda pro test průniku paprsku s bounding box
 bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const
 {
     glm::vec3 boundsMin = tranformation->getPosition() + minBounds * tranformation->getScale();
@@ -164,8 +163,8 @@ bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &
         tmax = tzmax;
 
     if (tmin > 0.0f)
-    {                // Pouze pozitivní průnik
-        dist = tmin; // Vrátí nejbližší vzdálenost (parametr t)
+    {                
+        dist = tmin; 
         return true;
     }
     return false;
