@@ -11,14 +11,14 @@ Material::Material(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness) : ambie
 Material::~Material() {}
 
 void Material::loadTexture(const char *name)
-{ // Přidej parametr pro cestu, abys neměl pevně zakódovaný soubor
+{ 
     int text_width, text_height, channels;
     unsigned char *data = stbi_load(name, &text_width, &text_height, &channels, 4);
     printf("%d %d %d\n", text_width, text_height,channels);
     if (!data)
     {
         std::cerr << "Chyba při načítání textury: " << name << " – " << stbi_failure_reason() << std::endl;
-        return; // Vrať se, abys nepokračoval s nulovými daty
+        return; 
     }
 
     glGenTextures(1, &textureID);
@@ -28,14 +28,14 @@ void Material::loadTexture(const char *name)
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // Nastavení parametrů textury (opakování, filtr)
+   
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
+    stbi_image_free(data);
     texture = true;
 }
 void Material::loadCubeMap()

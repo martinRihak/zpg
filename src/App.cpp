@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -83,7 +83,7 @@ void App::createScenes()
     Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
-    Model *sphereOBJ = new Model("../Models/NASA/the_sphere.obj");
+    Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
