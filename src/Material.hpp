@@ -19,7 +19,7 @@ private:
 
     bool texture ;
     GLuint textureID;
-
+    bool isSkyBox = false;
     std::vector<std::string> faces;
 
 public:
@@ -40,8 +40,15 @@ public:
     void setObjectColor(const glm::vec3 &c) { objectColor = c; }
     void setEmission(const glm::vec3 &e) { emission = e; }
     void setShininess(float s) { shininess = s; }
+    void setFaces(const std::vector<std::string>& f) { faces = f; }
+    std::vector<std::string>& getFaces() { return faces; }
+
     void loadTexture(const char* name);
     void loadCubeMap();
+
+    bool isSkyBoxMaterial() const { return isSkyBox; }
+    void setSkyBox(bool isSkyBox) { this->isSkyBox = isSkyBox; }
+
     bool hasTexture() const { return texture; }
     GLuint getTextureID()  { return textureID; }
 };

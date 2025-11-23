@@ -24,6 +24,7 @@ private:
     Transformation *tranformation;
     Material *material;
 
+
     std::unique_ptr<IAnimator> animator;
     bool animated = false;
     CompositeTransformation queuedTransforms;
@@ -32,12 +33,14 @@ private:
 
     glm::vec3 minBounds, maxBounds;
     bool selected = false;
-    uint8_t id ;   
+    uint8_t id;
+
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
+    void drawSkybox(float dt);
     void createRotation(float speedDegPerSec, glm::vec3 axis, int dir); // Opravený název
     void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     Transformation &getTransformation();
@@ -60,12 +63,11 @@ public:
     void setMaterial(Material *mat);
 
     void computeBounds(); // Volat po vytvoření
-    bool intersectsRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir,float& dist) const;
+    bool intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const;
     void setSelected(bool selected) { this->selected = selected; }
     bool isSelected() const { return selected; }
 
     uint8_t getID() const { return id; }
     void setID(uint8_t id) { this->id = id; }
-
 
 };

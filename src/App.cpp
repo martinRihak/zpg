@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -75,7 +75,7 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
-    Model *formula = new Model("../Models/assets/formula1.obj");
+    //Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house = new Model("../Models/assets/house.obj");
     Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
     Model *Ferarri = new Model("../Models/assets/Humvee.obj");
@@ -84,23 +84,23 @@ void App::createScenes()
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
+    Model* cubeModel = new Model("../Models/assets/cube.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
     Shader *phongFrag = new Shader("shaders/Phong.frag", GL_FRAGMENT_SHADER);
     Shader *blinnFrag = new Shader("shaders/Blinn.frag", GL_FRAGMENT_SHADER);
     Shader *vertex02 = new Shader("shaders/vert.vert", GL_VERTEX_SHADER);
-    Shader *assimpVertex = new Shader("shaders/Assimp.vert", GL_VERTEX_SHADER);
-    Shader *TextureVertex = new Shader("shaders/Texture.vert", GL_VERTEX_SHADER);
-    Shader* basicVertex = new  Shader("shaders/basicVertex.vert", GL_VERTEX_SHADER);
+    Shader *skyboxVert = new Shader("shaders/skybox.vert", GL_VERTEX_SHADER);
+    Shader *skyboxFrag = new Shader("shaders/skybox.frag", GL_FRAGMENT_SHADER);
+    
 
+    ShaderProgram *skyboxShader = new ShaderProgram(*skyboxVert, *skyboxFrag,this->camera);
     ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag,this->camera);
-    ShaderProgram *constantShader = new ShaderProgram(*basicVertex, *constantFrag,this->camera);
+    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag,this->camera);
     ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag,this->camera);
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag,this->camera);
 
-    ShaderProgram *TextureShader = new ShaderProgram(*TextureVertex, *phongFrag,this->camera);
-    ShaderProgram *assimpPhong = new ShaderProgram(*assimpVertex, *phongFrag,this->camera);
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
@@ -110,7 +110,7 @@ void App::createScenes()
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
-    builder->registerModel("formula", formula);
+  //  builder->registerModel("formula", formula);
     builder->registerModel("house", house);
     builder->registerModel("koen", Koen);
 
@@ -120,13 +120,14 @@ void App::createScenes()
 
 
     builder->registerModel("sphereOBJ", sphereOBJ);
+    builder->registerModel("cube", cubeModel);
+
 
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
-    builder->registerShader("assimpPhong", assimpPhong);
-    builder->registerShader("TexturePhong", TextureShader);
+    builder->registerShader("skyboxShader", skyboxShader);
 
     //builder->createTriangle();
    // builder->create4Spheres();

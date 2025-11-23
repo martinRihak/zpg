@@ -11,14 +11,14 @@ Material::Material(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness) : ambie
 Material::~Material() {}
 
 void Material::loadTexture(const char *name)
-{ 
+{
     int text_width, text_height, channels;
     unsigned char *data = stbi_load(name, &text_width, &text_height, &channels, 4);
-    printf("%d %d %d\n", text_width, text_height,channels);
+    printf("%d %d %d\n", text_width, text_height, channels);
     if (!data)
     {
         std::cerr << "Chyba při načítání textury: " << name << " – " << stbi_failure_reason() << std::endl;
-        return; 
+        return;
     }
 
     glGenTextures(1, &textureID);
@@ -28,7 +28,6 @@ void Material::loadTexture(const char *name)
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-   
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -40,4 +39,43 @@ void Material::loadTexture(const char *name)
 }
 void Material::loadCubeMap()
 {
+    if (faces.size() != 6)
+    {
+        std::cerr << "Chyba: Cube mapa vyžaduje přesně 6 textur!" << std::endl;
+        return;
+    }
+
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    unsigned char *data;
+    for (unsigned int i = 0; i < this->faces.size(); ++i)
+    {
+        data = stbi_load(this->faces[i].c_str(), &width, &height, &nrChannels, 4);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        }
+        else
+        {
+            std::cerr << "Chyba načtení textury cube mapy: " << faces[i] << std::endl;
+            stbi_image_free(data);
+            glDeleteTextures(1, &textureID); // Zruš texturu při chybě
+            textureID = 0;
+            return;
+        }
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    texture = true;
+    isSkyBox = true;
+
+    stbi_image_free(data);
+    std::cout << "Cube mapa úspěšně načtena s ID: " << textureID << std::endl;
 }

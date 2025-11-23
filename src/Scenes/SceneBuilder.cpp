@@ -137,80 +137,73 @@ void SceneBuilder::createForest()
 }
 void SceneBuilder::createSunSystem()
 {
+    std::vector<std::string> skyboxFaces = {
+        "../Models/NASA/2k_stars.jpg",
+        "../Models/NASA/2k_stars.jpg",
+        "../Models/NASA/2k_stars.jpg",
+        "../Models/NASA/2k_stars.jpg",
+        "../Models/NASA/2k_stars.jpg",
+        "../Models/NASA/2k_stars.jpg"};
     Scene *scene = new Scene();
+    DrawableObject *cube = createObject("cube", "phong");
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getTransformation().setScale(glm::vec3(2));
+    //cube->getMaterial()->loadCubeMap();
 
     // Slunce
-    DrawableObject *sun = createObject("sphere", "phong");
+    DrawableObject *sun = createObject("sphereOBJ", "phong");
     sun->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
     sun->getTransformation().setScale(glm::vec3(1.0f));
     sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    sun->createRotation(5.0f, glm::vec3(0, 1, 0), 1);                                   
-    sun->createLight(glm::vec3(1.0f), glm::vec3(0.5f), glm::vec3(1.0f, 0.f, 0.00001f)); 
+    sun->createRotation(5.0f, glm::vec3(0, 1, 0), 1);
+    sun->createLight(glm::vec3(1.0f), glm::vec3(0.5f), glm::vec3(1.0f, 0.f, 0.00001f));
     scene->addLight(sun->getLight());
 
-    // Merkur (bez měsíců)
-    DrawableObject *mercury = createObject("sphere", "phong");
+    DrawableObject *mercury = createObject("sphereOBJ", "phong");
     mercury->getMaterial()->loadTexture("../Models/NASA/2k_mercury.jpg");
-    mercury->getTransformation().setScale(glm::vec3(0.05f)); // Zvětšeno pro viditelnost (real ~0.0035)
-    mercury->createOrbit(sun, 1.0f, 60.0f, 0.0f);            // Blízko Slunce, rychlý oběh
-    mercury->createRotation(0.5f, glm::vec3(0, 1, 0), 1);    // Pomalá rotace
+    mercury->getTransformation().setScale(glm::vec3(0.05f));
+    mercury->createOrbit(sun, 1.0f, 60.0f, 0.0f);
 
-    // Venuše (bez měsíců, retrográdní rotace)
-    DrawableObject *venus = createObject("sphere", "phong");
+    DrawableObject *venus = createObject("sphereOBJ", "phong");
     venus->getMaterial()->loadTexture("../Models/NASA/2k_venus_atmosphere.jpg");
-    venus->getTransformation().setScale(glm::vec3(0.1f));   // Zvětšeno pro viditelnost (real ~0.0087)
-    venus->createOrbit(sun, 2.0f, 40.0f, 90.0f);            // Počáteční úhel pro rozložení
-    venus->createRotation(-0.1f, glm::vec3(0, 1, 0), 1);    // Retrográdní (záporná rychlost)
+    venus->getTransformation().setScale(glm::vec3(0.1f));
+    venus->createOrbit(sun, 2.0f, 40.0f, 90.0f);
 
-    // Země a její Měsíc
-    DrawableObject *earth = createObject("sphere", "phong");
+    DrawableObject *earth = createObject("sphereOBJ", "phong");
     earth->getMaterial()->loadTexture("../Models/NASA/2k_earth_daymap.jpg");
-    earth->getTransformation().setScale(glm::vec3(0.1f));   // Zvětšeno pro viditelnost (real ~0.0092)
+    earth->getTransformation().setScale(glm::vec3(0.1f));
     earth->createOrbit(sun, 3.0f, 30.0f, 180.0f);
-    earth->createRotation(30.0f, glm::vec3(0, 1, 0), 1); 
 
-    DrawableObject *moon = createObject("sphere", "phong");
+    DrawableObject *moon = createObject("sphereOBJ", "phong");
     moon->getMaterial()->loadTexture("../Models/NASA/2k_moon.jpg");
-    moon->getTransformation().setScale(glm::vec3(0.03f));   // Zvětšeno relativně k Zemi
-    moon->createOrbit(earth, 0.2f, 60.0f, 0.0f);            // Mírně menší radius pro lepší viditelnost
-    moon->createRotation(10.0f, glm::vec3(0, 1, 0), 1);
+    moon->getTransformation().setScale(glm::vec3(0.03f));
+    moon->createOrbit(earth, 0.2f, 60.0f, 0.0f);
 
-    // Mars (bez měsíců)
-    DrawableObject *mars = createObject("sphere", "phong");
+    DrawableObject *mars = createObject("sphereOBJ", "phong");
     mars->getMaterial()->loadTexture("../Models/NASA/2k_mars.jpg");
-    mars->getTransformation().setScale(glm::vec3(0.07f));   // Zvětšeno pro viditelnost (real ~0.0049)
+    mars->getTransformation().setScale(glm::vec3(0.07f));
     mars->createOrbit(sun, 4.0f, 20.0f, 270.0f);
-    mars->createRotation(25.0f, glm::vec3(0, 1, 0), 1);
 
-    // Jupiter (bez měsíců)
-    DrawableObject *jupiter = createObject("sphere", "phong");
+    DrawableObject *jupiter = createObject("sphereOBJ", "phong");
     jupiter->getMaterial()->loadTexture("../Models/NASA/2k_jupiter.jpg");
-    jupiter->getTransformation().setScale(glm::vec3(0.4f)); // Relativně velký (real ~0.1)
+    jupiter->getTransformation().setScale(glm::vec3(0.4f));
     jupiter->createOrbit(sun, 20.0f, 10.0f, 45.0f);
-    jupiter->createRotation(50.0f, glm::vec3(0, 1, 0), 1); 
 
-    // Saturn (bez měsíců)
-    DrawableObject *saturn = createObject("sphere", "phong");
+    DrawableObject *saturn = createObject("sphereOBJ", "phong");
     saturn->getMaterial()->loadTexture("../Models/NASA/2k_saturn.jpg");
-    saturn->getTransformation().setScale(glm::vec3(0.3f));  // Relativně velký (real ~0.084)
+    saturn->getTransformation().setScale(glm::vec3(0.3f));
     saturn->createOrbit(sun, 35.0f, 5.0f, 135.0f);
-    saturn->createRotation(40.0f, glm::vec3(0, 1, 0), 1);
 
-    // Uranus (bez měsíců, retrográdní rotace)
-    DrawableObject *uranus = createObject("sphere", "phong");
+    DrawableObject *uranus = createObject("sphereOBJ", "phong");
     uranus->getMaterial()->loadTexture("../Models/NASA/2k_uranus.jpg");
-    uranus->getTransformation().setScale(glm::vec3(0.2f));  // Zvětšeno pro viditelnost (real ~0.036)
-    uranus->createOrbit(sun, 50.0f, 3.0f, 225.0f);          // Větší vzdálenost, pomalejší oběh
-    uranus->createRotation(-35.0f, glm::vec3(0, 1, 0), 1);  // Retrográdní rotace
+    uranus->getTransformation().setScale(glm::vec3(0.2f));
+    uranus->createOrbit(sun, 50.0f, 3.0f, 225.0f);
 
-    // Neptun (bez měsíců)
-    DrawableObject *neptune = createObject("sphere", "phong");
+    DrawableObject *neptune = createObject("sphereOBJ", "phong");
     neptune->getMaterial()->loadTexture("../Models/NASA/2k_neptune.jpg");
-    neptune->getTransformation().setScale(glm::vec3(0.2f)); // Zvětšeno pro viditelnost (real ~0.035)
-    neptune->createOrbit(sun, 60.0f, 2.0f, 315.0f);         // Největší vzdálenost, nejpomalejší oběh
-    neptune->createRotation(40.0f, glm::vec3(0, 1, 0), 1);
-
-    // Přidání všech objektů do scény
+    neptune->getTransformation().setScale(glm::vec3(0.2f));
+    neptune->createOrbit(sun, 60.0f, 2.0f, 315.0f);
+    scene->addObject(cube);
     scene->addObject(sun);
     scene->addObject(mercury);
     scene->addObject(venus);
@@ -221,7 +214,7 @@ void SceneBuilder::createSunSystem()
     scene->addObject(saturn);
     scene->addObject(uranus);
     scene->addObject(neptune);
-  
+
     this->createScene(scene);
 }
 void SceneBuilder::createTestScene()

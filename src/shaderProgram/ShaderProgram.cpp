@@ -11,7 +11,7 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentS
     glAttachShader(this->shaderProgram, vertexShader.getID());
     glAttachShader(this->shaderProgram, fragmentShader.getID());
     glLinkProgram(this->shaderProgram);
-  //  updateCamera(this->camera);
+    //  updateCamera(this->camera);
 }
 
 void ShaderProgram::use()
@@ -42,7 +42,7 @@ void ShaderProgram::updateCamera(Camera *camera)
     storedViewMatrix = camera->getCamera();
     storedProjMatrix = camera->getProjectionMatrix();
     storedViewPos = camera->getPosition();
-    cameraDirty = true; // Označ jako změněné
+    cameraDirty = true; 
 }
 
 void ShaderProgram::updateLight(int index, Light *light)
@@ -158,10 +158,19 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.objectColor", mat->getObjectColor());
     setUniform("material.emission", mat->getEmission());
     setUniform("material.hasTexture", mat->hasTexture());
+    setUniform("material.isSkyBox", mat->isSkyBoxMaterial());
     if (mat->hasTexture())
     {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
-        this->setUniform("textureUnitID", 0);
+        if (mat->isSkyBoxMaterial())
+        {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, mat->getTextureID());
+            this->setUniform("material.ourCubeTexture", 0);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
+            this->setUniform("material.ourTexture", 0);
+        }
     }
 }

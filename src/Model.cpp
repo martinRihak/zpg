@@ -93,6 +93,7 @@ Model::Model(const char *name)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cerr << "Assimp error: " << importer.GetErrorString() << std::endl;
+        std::cout << "Failed to load model with Assimp!   "<< name << std::endl;
         throw std::runtime_error("Failed to load model with Assimp!");
     }
 

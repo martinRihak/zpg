@@ -36,6 +36,7 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
 {
     shader->use();
     shader->setUniform("lightCount", static_cast<int>(lights.size()));
+    shader->setModelMatrix(tranformation->getModelMatrix());
     for (int i = 0; i < lights.size() && i < 8; i++)
     {
         lights[i]->update(dt);
@@ -43,8 +44,10 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
         shader->updateMaterial(this->material);
     }
     update(dt);
-    shader->setModelMatrix(tranformation->getModelMatrix());
     model->draw();
+}
+void DrawableObject::drawSkybox(float dt)
+{
 
 }
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)

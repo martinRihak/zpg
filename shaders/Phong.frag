@@ -29,7 +29,9 @@ struct Material {
     float shininess;
     vec3 emission;
     bool hasTexture;
+    bool isSkyBox;
     sampler2D ourTexture;
+    samplerCube ourCubeTexture;
 };
 uniform Material material;
 
@@ -41,7 +43,10 @@ void main() {
     vec3 specular = vec3(0.0);
     vec3 color;
     if(material.hasTexture == true)
-        color = texture(material.ourTexture, texCoords).rgb;
+        if(material.isSkyBox == true)
+            color = texture(material.ourCubeTexture, worldPosition).rgb;
+        else
+            color = texture(material.ourTexture, texCoords).rgb;
     else
         color = material.objectColor;
 
