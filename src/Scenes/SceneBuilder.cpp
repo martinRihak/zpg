@@ -41,6 +41,7 @@ void SceneBuilder::createTriangle()
     Scene *scene = new Scene();
     DrawableObject *triangleObj = createObject("triangle3DModel", "TexturePhong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
+    triangleObj->getTransformation().setUseCustom(true);
     triangleObj->getTransformation().setPosition(glm::vec3(-1, 0, 0));
     DrawableObject *triangleObj2 = createObject("triangle3DModel", "TexturePhong");
     triangleObj2->getMaterial()->loadTexture("../src/grass.png");
