@@ -41,14 +41,14 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
     {
         lights[i]->update(dt);
         shader->updateLight(i, lights[i]);
-        shader->updateMaterial(this->material);
     }
+    shader->updateMaterial(this->material);
     update(dt);
     model->draw();
+    glUseProgram(0);
 }
 void DrawableObject::drawSkybox(float dt)
 {
-
 }
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)
 {

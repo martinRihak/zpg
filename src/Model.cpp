@@ -94,7 +94,6 @@ Model::Model(const char *name)
     {
         std::cerr << "Assimp error: " << importer.GetErrorString() << std::endl;
         std::cout << "Failed to load model with Assimp!   "<< name << std::endl;
-        throw std::runtime_error("Failed to load model with Assimp!");
     }
 
     // --- NOVÉ: Inicializace globálních bounds ---
