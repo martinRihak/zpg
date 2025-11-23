@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/glew.h>
-#include <glm/glm.hpp>  // Přidáno pro glm::vec3 (pokud ještě není)
+#include <glm/glm.hpp>  
 #include <iostream>
 #include <vector>
 
@@ -19,7 +19,7 @@ private:
         void configAttributes(int stride, int posOffset, int normOffset, int uvOffset);
         Mesh() : VAO(0), VBO(0), EBO(0), indexCount(0) {} 
         ~Mesh()
-        { // Destruktor pro čištění bufferů
+        { 
             glDeleteVertexArrays(1, &VAO);
             std::cout << "Destructor called" << std::endl;
             if (VBO != 0)
@@ -30,7 +30,6 @@ private:
     };
     std::vector<Mesh*> meshes;
 
-    // --- NOVÉ: Globální bounds pro celý model (pro picking v DrawableObject) ---
     glm::vec3 minBounds;
     glm::vec3 maxBounds;
 
@@ -44,8 +43,6 @@ public:
     void draw();
     size_t getMeshCount() const { return meshes.size(); }
     const std::string &getTexturePath(size_t meshIndex = 0) const;
-
-    // --- NOVÉ: Gettery pro bounds (použij v DrawableObject::computeBounds()) ---
     glm::vec3 getMinBounds() const { return minBounds; }
     glm::vec3 getMaxBounds() const { return maxBounds; }
 };

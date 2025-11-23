@@ -4,7 +4,7 @@
 #include <cstdint>
 #include "Scenes/Scene.hpp"
 #include "Camera.hpp"
-#include "Scenes/SceneBuilder.hpp"  // Přidáno pro SceneBuilder
+#include "Scenes/SceneBuilder.hpp"  
 
 class Scene;
 
@@ -14,7 +14,7 @@ public:
     Controller();
     ~Controller();
     void handleMouseClick(GLFWwindow *window, int button, int action, int mods, Camera *camera, Scene *scene, SceneBuilder *builder);
-    void processInput(GLFWwindow *window, int8_t sceneCount, Camera *camera, float dt, SceneBuilder *builder);  // Upraveno: Sloučeno, přidán builder
+    void processInput(GLFWwindow *window, int8_t sceneCount, Camera *camera, float dt, SceneBuilder *builder);  
     int8_t getActiveScene();
 
 private:

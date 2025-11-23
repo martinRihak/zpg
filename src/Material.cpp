@@ -61,7 +61,7 @@ void Material::loadCubeMap()
         {
             std::cerr << "Chyba načtení textury cube mapy: " << faces[i] << std::endl;
             stbi_image_free(data);
-            glDeleteTextures(1, &textureID); // Zruš texturu při chybě
+            glDeleteTextures(1, &textureID);
             textureID = 0;
             return;
         }

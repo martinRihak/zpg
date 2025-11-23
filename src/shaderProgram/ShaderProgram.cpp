@@ -25,7 +25,7 @@ void ShaderProgram::use()
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &storedViewMatrix[0][0]);
         if (projLoc != -1)
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, &storedProjMatrix[0][0]);
-        setUniform("viewPos", storedViewPos); // Použij tvou setUniform metodu
+        setUniform("viewPos", storedViewPos);
         cameraDirty = false;
     }
 }
@@ -42,7 +42,7 @@ void ShaderProgram::updateCamera(Camera *camera)
     storedViewMatrix = camera->getCamera();
     storedProjMatrix = camera->getProjectionMatrix();
     storedViewPos = camera->getPosition();
-    cameraDirty = true; 
+    cameraDirty = true;
 }
 
 void ShaderProgram::updateLight(int index, Light *light)
@@ -62,14 +62,14 @@ void ShaderProgram::updateLight(int index, Light *light)
         setUniform((base + "direction").c_str(), refl->getDirection());
         setUniform((base + "cutOff").c_str(), refl->getCutOff());
         setUniform((base + "outterCutOff").c_str(), refl->getOutterCutOff());
-        setUniform((base + "lightType").c_str(), 1); // Oprav: s indexem!
+        setUniform((base + "lightType").c_str(), 1);
     }
 
     else if (light->getType() == LightType::DIRECTIONAL)
     {
         Directional *dir = dynamic_cast<Directional *>(light);
         setUniform((base + "direction").c_str(), dir->getDirection());
-        setUniform((base + "lightType").c_str(), 2); // Oprav: s indexem!
+        setUniform((base + "lightType").c_str(), 2);
     }
     else
     {
@@ -162,15 +162,7 @@ void ShaderProgram::updateMaterial(Material *mat)
     if (mat->hasTexture())
     {
         glActiveTexture(GL_TEXTURE0);
-        if (mat->isSkyBoxMaterial())
-        {
-            glBindTexture(GL_TEXTURE_CUBE_MAP, mat->getTextureID());
-            this->setUniform("material.ourCubeTexture", 0);
-        }
-        else
-        {
-            glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
-            this->setUniform("material.ourTexture", 0);
-        }
+        glBindTexture(GL_TEXTURE_2D, mat->getTextureID());
+        this->setUniform("material.ourTexture", 0);
     }
 }

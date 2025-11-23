@@ -55,7 +55,7 @@ void SceneBuilder::createTriangle()
 void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
-    DrawableObject *sphere1 = createObject("sphere", "constant");
+    DrawableObject *sphere1 = createObject("sphere", "phong");
     sphere1->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
 
     DrawableObject *sphere2 = createObject("sphere", "phong");

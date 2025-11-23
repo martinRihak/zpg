@@ -1,6 +1,6 @@
 #include "Controller.hpp"
-#include <glm/gtc/matrix_transform.hpp> // Pro glm::unProject
-#include <glm/gtx/norm.hpp>             // Pro glm::distance2, pokud potřeba
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtx/norm.hpp>            
 #include <limits>
 Controller::Controller()
 {
@@ -20,7 +20,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
     if (!window)
         return;
 
-    // Pohyb kamery
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera->setEye(camera->getPosition() + cameraSpeed * camera->getTarget());
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -32,7 +31,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         camera->switchFlash();
 
-    // Rotace kamery pravým tlačítkem myši (rozhled)
     if (glfwGetWindowAttrib(window, GLFW_FOCUSED) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
     {
         double xpos, ypos;
@@ -46,7 +44,7 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         }
 
         float xoffset = (xpos - lastX) * mouseSensitivity;
-        float yoffset = (ypos - lastY) * mouseSensitivity; // Obráceno pro přirozený pohyb
+        float yoffset = (ypos - lastY) * mouseSensitivity;
 
         float newAlpha = camera->getAlpha() + yoffset;
         float newFi = camera->getFi() + xoffset;
@@ -61,7 +59,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         isRightMouseButtonPressed = false;
     }
 
-    // Přepínání scén
     for (int i = 0; i < 9; ++i)
     {
         int key = GLFW_KEY_1 + i;
@@ -79,7 +76,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         prevKeyState[i] = pressed;
     }
 
-    // Mazání vybraného objektu (klávesa DELETE)
     if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && selectedObject)
     {
         Scene *currentScene = builder->getScene(active);
@@ -93,7 +89,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         }
     }
 
-    // Sázení stromu (klávesa 'P' – pod aktuální pozicí myši na y=0)
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && selectedObject != nullptr)
     {
         double xpos, ypos;
@@ -134,19 +129,17 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         }
     }
 
-    // Přemístění (dragging) vybraného objektu (držení levého tlačítka)
     if (isDragging && selectedObject && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
 
-        // Vypočítej delta myši
         glm::vec2 currentMousePos(xpos, ypos);
         if (glm::distance2(currentMousePos, lastMousePos) > 0.1f)
-        { // Malý threshold pro pohyb
+        { 
             int width, height;
             glfwGetWindowSize(window, &width, &height);
-            ypos = height - ypos; // Obráceno pro OpenGL
+            ypos = height - ypos; 
 
             glm::vec3 screenNear(2.0f * xpos / width - 1.0f, 2.0f * ypos / height - 1.0f, -1.0f);
             glm::vec3 screenFar(screenNear.x, screenNear.y, 1.0f);
@@ -159,10 +152,10 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             glm::vec3 rayEnd = glm::unProject(screenFar, view, proj, viewport);
             glm::vec3 rayDir = glm::normalize(rayEnd - rayOrigin);
 
-            // Intersect s plane na stejné y-výšce jako aktuální objekt
+            
             float objY = selectedObject->getTransformation().getPosition().y;
             if (std::abs(rayDir.y) > 1e-6f)
-            { // Ochrana proti dělení nulou
+            { 
                 float t = (objY - rayOrigin.y) / rayDir.y;
                 if (t > 0.0f)
                 {
@@ -177,7 +170,7 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
     if (selectedObject != nullptr)
     {
         glm::vec3 deltaPos(0.0f);
-        float speed = 2.0f; // Nastavitelná rychlost (jednotky za sekundu)
+        float speed = 2.0f; 
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
             deltaPos.x -= speed * dt;
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -186,7 +179,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             deltaPos.z -= speed * dt;
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
             deltaPos.z += speed * dt;
-        // ... (podobně pro Y osu)
 
         if (glm::length(deltaPos) > 0.0f)
         {
@@ -211,24 +203,21 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
     glfwGetCursorPos(window, &xpos, &ypos);
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    int newY = height - (int)ypos; // Obrácení Y, jako v učitelově příkladu
+    int newY = height - (int)ypos; 
 
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
-        // Načtení dat z framebufferu podle učitelova příkladu
         GLbyte color[4];
         GLfloat depth;
-        GLuint stencilId; // Stencil index pro ID objektu
+        GLuint stencilId; 
 
         glReadPixels((GLint)xpos, newY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
         glReadPixels((GLint)xpos, newY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
         glReadPixels((GLint)xpos, newY, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &stencilId);
 
-        // Výpis hodnot, jako v učitelově příkladu
         printf("Clicked on pixel %f, %f, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
                xpos, ypos, color[0], color[1], color[2], color[3], depth, stencilId);
 
-        // Výběr objektu podle stencil ID (předpokládáme metodu v Scene)
         selectedObject = scene->getObjectById(stencilId);
         if (selectedObject)
         {
@@ -239,16 +228,12 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
             selectedObject = nullptr;
         }
 
-        // Volitelně: Vypočet světové pozice pod kurzorem (pomocí unProject s depth)
         glm::vec3 screenPos((GLfloat)xpos, (GLfloat)newY, depth);
-        glm::mat4 viewMatrix = camera->getCamera();           // View matice z kamery
-        glm::mat4 projMatrix = camera->getProjectionMatrix(); // Projection matice
+        glm::mat4 viewMatrix = camera->getCamera();          
+        glm::mat4 projMatrix = camera->getProjectionMatrix(); 
         glm::vec4 viewport(0, 0, (GLfloat)width, (GLfloat)height);
         glm::vec3 worldPos = glm::unProject(screenPos, viewMatrix, projMatrix, viewport);
         printf("unProject [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
 
-        // Pokud potřebuješ, můžeš worldPos použít pro další akce (např. přemístění vybraného objektu na tuto pozici)
-        // Např.: if (selectedObject) selectedObject->getTransformation().setPosition(worldPos);
     }
-    // Pravé tlačítko: Žádná akce zde (ovládá se v processInput při držení)
 }
