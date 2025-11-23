@@ -19,3 +19,11 @@ public:
 private:
     std::vector<std::shared_ptr<ITransformation>> children;
 };
+class CustomTransform : public ITransformation {
+public:
+    glm::mat4 getModelMatrix() const override {
+        glm::mat4 m(1.0f);  
+        m[3][3] = 20.0f;    
+        return m;
+    }
+};
