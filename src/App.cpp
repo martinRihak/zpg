@@ -83,8 +83,8 @@ void App::createScenes()
     //Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
     //Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     //Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
-    Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
-    Model* cubeModel = new Model("../Models/assets/cube.obj");
+    Model *sphereOBJ = new Model("Models/NASA/sphereOBJ.obj");
+    Model* cubeModel = new Model("Models/assets/cube.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);

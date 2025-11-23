@@ -1,10 +1,10 @@
 #include "Model.hpp"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <assimp/material.h> 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"  // Nahrazeno Assimp za tinyobjloader
 #include <stdexcept>
 #include <vector>
+#include <limits>  // Pro numeric_limits
+#include <iostream>
 
 void Model::Mesh::createVAO()
 {
@@ -88,87 +88,106 @@ Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 
 Model::Model(const char *name)
 {
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(name, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices);
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-    {
-        std::cerr << "Assimp error: " << importer.GetErrorString() << std::endl;
-        std::cout << "Failed to load model with Assimp!   "<< name << std::endl;
+    tinyobj::ObjReaderConfig reader_config;
+   reader_config.mtl_search_path = "";  // Cesta k MTL souborům (uprav podle potřeby)
+
+    tinyobj::ObjReader reader;
+    if (!reader.ParseFromFile(name, reader_config)) {
+        std::cerr << "TinyObjLoader error: " << reader.Error() << std::endl;
+        std::cout << "Failed to load model: " << name << std::endl;
+        return;  // Nebo vyhoď výjimku
     }
 
-    // --- NOVÉ: Inicializace globálních bounds ---
+    if (!reader.Warning().empty()) {
+        std::cerr << "TinyObjLoader warning: " << reader.Warning() << std::endl;
+    }
+
+    auto& attrib = reader.GetAttrib();
+    auto& shapes = reader.GetShapes();
+    auto& materials = reader.GetMaterials();
+
+    // Inicializace globálních bounds
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
 
-    for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
-    {
-        aiMesh *aiMesh = scene->mMeshes[i];
+    for (const auto& shape : shapes) {
         Mesh* mesh = new Mesh();
 
         std::vector<float> vertices;
         std::vector<unsigned int> indices;
-        for (unsigned int v = 0; v < aiMesh->mNumVertices; ++v)
-        {
-            // Pozice
-            float x = aiMesh->mVertices[v].x;
-            float y = aiMesh->mVertices[v].y;
-            float z = aiMesh->mVertices[v].z;
-            vertices.push_back(x);
-            vertices.push_back(y);
-            vertices.push_back(z);
 
-            // --- NOVÉ: Update bounds z pozic ---
-            glm::vec3 pos(x, y, z);
-            minBounds = glm::min(minBounds, pos);
-            maxBounds = glm::max(maxBounds, pos);
+        bool hasNormals = !attrib.normals.empty();
+        bool hasUVs = !attrib.texcoords.empty();
 
-            // Normály
-            if (aiMesh->HasNormals())
-            {
-                vertices.push_back(aiMesh->mNormals[v].x);
-                vertices.push_back(aiMesh->mNormals[v].y);
-                vertices.push_back(aiMesh->mNormals[v].z);
-            }
-            else
-            {
-                vertices.push_back(0.0f);
-                vertices.push_back(0.0f);
-                vertices.push_back(0.0f);
-            }
+        size_t index_offset = 0;
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f) {
+            size_t fv = shape.mesh.num_face_vertices[f];
+            for (size_t v = 0; v < fv; ++v) {
+                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
-            // Texturovací koordináty
-            if (aiMesh->HasTextureCoords(0))
-            {
-                vertices.push_back(aiMesh->mTextureCoords[0][v].x);
-                vertices.push_back(aiMesh->mTextureCoords[0][v].y);
+                // Pozice (povinné)
+                float x = attrib.vertices[3 * idx.vertex_index + 0];
+                float y = attrib.vertices[3 * idx.vertex_index + 1];
+                float z = attrib.vertices[3 * idx.vertex_index + 2];
+                vertices.push_back(x);
+                vertices.push_back(y);
+                vertices.push_back(z);
+
+                // Update bounds
+                glm::vec3 pos(x, y, z);
+                minBounds = glm::min(minBounds, pos);
+                maxBounds = glm::max(maxBounds, pos);
+
+                // Normály
+                if (idx.normal_index >= 0 && hasNormals) {
+                    vertices.push_back(attrib.normals[3 * idx.normal_index + 0]);
+                    vertices.push_back(attrib.normals[3 * idx.normal_index + 1]);
+                    vertices.push_back(attrib.normals[3 * idx.normal_index + 2]);
+                } else {
+                    vertices.push_back(0.0f);
+                    vertices.push_back(0.0f);
+                    vertices.push_back(0.0f);
+                }
+
+                // Texturovací koordináty
+                if (idx.texcoord_index >= 0 && hasUVs) {
+                    vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
+                    vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
+                } else {
+                    vertices.push_back(0.0f);
+                    vertices.push_back(0.0f);
+                }
             }
-            else
-            {
-                vertices.push_back(0.0f);
-                vertices.push_back(0.0f);
-            }
+            index_offset += fv;
         }
-        for (unsigned int f = 0; f < aiMesh->mNumFaces; ++f)
-        {
-            aiFace face = aiMesh->mFaces[f];
-            for (unsigned int indx = 0; indx < face.mNumIndices; ++indx)
-            {
-                indices.push_back(face.mIndices[indx]);
-            }
+
+        // Indices: Pro drawElements – vytvoř 0..n, protože data jsou již triangulovaná
+        for (size_t i = 0; i < vertices.size() / (hasUVs ? 8 : 6); ++i) {
+            indices.push_back(static_cast<unsigned int>(i));
         }
+
         mesh->createVBO(vertices.data(), vertices.size() * sizeof(float));
         mesh->createVAO();
         mesh->createEBO(indices.data(), indices.size() * sizeof(unsigned int));
 
-        int stride = (aiMesh->HasTextureCoords(0) ? 8 : 6) * sizeof(float);
-        int uvOffset = (aiMesh->HasTextureCoords(0) ? 6 * sizeof(float) : -1); // -1 znamená bez UV
+        int stride = (hasUVs ? 8 : 6) * sizeof(float);
+        int uvOffset = (hasUVs ? 6 * sizeof(float) : -1);
         mesh->configAttributes(stride, 0, 3 * sizeof(float), uvOffset);
 
         mesh->indexCount = indices.size();
-        mesh->vertexCount = aiMesh->mNumVertices; 
+        mesh->vertexCount = vertices.size() / (hasUVs ? 8 : 6);
+
         glBindVertexArray(0);
-       
+
         meshes.push_back(mesh);
+
+        // Volitelně: Textura z materiálu
+        if (!shape.mesh.material_ids.empty() && shape.mesh.material_ids[0] >= 0) {
+            const auto& mat = materials[shape.mesh.material_ids[0]];
+            if (!mat.diffuse_texname.empty()) {
+                mesh->texturePath = mat.diffuse_texname;
+            }
+        }
     }
 }
 

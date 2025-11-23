@@ -30,6 +30,18 @@ find_path(STB_INCLUDE_DIR stb_image.h
 if(NOT STB_INCLUDE_DIR)
     message(FATAL_ERROR "Nepodařilo se najít stb_image.h! Zkontroluj složku stb-master.")
 endif()
+
+# Přidání podpory pro tiny_obj_loader (header-only, hledá se v lokální složce)
+find_path(TINYOBJLOADER_INCLUDE_DIR tiny_obj_loader.h
+    PATHS ${CMAKE_SOURCE_DIR}/tinyobjloader  # Hledej v této složce (uprav, pokud je jinde)
+    NO_DEFAULT_PATH  # Ignoruj systémové cesty
+)
+
+if(NOT TINYOBJLOADER_INCLUDE_DIR)
+    message(FATAL_ERROR "Nepodařilo se najít tiny_obj_loader.h! Zkontroluj složku tinyobjloader.")
+endif()
+
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
 pkg_check_modules(assimp REQUIRED assimp)
@@ -55,9 +67,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${OPENGL_INCLUDE_DIR} 
     ${GLEW_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
-    ${assimp_INCLUDE_DIRS}
     ${SOIL_INCLUDE_DIR}
     ${STB_INCLUDE_DIR}
+    ${TINYOBJLOADER_INCLUDE_DIR}
 )
 
 # Linkování knihoven

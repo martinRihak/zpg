@@ -90,13 +90,13 @@ void SceneBuilder::createForest()
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
 
     DrawableObject *shrek = createObject("shrek", "phong");
-    shrek->getMaterial()->loadTexture("../Models/assets/shrek/shrek.png");
+    shrek->getMaterial()->loadTexture("Models/assets/shrek/shrek.png");
     shrek->getTransformation().setPosition(glm::vec3(5, 0, 0));
     DrawableObject *fiona = createObject("fiona", "phong");
-    fiona->getMaterial()->loadTexture("../Models/assets/shrek/fiona.png");
+    fiona->getMaterial()->loadTexture("Models/assets/shrek/fiona.png");
     fiona->getTransformation().setPosition(glm::vec3(7, 0, 0));
     DrawableObject *toiled = createObject("toiled", "phong");
-    toiled->getMaterial()->loadTexture("../Models/assets/shrek/toiled.jpg");
+    toiled->getMaterial()->loadTexture("Models/assets/shrek/toiled.jpg");
     toiled->getTransformation().setPosition(glm::vec3(6, 0, -3));
     toiled->getTransformation().setRotation(45.0f, glm::vec3(0, 1, 0));
 
@@ -138,12 +138,12 @@ void SceneBuilder::createForest()
 void SceneBuilder::createSunSystem()
 {
     std::vector<std::string> skyboxFaces = {
-        "../Models/NASA/2k_stars.jpg",
-        "../Models/NASA/2k_stars.jpg",
-        "../Models/NASA/2k_stars.jpg",
-        "../Models/NASA/2k_stars.jpg",
-        "../Models/NASA/2k_stars.jpg",
-        "../Models/NASA/2k_stars.jpg"};
+        "Models/NASA/2k_stars.jpg",
+        "Models/NASA/2k_stars.jpg",
+        "Models/NASA/2k_stars.jpg",
+        "Models/NASA/2k_stars.jpg",
+        "Models/NASA/2k_stars.jpg",
+        "Models/NASA/2k_stars.jpg"};
     Scene *scene = new Scene();
     DrawableObject *cube = createObject("cube", "phong");
     cube->getMaterial()->setFaces(skyboxFaces);
@@ -152,7 +152,7 @@ void SceneBuilder::createSunSystem()
 
     // Slunce
     DrawableObject *sun = createObject("sphereOBJ", "phong");
-    sun->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
+    sun->getMaterial()->loadTexture("Models/NASA/2k_sun.jpg");
     sun->getTransformation().setScale(glm::vec3(1.0f));
     sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     sun->createRotation(5.0f, glm::vec3(0, 1, 0), 1);
@@ -160,47 +160,47 @@ void SceneBuilder::createSunSystem()
     scene->addLight(sun->getLight());
 
     DrawableObject *mercury = createObject("sphereOBJ", "phong");
-    mercury->getMaterial()->loadTexture("../Models/NASA/2k_mercury.jpg");
+    mercury->getMaterial()->loadTexture("Models/NASA/2k_mercury.jpg");
     mercury->getTransformation().setScale(glm::vec3(0.05f));
     mercury->createOrbit(sun, 1.0f, 60.0f, 0.0f);
 
     DrawableObject *venus = createObject("sphereOBJ", "phong");
-    venus->getMaterial()->loadTexture("../Models/NASA/2k_venus_atmosphere.jpg");
+    venus->getMaterial()->loadTexture("Models/NASA/2k_venus_atmosphere.jpg");
     venus->getTransformation().setScale(glm::vec3(0.1f));
     venus->createOrbit(sun, 2.0f, 40.0f, 90.0f);
 
     DrawableObject *earth = createObject("sphereOBJ", "phong");
-    earth->getMaterial()->loadTexture("../Models/NASA/2k_earth_daymap.jpg");
+    earth->getMaterial()->loadTexture("Models/NASA/2k_earth_daymap.jpg");
     earth->getTransformation().setScale(glm::vec3(0.1f));
     earth->createOrbit(sun, 3.0f, 30.0f, 180.0f);
 
     DrawableObject *moon = createObject("sphereOBJ", "phong");
-    moon->getMaterial()->loadTexture("../Models/NASA/2k_moon.jpg");
+    moon->getMaterial()->loadTexture("Models/NASA/2k_moon.jpg");
     moon->getTransformation().setScale(glm::vec3(0.03f));
     moon->createOrbit(earth, 0.2f, 60.0f, 0.0f);
 
     DrawableObject *mars = createObject("sphereOBJ", "phong");
-    mars->getMaterial()->loadTexture("../Models/NASA/2k_mars.jpg");
+    mars->getMaterial()->loadTexture("Models/NASA/2k_mars.jpg");
     mars->getTransformation().setScale(glm::vec3(0.07f));
     mars->createOrbit(sun, 4.0f, 20.0f, 270.0f);
 
     DrawableObject *jupiter = createObject("sphereOBJ", "phong");
-    jupiter->getMaterial()->loadTexture("../Models/NASA/2k_jupiter.jpg");
+    jupiter->getMaterial()->loadTexture("Models/NASA/2k_jupiter.jpg");
     jupiter->getTransformation().setScale(glm::vec3(0.4f));
     jupiter->createOrbit(sun, 20.0f, 10.0f, 45.0f);
 
     DrawableObject *saturn = createObject("sphereOBJ", "phong");
-    saturn->getMaterial()->loadTexture("../Models/NASA/2k_saturn.jpg");
+    saturn->getMaterial()->loadTexture("Models/NASA/2k_saturn.jpg");
     saturn->getTransformation().setScale(glm::vec3(0.3f));
     saturn->createOrbit(sun, 35.0f, 5.0f, 135.0f);
 
     DrawableObject *uranus = createObject("sphereOBJ", "phong");
-    uranus->getMaterial()->loadTexture("../Models/NASA/2k_uranus.jpg");
+    uranus->getMaterial()->loadTexture("Models/NASA/2k_uranus.jpg");
     uranus->getTransformation().setScale(glm::vec3(0.2f));
     uranus->createOrbit(sun, 50.0f, 3.0f, 225.0f);
 
     DrawableObject *neptune = createObject("sphereOBJ", "phong");
-    neptune->getMaterial()->loadTexture("../Models/NASA/2k_neptune.jpg");
+    neptune->getMaterial()->loadTexture("Models/NASA/2k_neptune.jpg");
     neptune->getTransformation().setScale(glm::vec3(0.2f));
     neptune->createOrbit(sun, 60.0f, 2.0f, 315.0f);
     scene->addObject(cube);
