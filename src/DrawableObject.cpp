@@ -34,22 +34,53 @@ void DrawableObject::createRandomMovement(float speed, float baseInterval)
 }
 void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
 {
+    if (material->isSkyBoxMaterial())
+    {
+        drawSkybox(dt);
+    }
+    else
+    {
+        drawRegular(dt, lights);
+    }
+}
+void DrawableObject::drawSkybox(float dt)
+{
+    glDepthFunc(GL_LEQUAL);
+
+    shader->use();
+
+    shader->setModelMatrix(tranformation->getModelMatrix());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, material->getTextureID());
+    this->shader->setUniform("cubeTexture", 0);
+    update(dt);
+    model->draw();
+
+    glDepthFunc(GL_LESS);
+}
+
+void DrawableObject::drawRegular(float dt, const std::vector<Light *> &lights)
+{
+
     shader->use();
     shader->setUniform("lightCount", static_cast<int>(lights.size()));
     shader->setModelMatrix(tranformation->getModelMatrix());
+
     for (int i = 0; i < lights.size() && i < 8; i++)
     {
         lights[i]->update(dt);
         shader->updateLight(i, lights[i]);
     }
+
     shader->updateMaterial(this->material);
+
     update(dt);
     model->draw();
+
     glUseProgram(0);
 }
-void DrawableObject::drawSkybox(float dt)
-{
-}
+
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)
 {
     this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis, dir);
@@ -163,8 +194,8 @@ bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &
         tmax = tzmax;
 
     if (tmin > 0.0f)
-    {                
-        dist = tmin; 
+    {
+        dist = tmin;
         return true;
     }
     return false;

@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -54,7 +54,13 @@ App::~App()
 
 void App::createScenes()
 {
-
+    std::vector<std::string> skyboxFaces = {
+        "../Models/cubeMap/stars_posx.jpg",
+        "../Models/cubeMap/stars_negx.jpg",
+        "../Models/cubeMap/stars_posy.jpg",
+        "../Models/cubeMap/stars_negy.jpg",
+        "../Models/cubeMap/stars_posz.jpg",
+        "../Models/cubeMap/stars_negz.jpg"};
     float triangle3D[] = {
         0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
         0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
@@ -73,16 +79,16 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
-    //Model *formula = new Model("../Models/assets/formula1.obj");
+    // Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house = new Model("../Models/assets/house.obj");
-    Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
-    Model *Ferarri = new Model("../Models/assets/Humvee.obj");
+    //  Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
+    // Model *Ferarri = new Model("../Models/assets/Humvee.obj");
     Model *planeModel = new Model(plane, sizeof(plane), 6, true);
     Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
-    Model *sphereOBJ = new Model("Models/NASA/sphereOBJ.obj");
-    Model* cubeModel = new Model("Models/assets/cube.obj");
+    Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
+    Model *cubeModel = new Model("../Models/assets/cube.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -91,34 +97,30 @@ void App::createScenes()
     Shader *vertex02 = new Shader("shaders/vert.vert", GL_VERTEX_SHADER);
     Shader *skyboxVert = new Shader("shaders/skybox.vert", GL_VERTEX_SHADER);
     Shader *skyboxFrag = new Shader("shaders/skybox.frag", GL_FRAGMENT_SHADER);
-    
 
-    ShaderProgram *skyboxShader = new ShaderProgram(*skyboxVert, *skyboxFrag,this->camera);
-    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag,this->camera);
-    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag,this->camera);
-    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag,this->camera);
-    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag,this->camera);
-
+    ShaderProgram *skyboxShader = new ShaderProgram(*skyboxVert, *skyboxFrag, this->camera);
+    ShaderProgram *lambertShader = new ShaderProgram(*vertex02, *lambertFrag, this->camera);
+    ShaderProgram *constantShader = new ShaderProgram(*vertex02, *constantFrag, this->camera);
+    ShaderProgram *phongShader = new ShaderProgram(*vertex02, *phongFrag, this->camera);
+    ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
 
     this->builder = new SceneBuilder(this->camera);
     builder->registerModel("triangle", triangleModel);
     builder->registerModel("triangle3DModel", triandel3DModel);
     builder->registerModel("plane", planeModel);
-    builder->registerModel("ferarri", Ferarri);
+    //  builder->registerModel("ferarri", Ferarri);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("house", house);
-    builder->registerModel("koen", Koen);
+    // builder->registerModel("koen", Koen);
 
     builder->registerModel("shrek", shrekModel);
     builder->registerModel("fiona", fionaModel);
     builder->registerModel("toiled", toiledModel);
 
-
     builder->registerModel("sphereOBJ", sphereOBJ);
     builder->registerModel("cube", cubeModel);
-
 
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
@@ -130,7 +132,7 @@ void App::createScenes()
     builder->create4Spheres();
     builder->createForest();
     builder->createSunSystem();
-    //builder->createTestScene();
+    // builder->createTestScene();
 }
 void App::run()
 {

@@ -204,7 +204,7 @@ void Model::draw()
         glBindVertexArray(0);
         GLenum err = glGetError();
         if (err != GL_NO_ERROR)
-            std::cerr << "OpenGL error: " << err << std::endl;
+            std::cerr << "OpenGL: " << err << std::endl;
     }
 }
 const std::string &Model::getTexturePath(size_t meshIndex) const

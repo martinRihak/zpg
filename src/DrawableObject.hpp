@@ -24,7 +24,6 @@ private:
     Transformation *tranformation;
     Material *material;
 
-
     std::unique_ptr<IAnimator> animator;
     bool animated = false;
     CompositeTransformation queuedTransforms;
@@ -35,13 +34,14 @@ private:
     bool selected = false;
     uint8_t id;
 
+    void drawSkybox(float dt);
+    void drawRegular(float dt, const std::vector<Light*> &lights);
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
-    void drawSkybox(float dt);
-    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir); 
+    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir);
     void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     Transformation &getTransformation();
     void update(float dt);
@@ -69,5 +69,4 @@ public:
 
     uint8_t getID() const { return id; }
     void setID(uint8_t id) { this->id = id; }
-
 };

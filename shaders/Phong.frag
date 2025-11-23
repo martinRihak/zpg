@@ -29,7 +29,6 @@ struct Material {
     float shininess;
     vec3 emission;
     bool hasTexture;
-    bool isSkyBox;
     sampler2D ourTexture;
 };
 uniform Material material;

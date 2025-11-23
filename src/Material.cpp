@@ -41,7 +41,7 @@ void Material::loadCubeMap()
 {
     if (faces.size() != 6)
     {
-        std::cerr << "Chyba: Cube mapa vyžaduje přesně 6 textur!" << std::endl;
+        std::cerr << "Cube map requires exactly 6 images!" << std::endl;
         return;
     }
 
@@ -49,22 +49,22 @@ void Material::loadCubeMap()
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     int width, height, nrChannels;
-    unsigned char *data;
-    for (unsigned int i = 0; i < this->faces.size(); ++i)
+
+    for (unsigned int i = 0; i < faces.size(); i++)
     {
-        data = stbi_load(this->faces[i].c_str(), &width, &height, &nrChannels, 4);
-        if (data)
+        unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+
+        if (!data)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        }
-        else
-        {
-            std::cerr << "Chyba načtení textury cube mapy: " << faces[i] << std::endl;
-            stbi_image_free(data);
+            std::cerr << "Failed to load cubemap face: " << faces[i] << std::endl;
             glDeleteTextures(1, &textureID);
             textureID = 0;
             return;
         }
+
+        GLenum format = (nrChannels == 3 ? GL_RGB : GL_RGBA);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,0,format,width,height,0,format,GL_UNSIGNED_BYTE,data);
+        stbi_image_free(data);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -76,6 +76,5 @@ void Material::loadCubeMap()
     texture = true;
     isSkyBox = true;
 
-    stbi_image_free(data);
-    std::cout << "Cube mapa úspěšně načtena s ID: " << textureID << std::endl;
+    std::cout << "Cubemap loaded: " << textureID << std::endl;
 }

@@ -158,7 +158,6 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.objectColor", mat->getObjectColor());
     setUniform("material.emission", mat->getEmission());
     setUniform("material.hasTexture", mat->hasTexture());
-    setUniform("material.isSkyBox", mat->isSkyBoxMaterial());
     if (mat->hasTexture())
     {
         glActiveTexture(GL_TEXTURE0);
