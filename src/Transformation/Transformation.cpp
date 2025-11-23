@@ -1,13 +1,14 @@
 #include "Transformation.hpp"
 
 Transformation::Transformation()
-    : move(std::make_shared<Move>()), rotate(std::make_shared<Rotate>()), scale(std::make_shared<Scale>()) {
+    : move(std::make_shared<Move>()), rotate(std::make_shared<Rotate>()), scale(std::make_shared<Scale>()),custom(std::make_shared<CustomTransform>()), useCustom(false){
     updateModelMatrix();
 }
 
 void Transformation::updateModelMatrix() {
 
     modelMatrix = move->getModelMatrix() * rotate->getModelMatrix() * scale->getModelMatrix();
+    if(useCustom) modelMatrix = modelMatrix * custom->getModelMatrix();
 }
 
 void Transformation::setPosition(const glm::vec3& pos) {
