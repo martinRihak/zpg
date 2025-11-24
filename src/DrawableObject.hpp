@@ -41,15 +41,7 @@ public:
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
-<<<<<<< HEAD
-
-// Animations
-=======
-    void drawSkybox(float dt);
-    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir); 
-    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     Transformation &getTransformation();
->>>>>>> bab5ef6f1a2eb10088a1525df3cd94b8d6c1d3b5
     void update(float dt);
     IAnimator *getAnimator() const;
     void setAnimated(bool enabled);
@@ -60,7 +52,6 @@ public:
     void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
     
     
-    Transformation &getTransformation();
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
     ShaderProgram *getShaderProgram() const;
