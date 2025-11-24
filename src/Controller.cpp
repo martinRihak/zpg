@@ -1,6 +1,8 @@
 #include "Controller.hpp"
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtx/norm.hpp>            
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtx/norm.hpp>            
 #include <limits>
 Controller::Controller()
 {
@@ -44,6 +46,7 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         }
 
         float xoffset = (xpos - lastX) * mouseSensitivity;
+        float yoffset = (ypos - lastY) * mouseSensitivity;
         float yoffset = (ypos - lastY) * mouseSensitivity;
 
         float newAlpha = camera->getAlpha() + yoffset;
@@ -137,8 +140,10 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         glm::vec2 currentMousePos(xpos, ypos);
         if (glm::distance2(currentMousePos, lastMousePos) > 0.1f)
         { 
+        { 
             int width, height;
             glfwGetWindowSize(window, &width, &height);
+            ypos = height - ypos; 
             ypos = height - ypos; 
 
             glm::vec3 screenNear(2.0f * xpos / width - 1.0f, 2.0f * ypos / height - 1.0f, -1.0f);
@@ -153,8 +158,10 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             glm::vec3 rayDir = glm::normalize(rayEnd - rayOrigin);
 
             
+            
             float objY = selectedObject->getTransformation().getPosition().y;
             if (std::abs(rayDir.y) > 1e-6f)
+            { 
             { 
                 float t = (objY - rayOrigin.y) / rayDir.y;
                 if (t > 0.0f)
@@ -170,6 +177,7 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
     if (selectedObject != nullptr)
     {
         glm::vec3 deltaPos(0.0f);
+        float speed = 2.0f; 
         float speed = 2.0f; 
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
             deltaPos.x -= speed * dt;
@@ -204,11 +212,13 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     int newY = height - (int)ypos; 
+    int newY = height - (int)ypos; 
 
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
         GLbyte color[4];
         GLfloat depth;
+        GLuint stencilId; 
         GLuint stencilId; 
 
         glReadPixels((GLint)xpos, newY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
@@ -229,6 +239,8 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         }
 
         glm::vec3 screenPos((GLfloat)xpos, (GLfloat)newY, depth);
+        glm::mat4 viewMatrix = camera->getCamera();          
+        glm::mat4 projMatrix = camera->getProjectionMatrix(); 
         glm::mat4 viewMatrix = camera->getCamera();          
         glm::mat4 projMatrix = camera->getProjectionMatrix(); 
         glm::vec4 viewport(0, 0, (GLfloat)width, (GLfloat)height);

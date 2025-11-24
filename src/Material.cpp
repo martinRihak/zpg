@@ -56,7 +56,16 @@ void Material::loadCubeMap()
 
         if (!data)
         {
+<<<<<<< HEAD
             std::cerr << "Failed to load cubemap face: " << faces[i] << std::endl;
+=======
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        }
+        else
+        {
+            std::cerr << "Chyba načtení textury cube mapy: " << faces[i] << std::endl;
+            stbi_image_free(data);
+>>>>>>> bab5ef6f1a2eb10088a1525df3cd94b8d6c1d3b5
             glDeleteTextures(1, &textureID);
             textureID = 0;
             return;
