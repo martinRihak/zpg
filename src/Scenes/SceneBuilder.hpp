@@ -31,7 +31,7 @@ public:
     void createForest();
     void createSunSystem();
     void createTestScene();
-    void createShrek();
+    void createGame();
     // Accessors
 
     Model *getModel(const std::string &name) { return models[name]; }

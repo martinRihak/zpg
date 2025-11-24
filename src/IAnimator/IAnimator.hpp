@@ -54,3 +54,14 @@ public:
     void update(Transformation& t, float dt) override;
 
 };
+class MoveBetweenPointsAnimator : public IAnimator {
+public:
+    MoveBetweenPointsAnimator(glm::vec3 pointA, glm::vec3 pointB, float speed);
+
+    void update(Transformation &t, float dt) override;
+
+private:
+    glm::vec3 A, B;
+    float speed;
+    bool goingToB;
+};

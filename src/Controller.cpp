@@ -234,6 +234,5 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         glm::vec4 viewport(0, 0, (GLfloat)width, (GLfloat)height);
         glm::vec3 worldPos = glm::unProject(screenPos, viewMatrix, projMatrix, viewport);
         printf("unProject [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
-
     }
 }

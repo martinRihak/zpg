@@ -2,7 +2,7 @@
 #include "Lights/Reflector.hpp"
 
 Camera::Camera()
-    : eye(0.0f, 0.2f, -5.5f),
+    : eye(0.0f, 0.2f, 15.5f),
       up(0.0f, 1.0f, 0.0f),
       alpha(0.0f),
       fi(-90.0f)

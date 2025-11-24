@@ -91,7 +91,11 @@ void DrawableObject::createOrbit(DrawableObject *center, float radius, float spe
     animator = std::make_unique<OrbitAnimator>(center, radius, speedDegPerSec, initialAngleDeg);
     setAnimated(true);
 }
-
+void DrawableObject::createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed)
+{
+    animator = std::make_unique<MoveBetweenPointsAnimator>(p1, p2, speed);
+    setAnimated(true);
+}
 Transformation &DrawableObject::getTransformation()
 {
     return *tranformation;

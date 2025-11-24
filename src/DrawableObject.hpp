@@ -41,19 +41,24 @@ public:
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
-    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir);
-    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
-    Transformation &getTransformation();
+
+// Animations
     void update(float dt);
     IAnimator *getAnimator() const;
     void setAnimated(bool enabled);
     bool isAnimated() const;
+    void createRotation(float speedDegPerSec, glm::vec3 axis, int dir);
+    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
+    void createRandomMovement(float speed, float baseInterval);
+    void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
+    
+    
+    Transformation &getTransformation();
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
     ShaderProgram *getShaderProgram() const;
     DrawableObject *clone() const;
 
-    void createRandomMovement(float speed, float baseInterval);
     bool getHasLight() const;
     PointLight *getLight() const;
     void createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att);

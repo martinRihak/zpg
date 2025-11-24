@@ -248,6 +248,19 @@ void SceneBuilder::createTestScene()
     scena->addLight(light);
     this->createScene(scena);
 }
+void SceneBuilder::createGame()
+{
+    Scene *scene = new Scene();
+    DrawableObject *formula = createObject("formula", "phong");
+    formula->getTransformation().setScale(glm::vec3(0.2f));
+    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
+    formula->createBetweenPoints(glm::vec3(-20.0f, 0.0f, 0.0f), glm::vec3(20.0f, 0.0f, 0.0f), 5.0f);
+    Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    scene->addLight(light);
+    scene->addObject(formula);
+    this->createScene(scene);
+
+}
 Scene *SceneBuilder::getScene(int8_t index) const
 {
     if (index >= 0 && index < scenes.size())

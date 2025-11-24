@@ -79,7 +79,7 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
-    // Model *formula = new Model("../Models/assets/formula1.obj");
+    Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house = new Model("../Models/assets/house.obj");
     //  Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
     // Model *Ferarri = new Model("../Models/assets/Humvee.obj");
@@ -113,6 +113,7 @@ void App::createScenes()
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("house", house);
+    builder->registerModel("formula", formula);
     // builder->registerModel("koen", Koen);
 
     builder->registerModel("shrek", shrekModel);
@@ -128,11 +129,12 @@ void App::createScenes()
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
 
-    builder->createTriangle();
-    builder->create4Spheres();
-    builder->createForest();
-    builder->createSunSystem();
-    // builder->createTestScene();
+    builder->createGame();
+    // builder->createTriangle();
+    // builder->create4Spheres();
+    // builder->createForest();
+    // builder->createSunSystem();
+    //  builder->createTestScene();
 }
 void App::run()
 {

@@ -81,3 +81,30 @@ void RandomMovementAnimator::update(Transformation &t, float dt) {
     
     t.setPosition(newPosition);
 }
+MoveBetweenPointsAnimator::MoveBetweenPointsAnimator(glm::vec3 pointA, glm::vec3 pointB, float speed)
+    : A(pointA), B(pointB), speed(speed), goingToB(true) {}
+
+
+void MoveBetweenPointsAnimator::update(Transformation &t, float dt) {
+
+    glm::vec3 currentPos = t.getPosition();
+    glm::vec3 target = goingToB ? B : A;
+
+    glm::vec3 direction = glm::normalize(target - currentPos);
+
+    glm::vec3 nextPos = currentPos + direction * speed * dt;
+
+    if (glm::distance(currentPos, target) < glm::distance(currentPos, nextPos)) {
+        nextPos = target;
+        goingToB = !goingToB;
+        // Calculate the new direction vector for rotation
+        // Calculate the angle between the initial direction (e.g., positive X) and the new direction
+        // Assuming the object's "forward" is along the positive Z axis initially
+        float angleRad = atan2(target.z, target.x); 
+        float angleDeg = glm::degrees(angleRad);
+        // Set the rotation
+        t.setRotation(angleDeg, glm::vec3(0, 1, 0));
+    }
+
+    t.setPosition(nextPos);
+}
