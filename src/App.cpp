@@ -74,23 +74,21 @@ void App::createScenes()
         -0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
         0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
         0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f};
-
-    // Model *model = new Model(points, sizeof(points), 12, true);
-//    Model *bush = new Model(bushes, sizeof(bushes), 8730);
-    //Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
-    //Model *treeModel = new Model(tree, sizeof(tree), 92814);
-    //Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
-    //Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
-    ////Model *formula = new Model("../Models/assets/formula1.obj");
-    //Model *house = new Model("../Models/assets/house.obj");
-    //Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
-    //Model *Ferarri = new Model("../Models/assets/Humvee.obj");
-    //Model *planeModel = new Model(plane, sizeof(plane), 6, true);
-    //Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
-    //Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
-    //Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
-    Model *sphereOBJ = new Model("Models/NASA/sphereOBJ.obj");
-    Model* cubeModel = new Model("Models/assets/cube.obj");
+    Model *bush = new Model(bushes, sizeof(bushes), 8730);
+    Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
+    Model *treeModel = new Model(tree, sizeof(tree), 92814);
+    Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
+    Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
+    Model *formula = new Model("../Models/assets/formula1.obj");
+    Model *house = new Model("../Models/assets/house.obj");
+    //  Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
+    // Model *Ferarri = new Model("../Models/assets/Humvee.obj");
+    Model *planeModel = new Model(plane, sizeof(plane), 6, true);
+    Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
+    Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
+    Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
+    Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
+    Model *cubeModel = new Model("../Models/assets/cube.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -107,21 +105,20 @@ void App::createScenes()
     ShaderProgram *blinnShader = new ShaderProgram(*vertex02, *blinnFrag, this->camera);
 
     this->builder = new SceneBuilder(this->camera);
-//    builder->registerModel("triangle", triangleModel);
-    //builder->registerModel("triangle3DModel", triandel3DModel);
-    //builder->registerModel("plane", planeModel);
-    //builder->registerModel("ferarri", Ferarri);
-    //builder->registerModel("bush", bush);
-    //builder->registerModel("sphere", sphereModel);
-    //builder->registerModel("tree", treeModel);
-    //builder->registerModel("formula", formula);
-    //builder->registerModel("house", house);
-    //builder->registerModel("koen", Koen);
+    builder->registerModel("triangle", triangleModel);
+    builder->registerModel("triangle3DModel", triandel3DModel);
+    builder->registerModel("plane", planeModel);
+    //  builder->registerModel("ferarri", Ferarri);
+    builder->registerModel("bush", bush);
+    builder->registerModel("sphere", sphereModel);
+    builder->registerModel("tree", treeModel);
+    builder->registerModel("house", house);
+    builder->registerModel("formula", formula);
+    // builder->registerModel("koen", Koen);
 
-    //builder->registerModel("shrek", shrekModel);
-    //builder->registerModel("fiona", fionaModel);
-    //builder->registerModel("toiled", toiledModel);
-
+    builder->registerModel("shrek", shrekModel);
+    builder->registerModel("fiona", fionaModel);
+    builder->registerModel("toiled", toiledModel);
 
     builder->registerModel("sphereOBJ", sphereOBJ);
     builder->registerModel("cube", cubeModel);
@@ -132,11 +129,12 @@ void App::createScenes()
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
 
-    //builder->createTriangle();
-   // builder->create4Spheres();
-   // builder->createForest();
-    builder->createSunSystem();
-    //builder->createTestScene();
+    builder->createGame();
+    // builder->createTriangle();
+    // builder->create4Spheres();
+    // builder->createForest();
+    // builder->createSunSystem();
+    //  builder->createTestScene();
 }
 void App::run()
 {
