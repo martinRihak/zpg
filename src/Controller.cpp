@@ -6,8 +6,6 @@
 #include <limits>
 Controller::Controller()
 {
-    for (int i = 0; i < 9; ++i)
-        prevKeyState[i] = false;
 }
 
 Controller::~Controller() {}
@@ -216,8 +214,25 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     int newY = height - (int)ypos;
+    if (button == GLFW_MOUSE_BUTTON_LEFT && scene->isGameScene())
+    {
+        glm::vec3 rayOrigin = camera->getPosition();
 
-    if (button == GLFW_MOUSE_BUTTON_LEFT)
+        float x = (2.0f * xpos) / width - 1.0f;
+        float y = 1.0f - (2.0f * ypos) / height;
+        glm::vec4 rayClip(x, y, -1.0f, 1.0f);
+        glm::vec4 rayEye = glm::inverse(camera->getProjectionMatrix()) * rayClip;
+        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+        glm::vec3 rayWorld = glm::normalize(glm::vec3(glm::inverse(camera->getCamera()) * rayEye));
+        DrawableObject *shot = builder->createObject("sphere", "phong");
+
+        shot->getTransformation().setScale(glm::vec3(0.05f));
+        glm::vec3 startPos = rayOrigin + rayWorld * 0.5f; 
+
+        shot->addAnimator(new ShootAnimator(startPos,rayWorld, 10.0f,camera));
+        scene->addObject(shot);
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && !scene->isGameScene())
     {
         GLbyte color[4];
         GLfloat depth;

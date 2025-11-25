@@ -36,4 +36,6 @@ public:
     virtual void update(float dt) = 0;
     virtual LightType getType() const = 0;
     virtual ~Light() = default; // unique_ptr se postará o smazání
+    void destroy() {};
+
 };

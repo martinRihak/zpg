@@ -134,7 +134,7 @@ void App::createScenes()
     builder->createGame();
    // builder->createTriangle();
     // builder->create4Spheres();
-    //builder->createForest();
+    builder->createForest();
     builder->createSunSystem();
     //  builder->createTestScene();
 }

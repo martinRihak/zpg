@@ -16,7 +16,9 @@ DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
 DrawableObject::~DrawableObject()
 {
 }
-
+void DrawableObject::destroy(){
+    destroyVal = true;
+}
 void DrawableObject::draw(float dt)
 {
     shader->use();

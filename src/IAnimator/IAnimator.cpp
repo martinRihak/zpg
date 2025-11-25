@@ -70,7 +70,7 @@ void RandomMovementAnimator::randomizeDirection()
 
 void RandomMovementAnimator::update(IAnimatable &obj, float dt)
 {
-    Transformation& t = obj.getTransformation();
+    Transformation &t = obj.getTransformation();
     timeSinceLastChange += dt;
 
     float effectiveInterval = baseChangeInterval + (static_cast<float>(std::rand()) / RAND_MAX - 0.5f) * 0.5f;
@@ -101,7 +101,7 @@ MoveBetweenPointsAnimator::MoveBetweenPointsAnimator(glm::vec3 pointA, glm::vec3
 
 void MoveBetweenPointsAnimator::update(IAnimatable &obj, float dt)
 {
-    Transformation& t = obj.getTransformation();
+    Transformation &t = obj.getTransformation();
     glm::vec3 currentPos = t.getPosition();
     glm::vec3 target = goingToB ? B : A;
 
@@ -123,21 +123,48 @@ void MoveBetweenPointsAnimator::update(IAnimatable &obj, float dt)
 
     t.setPosition(nextPos);
 }
-ApproachCameraAnimator::ApproachCameraAnimator(const Camera *cam, float speed,bool& hit,float radius)
-    : camera(cam), speed(speed), hit(hit), radius(radius) {}  // Opravená inicializace: přidán radius
+ShootAnimator::ShootAnimator(glm::vec3 startPos, glm::vec3 direction, float speed, Camera *camera)
+    : startPos(startPos), direction(direction), speed(speed), initialized(false), camera(camera), radius(20.0f) {}
+
+void ShootAnimator::update(IAnimatable &obj, float dt)
+{
+    Transformation &t = obj.getTransformation();
+
+    if (!initialized)
+    {
+        t.setPosition(startPos);
+        initialized = true;
+    }
+    glm::vec3 currentPos = t.getPosition();
+    glm::vec3 cameraPos = camera->getPosition();
+
+    float distanceToCamera = glm::distance(currentPos, cameraPos);
+
+    if (distanceToCamera >= radius)
+    {
+        obj.destroy();
+        return;
+    }
+    glm::vec3 newPos = currentPos + direction * speed * dt;
+    t.setPosition(newPos);
+}
+ApproachCameraAnimator::ApproachCameraAnimator(const Camera *cam, float speed, float radius)
+    : camera(cam), speed(speed), radius(radius) {} // Opravená inicializace: přidán radius
 void ApproachCameraAnimator::update(IAnimatable &obj, float dt)
 {
-    Transformation& t = obj.getTransformation();
-    if (!camera) return;
+    Transformation &t = obj.getTransformation();
+    if (!camera)
+        return;
 
     glm::vec3 currentPos = t.getPosition();
     glm::vec3 cameraPos = camera->getPosition();
 
     float distanceToCamera = glm::distance(currentPos, cameraPos);
 
-    if (distanceToCamera <= radius) {
-        hit = true;
-        return;  
+    if (distanceToCamera <= radius)
+    {
+        obj.destroy();
+        return;
     }
 
     glm::vec3 direction = glm::normalize(cameraPos - currentPos);

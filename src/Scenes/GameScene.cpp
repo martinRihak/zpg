@@ -17,17 +17,32 @@ void GameScene::render(float dt)
         glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);
         o->draw(dt, this->lights);
     }
+    for (DrawableObject *e : enemy)
+    {
+        e->draw(dt, this->lights);
+    }
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     for (DrawableObject *o : this->objects)
     {
-        if (o->getHit() == true)
+        if (o->isDestroyed() == true)
         {
-            std::cout << o->getID()<< ": Byl smazan" << std::endl;
+            std::cout << o->getID() << ": Byl smazan" << std::endl;
             objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());
             delete o;
             continue;
         }
         o->draw(dt, this->lights);
+    }
+    for (DrawableObject *e : enemy)
+    {
+        if (e->isDestroyed() == true)
+        {
+            std::cout << e->getID() << ": Byl smazan" << std::endl;
+            enemy.erase(std::remove(enemy.begin(), enemy.end(), e), enemy.end());
+            delete e;
+            continue;
+        }
+        e->draw(dt, this->lights);
     }
 
     updateSpawning(dt);
@@ -64,7 +79,11 @@ void GameScene::updateSpawning(float dt)
 
         float approachSpeed = 0.5f + static_cast<float>(rand() % 1000) / 1000.0f * 1.6f;
 
-        enemy->addAnimator(new ApproachCameraAnimator(camera, approachSpeed, enemy->getHit(),2.0f));
-        this->addObject(enemy);
+        enemy->addAnimator(new ApproachCameraAnimator(camera, approachSpeed, 2.0f));
+        this->enemy.push_back(enemy);
     }
+}
+
+void GameScene::colision()
+{
 }

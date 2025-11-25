@@ -28,7 +28,7 @@ private:
     std::unique_ptr<IAnimator> animator;
     bool animated = false;
     CompositeTransformation queuedTransforms;
-    bool hasLight = false, hit = false;
+    bool hasLight = false, destroyVal = false;
     PointLight *light = nullptr;
 
     glm::vec3 minBounds, maxBounds;
@@ -77,11 +77,10 @@ public:
     int getID() const { return id; }
     void setID(int id) { this->id = id; }
 
-    void setHit(bool hit) { this->hit = hit; }
 
-    
-    bool& getHit() { return hit; }
-    const bool& getHit() const { return hit; }
+
+    void destroy() override;
+    bool isDestroyed() const { return destroyVal; }
 
 
 };

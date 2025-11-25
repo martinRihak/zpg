@@ -4,40 +4,46 @@
 // Sjednocené rozhraní pro všechny animovatelné objekty
 #include "IAnimatable.hpp"
 
-class IAnimator {
+class IAnimator
+{
 public:
     virtual ~IAnimator() = default;
     // Sjednocená update metoda pracující s obecným animovatelným objektem
     virtual void update(IAnimatable &obj, float dt) = 0;
 };
-class NullAnimator : public IAnimator {
+class NullAnimator : public IAnimator
+{
 public:
     void update(IAnimatable &obj, float dt) override;
 };
 
-class RotateAnimator : public IAnimator {
+class RotateAnimator : public IAnimator
+{
 public:
-    RotateAnimator(float speedDegPerSec, glm::vec3 axis,int dir);
+    RotateAnimator(float speedDegPerSec, glm::vec3 axis, int dir);
     void update(IAnimatable &obj, float dt) override;
+
 private:
     float speed;
     int dir;
     glm::vec3 axis;
     float angle;
 };
-class OrbitAnimator : public IAnimator {
+class OrbitAnimator : public IAnimator
+{
 public:
-    OrbitAnimator(const IAnimatable* center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
+    OrbitAnimator(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void update(IAnimatable &obj, float dt) override;
+
 private:
-    const IAnimatable* center;
+    const IAnimatable *center;
     float radius;
     float speed;
     float angle;
 };
 
-
-class RandomMovementAnimator : public IAnimator {
+class RandomMovementAnimator : public IAnimator
+{
 private:
     float speed;
     float timeSinceLastChange;
@@ -46,15 +52,16 @@ private:
     glm::vec3 maxBounds;
     glm::vec3 minBounds;
     void randomizeDirection();
-    bool isInBounds(const glm::vec3& position) const;
+    bool isInBounds(const glm::vec3 &position) const;
+
 public:
     RandomMovementAnimator(float speed, float baseChangeInterval,
-                          glm::vec3 minBounds = glm::vec3(-5.0f,0.0f,-5.0f),
-                          glm::vec3 maxBounds = glm::vec3(5.0f));
-    void update(IAnimatable& obj, float dt) override;
-
+                           glm::vec3 minBounds = glm::vec3(-5.0f, 0.0f, -5.0f),
+                           glm::vec3 maxBounds = glm::vec3(5.0f));
+    void update(IAnimatable &obj, float dt) override;
 };
-class MoveBetweenPointsAnimator : public IAnimator {
+class MoveBetweenPointsAnimator : public IAnimator
+{
 public:
     MoveBetweenPointsAnimator(glm::vec3 pointA, glm::vec3 pointB, float speed);
 
@@ -66,14 +73,28 @@ private:
     bool goingToB;
 };
 class Camera; // Forward declaration
-class ApproachCameraAnimator : public IAnimator {
+class ShootAnimator : public IAnimator
+{
 private:
-    const Camera* camera;
+    glm::vec3 startPos;
+    glm::vec3 direction; // Norm vector
     float speed;
-    bool& hit;
+    bool initialized;
     float radius;
-public:
-    ApproachCameraAnimator(const Camera* cam, float speed,bool& hit,float radius);
-    void update(IAnimatable& obj, float dt) override;
+    Camera *camera;
 
+public:
+    ShootAnimator(glm::vec3 startPos, glm::vec3 direction, float speed , Camera *camera);
+    void update(IAnimatable &obj, float dt) override;
+};
+class ApproachCameraAnimator : public IAnimator
+{
+private:
+    const Camera *camera;
+    float speed;
+    float radius;
+
+public:
+    ApproachCameraAnimator(const Camera *cam, float speed,  float radius);
+    void update(IAnimatable &obj, float dt) override;
 };
