@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include "Model.hpp"
 #include "shaderProgram/ShaderProgram.hpp"
+#include "IAnimator/IAnimatable.hpp"
 #include "Transformation/Transformation.hpp"
 #include "IAnimator/IAnimator.hpp"
 #include "Transformation/ITransformation.hpp"
@@ -16,23 +17,23 @@
 class PointLight;
 class Light;
 class ShaderProgram;
-class DrawableObject
+class IAnimator;
+class DrawableObject : public IAnimatable
 {
 private:
     Model *model;
     ShaderProgram *shader;
-    Transformation *tranformation;
+    std::shared_ptr<Transformation> tranformation;
     Material *material;
-
     std::unique_ptr<IAnimator> animator;
     bool animated = false;
     CompositeTransformation queuedTransforms;
-    bool hasLight = false;
+    bool hasLight = false, hit = false;
     PointLight *light = nullptr;
 
     glm::vec3 minBounds, maxBounds;
     bool selected = false;
-    uint8_t id;
+    int id;
 
     void drawSkybox(float dt);
     void drawRegular(float dt, const std::vector<Light*> &lights);
@@ -41,17 +42,20 @@ public:
     ~DrawableObject();
     void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
-    Transformation &getTransformation();
-    void update(float dt);
+    Transformation &getTransformation() override;
+    const Transformation &getTransformation() const override;
+    void setTransformation(std::shared_ptr<Transformation> tranformation) { this->tranformation = std::move(tranformation); }
     IAnimator *getAnimator() const;
     void setAnimated(bool enabled);
     bool isAnimated() const;
     void createRotation(float speedDegPerSec, glm::vec3 axis, int dir);
-    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
+    void createOrbit(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void createRandomMovement(float speed, float baseInterval);
     void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
-    
-    
+    void addAnimator(IAnimator* animator){this->animator = std::unique_ptr<IAnimator>(animator);this->animated = true;}
+    void update(float dt);
+
+
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
     ShaderProgram *getShaderProgram() const;
@@ -70,6 +74,14 @@ public:
     void setSelected(bool selected) { this->selected = selected; }
     bool isSelected() const { return selected; }
 
-    uint8_t getID() const { return id; }
-    void setID(uint8_t id) { this->id = id; }
+    int getID() const { return id; }
+    void setID(int id) { this->id = id; }
+
+    void setHit(bool hit) { this->hit = hit; }
+
+    
+    bool& getHit() { return hit; }
+    const bool& getHit() const { return hit; }
+
+
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.hpp"
+#include "GameScene.hpp"
 #include "../Camera.hpp"
 #include <map>
 #include <memory>
@@ -40,6 +41,6 @@ public:
     DrawableObject *createObject(const std::string &modelName, const std::string &shaderName);
     Scene *getScene(int8_t index) const;
     int8_t getSceneCount() const;
-    int8_t getActiveSceneIndex() const;
+    Scene* getCurrentScene() { return scenes[activeSceneIndex]; }
     void setActiveSceneIndex(int8_t index);
 };

@@ -48,10 +48,17 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         float xoffset = (xpos - lastX) * mouseSensitivity;
         float yoffset = (ypos - lastY) * mouseSensitivity;
 
-        float newAlpha = camera->getAlpha() + yoffset;
-        float newFi = camera->getFi() + xoffset;
-
-        camera->setAngels(newAlpha, newFi);
+        if (currentScene && currentScene->isGameScene())
+        {
+            float newFi = camera->getFi() + xoffset;
+            camera->setAngels(camera->getAlpha(), newFi);
+        }
+        else
+        {
+            float newAlpha = camera->getAlpha() + yoffset;
+            float newFi = camera->getFi() + xoffset;
+            camera->setAngels(newAlpha, newFi);
+        }
 
         lastX = xpos;
         lastY = ypos;
@@ -71,7 +78,8 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             printf("%d\n", key);
             if (i < sceneCount)
             {
-                active = static_cast<int8_t>(i);
+                this->currentScene = builder->getScene(i);
+                this->active = i;
                 camera->notifyAll();
             }
         }
@@ -80,7 +88,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
 
     if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && selectedObject)
     {
-        Scene *currentScene = builder->getScene(active);
         if (currentScene)
         {
             auto &objs = currentScene->getObjects();
@@ -120,7 +127,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
                 if (newObj)
                 {
                     newObj->getTransformation().setPosition(plantPos);
-                    Scene *currentScene = builder->getScene(active);
                     if (currentScene)
                     {
                         currentScene->addObject(newObj);
@@ -228,6 +234,15 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         if (selectedObject)
         {
             printf("Vybrán objekt s ID %u\n", stencilId);
+            if (currentScene->isGameScene())
+            {
+
+                auto &objs = currentScene->getObjects();
+                objs.erase(std::remove(objs.begin(), objs.end(), selectedObject), objs.end());
+                delete selectedObject;
+                selectedObject = nullptr;
+                printf("Objekt smazán!\n");
+            }
         }
         else
         {

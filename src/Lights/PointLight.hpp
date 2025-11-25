@@ -13,7 +13,7 @@ public:
     PointLight(glm::vec3 pos, glm::vec3 d, glm::vec3 s,glm::vec3 a);
 
     void createRotation(float speedDegPerSec, glm::vec3 axis,int dir);
-    void createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
+    void createOrbit(const IAnimatable*center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void createRandomMovement(float speed, float baseInterval);
     void setAnimated(bool enabled);
     bool isAnimated() const;

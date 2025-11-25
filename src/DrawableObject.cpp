@@ -1,12 +1,13 @@
 #include "DrawableObject.hpp"
 #include "Transformation/ITransformation.hpp"
+#include "IAnimator/IAnimator.hpp"
 #include "Lights/PointLight.hpp"
 #include <limits> // Pro FLT_MAX
 
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader), material(new Material())
 {
-    tranformation = new Transformation();
+    tranformation = std::make_shared<Transformation>(); 
     // Inicializace bounding box
     minBounds = model->getMinBounds();
     maxBounds = model->getMaxBounds();
@@ -86,7 +87,7 @@ void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int di
     this->animator = std::make_unique<RotateAnimator>(speedDegPerSec, axis, dir);
     this->animated = true;
 }
-void DrawableObject::createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg)
+void DrawableObject::createOrbit(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg)
 {
     animator = std::make_unique<OrbitAnimator>(center, radius, speedDegPerSec, initialAngleDeg);
     setAnimated(true);
@@ -96,17 +97,26 @@ void DrawableObject::createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed
     animator = std::make_unique<MoveBetweenPointsAnimator>(p1, p2, speed);
     setAnimated(true);
 }
-Transformation &DrawableObject::getTransformation()
-{
-    return *tranformation;
-}
+
+
 void DrawableObject::update(float dt)
 {
     if (animated && animator)
     {
-        animator->update(*tranformation, dt);
+        animator->update(*this, dt);
     }
 }
+
+Transformation &DrawableObject::getTransformation()
+{
+    return *tranformation;
+}
+
+const Transformation &DrawableObject::getTransformation() const
+{
+    return *tranformation;
+}
+
 IAnimator *DrawableObject::getAnimator() const
 {
     return this->animator.get();

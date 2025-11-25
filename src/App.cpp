@@ -89,6 +89,7 @@ void App::createScenes()
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
     Model *cubeModel = new Model("../Models/assets/cube.obj");
+    Model* asteroid = new Model("../Models/NASA/asteroid/asteroid.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -122,7 +123,8 @@ void App::createScenes()
 
     builder->registerModel("sphereOBJ", sphereOBJ);
     builder->registerModel("cube", cubeModel);
-
+    builder->registerModel("asteroid",asteroid);
+    
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
@@ -130,16 +132,16 @@ void App::createScenes()
     builder->registerShader("skyboxShader", skyboxShader);
 
     builder->createGame();
-    // builder->createTriangle();
+   // builder->createTriangle();
     // builder->create4Spheres();
-    // builder->createForest();
-    // builder->createSunSystem();
+    //builder->createForest();
+    builder->createSunSystem();
     //  builder->createTestScene();
 }
 void App::run()
 {
     createScenes();
-
+   controller->setCurrentScene(builder->getScene(0));
     double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(this->window))
     {
@@ -148,16 +150,14 @@ void App::run()
         float dt = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
 
-        if (this->controller)
+        if (controller->getCurrentScene())
         {
-            this->controller->processInput(this->window, builder->getSceneCount(), this->camera, dt, getSceneBuilder());
-            builder->setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
-        }
-
-        Scene *activeScene = builder->getScene(builder->getActiveSceneIndex());
-        if (activeScene)
-        {
-            activeScene->render(dt);
+            if (this->controller)
+            {
+                this->controller->processInput(this->window, builder->getSceneCount(), this->camera, dt, getSceneBuilder());
+                builder->setActiveSceneIndex(this->controller->getActiveScene()); // Update active scene based on controller
+            }
+            controller->getCurrentScene()->render(dt);
         }
         glfwPollEvents();
         glfwSwapBuffers(window);

@@ -7,7 +7,7 @@ void PointLight::createRotation(float speedDegPerSec, glm::vec3 axis,int dir)
     this->animated = true;
 }
 
-void PointLight::createOrbit(DrawableObject *center, float radius, float speedDegPerSec, float initialAngleDeg)
+void PointLight::createOrbit(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg)
 {
     this->animator = std::make_unique<OrbitAnimator>(center, radius, speedDegPerSec, initialAngleDeg);
     this->animated = true;
@@ -21,7 +21,7 @@ void PointLight::update(float dt)
 {
     if (animated && animator)
     {
-        animator->update(this->getTransformation(), dt);
+        animator->update(*this, dt);
     } 
 }
 

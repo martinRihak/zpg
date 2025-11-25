@@ -39,12 +39,11 @@ glEnable(GL_STENCIL_TEST);
 
     for (DrawableObject *o : this->objects)
     {
-        glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);  // Nastav ID pro objekt
-        o->draw(dt, this->lights);  // Kresli objekt (ale jen stencil)
+        glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);  
+        o->draw(dt, this->lights);
     }
 
-    // Pass 2: Normální render s stencil testem (pokud potřebuješ, ale pro picking stačí pass 1 + read)
-    glStencilFunc(GL_ALWAYS, 0, 0xFF);  // Ignoruj stencil pro normální render
+    glStencilFunc(GL_ALWAYS, 0, 0xFF); 
     for (DrawableObject *o : this->objects)
     {
         o->draw(dt, this->lights);

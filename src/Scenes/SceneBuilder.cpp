@@ -250,7 +250,21 @@ void SceneBuilder::createTestScene()
 }
 void SceneBuilder::createGame()
 {
-    Scene *scene = new Scene();
+    std::vector<std::string> skyboxFaces = {
+        "../Models/NASA/cube/stars_posx.jpg",
+        "../Models/NASA/cube/stars_negx.jpg",
+        "../Models/NASA/cube/stars_posy.jpg",
+        "../Models/NASA/cube/stars_negy.jpg",
+        "../Models/NASA/cube/stars_posz.jpg",
+        "../Models/NASA/cube/stars_negz.jpg"};
+    DrawableObject *cube = createObject("cube", "skyboxShader");
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getTransformation().setScale(glm::vec3(50));
+    cube->getMaterial()->loadCubeMap();
+    DrawableObject *asteroid = createObject("sphereOBJ", "phong");
+    asteroid->getMaterial()->loadTexture("../Models/NASA/asteroid/asteroid.jpg");
+    asteroid->getTransformation().setScale(glm::vec3(0.1f));
+    GameScene *scene = new GameScene(7.0f, this->camera, asteroid);
     DrawableObject *formula = createObject("formula", "phong");
     formula->getTransformation().setScale(glm::vec3(0.2f));
     formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
@@ -258,8 +272,8 @@ void SceneBuilder::createGame()
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
     scene->addObject(formula);
+  //  scene->addObject(cube);
     this->createScene(scene);
-
 }
 Scene *SceneBuilder::getScene(int8_t index) const
 {
@@ -274,12 +288,6 @@ int8_t SceneBuilder::getSceneCount() const
 {
     return static_cast<int8_t>(scenes.size());
 }
-
-int8_t SceneBuilder::getActiveSceneIndex() const
-{
-    return activeSceneIndex;
-}
-
 void SceneBuilder::setActiveSceneIndex(int8_t index)
 {
     if (index >= 0 && index < scenes.size())

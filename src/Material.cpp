@@ -13,6 +13,7 @@ Material::~Material() {}
 void Material::loadTexture(const char *name)
 {
     int text_width, text_height, channels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(name, &text_width, &text_height, &channels, 4);
     printf("%d %d %d\n", text_width, text_height, channels);
     if (!data)
@@ -20,7 +21,7 @@ void Material::loadTexture(const char *name)
         std::cerr << "Chyba při načítání textury: " << name << " – " << stbi_failure_reason() << std::endl;
         return;
     }
-
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -33,7 +34,6 @@ void Material::loadTexture(const char *name)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
     stbi_image_free(data);
     texture = true;
 }
@@ -63,7 +63,7 @@ void Material::loadCubeMap()
         }
 
         GLenum format = (nrChannels == 3 ? GL_RGB : GL_RGBA);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,0,format,width,height,0,format,GL_UNSIGNED_BYTE,data);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
     }
 
