@@ -32,11 +32,13 @@ private:
     PointLight *light = nullptr;
 
     glm::vec3 minBounds, maxBounds;
+    float boundingRadius = 1.0f;
     bool selected = false;
     int id;
 
     void drawSkybox(float dt);
-    void drawRegular(float dt, const std::vector<Light*> &lights);
+    void drawRegular(float dt, const std::vector<Light *> &lights);
+
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
     ~DrawableObject();
@@ -52,9 +54,12 @@ public:
     void createOrbit(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void createRandomMovement(float speed, float baseInterval);
     void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
-    void addAnimator(IAnimator* animator){this->animator = std::unique_ptr<IAnimator>(animator);this->animated = true;}
+    void addAnimator(IAnimator *animator)
+    {
+        this->animator = std::unique_ptr<IAnimator>(animator);
+        this->animated = true;
+    }
     void update(float dt);
-
 
     void queueTransform(std::shared_ptr<ITransformation> t);
     void applyQueuedTransforms();
@@ -74,13 +79,10 @@ public:
     void setSelected(bool selected) { this->selected = selected; }
     bool isSelected() const { return selected; }
 
+    bool collidesWith(const DrawableObject *other) const;
     int getID() const { return id; }
     void setID(int id) { this->id = id; }
 
-
-
     void destroy() override;
     bool isDestroyed() const { return destroyVal; }
-
-
 };

@@ -179,42 +179,43 @@ void DrawableObject::createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float
 
 bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const
 {
-    glm::vec3 boundsMin = tranformation->getPosition() + minBounds * tranformation->getScale();
-    glm::vec3 boundsMax = tranformation->getPosition() + maxBounds * tranformation->getScale();
+    glm::vec3 scale = tranformation->getScale();
+    glm::vec3 pos = tranformation->getPosition();
 
-    float tmin = (boundsMin.x - rayOrigin.x) / rayDir.x;
-    float tmax = (boundsMax.x - rayOrigin.x) / rayDir.x;
-    if (tmin > tmax)
-        std::swap(tmin, tmax);
+    glm::vec3 boundsMin = pos + minBounds * scale;
+    glm::vec3 boundsMax = pos + maxBounds * scale;
+    const float EPS = 1e-6f;
+    glm::vec3 invDir = glm::vec3(
+        rayDir.x == 0.0f ? FLT_MAX : 1.0f / rayDir.x,
+        rayDir.y == 0.0f ? FLT_MAX : 1.0f / rayDir.y,
+        rayDir.z == 0.0f ? FLT_MAX : 1.0f / rayDir.z);
 
-    float tymin = (boundsMin.y - rayOrigin.y) / rayDir.y;
-    float tymax = (boundsMax.y - rayOrigin.y) / rayDir.y;
-    if (tymin > tymax)
-        std::swap(tymin, tymax);
+    float t1 = (boundsMin.x - rayOrigin.x) * invDir.x;
+    float t2 = (boundsMax.x - rayOrigin.x) * invDir.x;
+    float tmin = glm::min(t1, t2);
+    float tmax = glm::max(t1, t2);
 
-    if ((tmin > tymax) || (tymin > tmax))
+    t1 = (boundsMin.y - rayOrigin.y) * invDir.y;
+    t2 = (boundsMax.y - rayOrigin.y) * invDir.y;
+    tmin = glm::max(tmin, glm::min(t1, t2));
+    tmax = glm::min(tmax, glm::max(t1, t2));
+
+    t1 = (boundsMin.z - rayOrigin.z) * invDir.z;
+    t2 = (boundsMax.z - rayOrigin.z) * invDir.z;
+    tmin = glm::max(tmin, glm::min(t1, t2));
+    tmax = glm::min(tmax, glm::max(t1, t2));
+
+    // 3. Kontrola, zda se intervaly překrývají a zda je průsečík před kamerou
+    if (tmax < 0 || tmin > tmax)
         return false;
-    if (tymin > tmin)
-        tmin = tymin;
-    if (tymax < tmax)
-        tmax = tymax;
 
-    float tzmin = (boundsMin.z - rayOrigin.z) / rayDir.z;
-    float tzmax = (boundsMax.z - rayOrigin.z) / rayDir.z;
-    if (tzmin > tzmax)
-        std::swap(tzmin, tzmax);
-
-    if ((tmin > tzmax) || (tzmin > tmax))
-        return false;
-    if (tzmin > tmin)
-        tmin = tzmin;
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    if (tmin > 0.0f)
-    {
-        dist = tmin;
-        return true;
-    }
-    return false;
+    dist = tmin > 0.0f ? tmin : tmax; // Pokud tmin < 0, ale tmax > 0 → jsme uvnitř boxu
+    return true;
+}
+bool DrawableObject::collidesWith(const DrawableObject *other) const
+{
+    glm::vec3 distVec = getTransformation().getPosition() - other->getTransformation().getPosition();
+    float dist = glm::length(distVec);
+    float sumRadius = boundingRadius + other->boundingRadius; // boundingRadius přidej dříve
+    return dist <= sumRadius;
 }

@@ -13,6 +13,8 @@ private:
     std::vector<DrawableObject*> enemy;
     void colision();
     void updateSpawning(float dt);
+    void removeObjects(DrawableObject* obj);
+
 public:
     GameScene(float spawnInterval, Camera* camera, DrawableObject* enemyPrototype);
     ~GameScene();

@@ -125,11 +125,11 @@ void App::createScenes()
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
 
-    builder->createGame();
-   // builder->createTriangle();
-    // builder->create4Spheres();
-    builder->createForest();
-    builder->createSunSystem();
+   // builder->createGame();
+    builder->createTriangle();
+   // builder->create4Spheres();
+   // builder->createForest();
+   // builder->createSunSystem();
     //  builder->createTestScene();
 }
 void App::run()

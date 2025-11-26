@@ -39,6 +39,10 @@ void SceneBuilder::createTriangle()
 {
 
     Scene *scene = new Scene();
+    DrawableObject *formula = createObject("formula", "phong");
+    formula->getTransformation().setScale(glm::vec3(0.2f));
+    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
+    formula->createBetweenPoints(glm::vec3(-20.0f, 4.0f, 0.0f), glm::vec3(20.0f, 0.0f, 0.0f), 5.0f);
     DrawableObject *triangleObj = createObject("triangle3DModel", "phong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
     triangleObj->getTransformation().setUseCustom(true);
@@ -46,9 +50,11 @@ void SceneBuilder::createTriangle()
     DrawableObject *triangleObj2 = createObject("triangle3DModel", "phong");
     triangleObj2->getMaterial()->loadTexture("../src/grass.png");
     triangleObj2->getTransformation().setPosition(glm::vec3(1, 0, 0));
+    Directional *light = new Directional(glm::vec3(0.0f, 20.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    scene->addLight(light);
     scene->addObject(triangleObj);
     scene->addObject(triangleObj2);
-
+    scene->addObject(formula);
     this->createScene(scene);
 }
 
@@ -93,7 +99,7 @@ void SceneBuilder::createForest()
         "../Models/cubeMap/negy.jpg",
         "../Models/cubeMap/posz.jpg",
         "../Models/cubeMap/negz.jpg"};
-    
+
     DrawableObject *cube = createObject("cube", "skyboxShader");
     cube->getMaterial()->setFaces(skyboxFaces);
     cube->getTransformation().setScale(glm::vec3(50));
@@ -275,17 +281,13 @@ void SceneBuilder::createGame()
     cube->getMaterial()->setFaces(skyboxFaces);
     cube->getTransformation().setScale(glm::vec3(50));
     cube->getMaterial()->loadCubeMap();
-    DrawableObject *asteroid = createObject("asteroid", "phong");
+    DrawableObject *asteroid = createObject("sphere", "phong");
     asteroid->getMaterial()->loadTexture("../Models/NASA/asteroid/asteroid.jpg");
-    asteroid->getTransformation().setScale(glm::vec3(0.001f));
-    GameScene *scene = new GameScene(7.0f, this->camera, asteroid);
-    DrawableObject *formula = createObject("formula", "phong");
-    formula->getTransformation().setScale(glm::vec3(0.2f));
-    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
-    formula->createBetweenPoints(glm::vec3(-20.0f, 0.0f, 0.0f), glm::vec3(20.0f, 0.0f, 0.0f), 5.0f);
+    asteroid->getTransformation().setScale(glm::vec3(0.00001f));
+    GameScene *scene = new GameScene(4.0f, this->camera, asteroid);
+
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
-    scene->addObject(formula);
     scene->addObject(cube);
     this->createScene(scene);
 }

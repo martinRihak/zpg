@@ -10,6 +10,8 @@ GameScene::~GameScene()
 }
 void GameScene::render(float dt)
 {
+    updateSpawning(dt);
+    colision();
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     for (DrawableObject *o : this->objects)
@@ -24,28 +26,12 @@ void GameScene::render(float dt)
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     for (DrawableObject *o : this->objects)
     {
-        if (o->isDestroyed() == true)
-        {
-            std::cout << o->getID() << ": Byl smazan" << std::endl;
-            objects.erase(std::remove(objects.begin(), objects.end(), o), objects.end());
-            delete o;
-            continue;
-        }
         o->draw(dt, this->lights);
     }
     for (DrawableObject *e : enemy)
     {
-        if (e->isDestroyed() == true)
-        {
-            std::cout << e->getID() << ": Byl smazan" << std::endl;
-            enemy.erase(std::remove(enemy.begin(), enemy.end(), e), enemy.end());
-            delete e;
-            continue;
-        }
         e->draw(dt, this->lights);
     }
-
-    updateSpawning(dt);
     glDisable(GL_STENCIL_TEST);
 }
 void GameScene::updateSpawning(float dt)
@@ -86,4 +72,25 @@ void GameScene::updateSpawning(float dt)
 
 void GameScene::colision()
 {
+    for (DrawableObject *bull : objects)
+    {
+        for (DrawableObject *enemy : this->enemy)
+        {
+            if (bull->collidesWith(enemy))
+            {
+                printf("Kolize: Strela Zasahla nepritele.");
+                removeObjects(enemy);
+                objects.erase(std::remove(objects.begin(), objects.end(), bull), objects.end());
+                delete bull;
+                score += 10;
+                printf("Skore: %d\n", score);
+                return;
+            }
+        }
+    }
+}
+void GameScene::removeObjects(DrawableObject *obj)
+{
+    enemy.erase(std::remove(enemy.begin(), enemy.end(), obj), enemy.end());
+    delete obj;
 }

@@ -103,22 +103,15 @@ void MoveBetweenPointsAnimator::update(IAnimatable &obj, float dt)
 {
     Transformation &t = obj.getTransformation();
     glm::vec3 currentPos = t.getPosition();
-    glm::vec3 target = goingToB ? B : A;
+    glm::vec3 target = (goingToB ? B : A) ;
 
     glm::vec3 direction = glm::normalize(target - currentPos);
     glm::vec3 nextPos = currentPos + direction * speed * dt;
-
-    // Zkontrolujeme, zda jsme nepřekročili cíl, pomocí skalárního součinu.
-    // Pokud je směr od nového bodu k cíli opačný než původní směr, cíl jsme minuli.
+  
     if (glm::dot(target - nextPos, direction) < 0.0f)
     {
         nextPos = target;
         goingToB = !goingToB;
-        // Otočíme objekt ve směru nového pohybu
-        glm::vec3 newDirection = goingToB ? B - A : A - B;
-        float angleRad = atan2(newDirection.x, newDirection.y); // Správné osy pro otočení v rovině XZ
-        float angleDeg = glm::degrees(angleRad);
-        t.setRotation(angleDeg, glm::vec3(0, 1, 0));
     }
 
     t.setPosition(nextPos);
