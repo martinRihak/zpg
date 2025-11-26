@@ -41,8 +41,6 @@ RandomMovementAnimator::RandomMovementAnimator(float speed, float baseChangeInte
     : speed(speed), timeSinceLastChange(0.0f), baseChangeInterval(baseChangeInterval),
       minBounds(minBounds), maxBounds(maxBounds)
 {
-    // Seedování generátoru náhodných čísel by mělo být ideálně na jednom místě v aplikaci,
-    // ale pro jednoduchost to zde ponecháme.
     static bool seeded = false;
     if (!seeded)
     {
@@ -163,4 +161,17 @@ void ApproachCameraAnimator::update(IAnimatable &obj, float dt)
     glm::vec3 direction = glm::normalize(cameraPos - currentPos);
     glm::vec3 newPos = currentPos + direction * speed * dt;
     t.setPosition(newPos);
+}
+BasicBezier::BasicBezier(glm::mat4 points,glm::mat4x3 B,float t) : points(points), B(B),t(t) {}
+
+void BasicBezier::update(IAnimatable &obj, float dt){
+    Transformation &tr = obj.getTransformation();
+
+    glm::vec4 parameters = glm::vec4(t * t * t,t * t,t,1.0f);
+    glm::vec3 p = parameters * points * B;
+ 
+    tr.setPosition(glm::vec3(p));
+
+    if(t >= 1.0f || t<=0.0) delta *= -1;
+    t += delta*dt;
 }

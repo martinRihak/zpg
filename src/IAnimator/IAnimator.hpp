@@ -1,14 +1,11 @@
 #pragma once
 #include "../Transformation/Transformation.hpp"
-
-// Sjednocené rozhraní pro všechny animovatelné objekty
 #include "IAnimatable.hpp"
 
 class IAnimator
 {
 public:
     virtual ~IAnimator() = default;
-    // Sjednocená update metoda pracující s obecným animovatelným objektem
     virtual void update(IAnimatable &obj, float dt) = 0;
 };
 class NullAnimator : public IAnimator
@@ -72,7 +69,7 @@ private:
     float speed;
     bool goingToB;
 };
-class Camera; // Forward declaration
+class Camera; 
 class ShootAnimator : public IAnimator
 {
 private:
@@ -96,5 +93,19 @@ private:
 
 public:
     ApproachCameraAnimator(const Camera *cam, float speed,  float radius);
+    void update(IAnimatable &obj, float dt) override;
+};
+
+class BasicBezier : public IAnimator
+{
+private:
+    glm::mat4 points;
+    glm::mat4x3 B;
+    float t;
+    float speed = 1.f;
+    float delta = 0.5f;
+
+public:
+    BasicBezier(glm::mat4 points,glm::mat4x3 B,float t);
     void update(IAnimatable &obj, float dt) override;
 };

@@ -50,6 +50,16 @@ void SceneBuilder::createTriangle()
     DrawableObject *triangleObj2 = createObject("triangle3DModel", "phong");
     triangleObj2->getMaterial()->loadTexture("../src/grass.png");
     triangleObj2->getTransformation().setPosition(glm::vec3(1, 0, 0));
+    triangleObj2->addAnimator(new BasicBezier(
+        glm::mat4(glm::vec4(-1.0, 3.0, -3.0, 1.0),
+                  glm::vec4(3.0, -6.0, 3.0, 0),
+                  glm::vec4(-3.0, 3.0, 0, 0),
+                  glm::vec4(1, 0, 0, 0)),
+        glm::mat4x3(glm::vec3(-1, 0, 0),
+                    glm::vec3(0, 1, 0),
+                    glm::vec3(0, -1, 0),
+                    glm::vec3(1, 0, 0)),
+        0.5));
     Directional *light = new Directional(glm::vec3(0.0f, 20.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
     scene->addObject(triangleObj);
