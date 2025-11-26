@@ -20,9 +20,17 @@ void ShaderProgram::use()
     if (cameraDirty)
     {
         GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
-        GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
-        if (viewLoc != -1)
+        if (viewLoc == -1)
+        {
+            storedViewMatrix = glm::mat4(glm::mat3(camera->getCamera()));
+            viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrixSkyBox");
+            if (viewLoc != -1)
+                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &storedViewMatrix[0][0]);
+        }
+        else
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &storedViewMatrix[0][0]);
+
+        GLint projLoc = glGetUniformLocation(this->shaderProgram, "projectMatrix");
         if (projLoc != -1)
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, &storedProjMatrix[0][0]);
         setUniform("viewPos", storedViewPos);
@@ -158,6 +166,7 @@ void ShaderProgram::updateMaterial(Material *mat)
     setUniform("material.objectColor", mat->getObjectColor());
     setUniform("material.emission", mat->getEmission());
     setUniform("material.hasTexture", mat->hasTexture());
+    setUniform("time",mat->getTime());
     if (mat->hasTexture())
     {
         glActiveTexture(GL_TEXTURE0);

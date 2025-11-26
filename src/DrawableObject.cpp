@@ -7,7 +7,7 @@
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader), material(new Material())
 {
-    tranformation = std::make_shared<Transformation>(); 
+    tranformation = std::make_shared<Transformation>();
     // Inicializace bounding box
     minBounds = model->getMinBounds();
     maxBounds = model->getMaxBounds();
@@ -16,7 +16,8 @@ DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
 DrawableObject::~DrawableObject()
 {
 }
-void DrawableObject::destroy(){
+void DrawableObject::destroy()
+{
     destroyVal = true;
 }
 void DrawableObject::draw(float dt)
@@ -49,7 +50,7 @@ void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
 void DrawableObject::drawSkybox(float dt)
 {
     glDepthFunc(GL_LEQUAL);
-
+    glDepthMask(GL_FALSE);
     shader->use();
 
     shader->setModelMatrix(tranformation->getModelMatrix());
@@ -57,9 +58,10 @@ void DrawableObject::drawSkybox(float dt)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, material->getTextureID());
     this->shader->setUniform("cubeTexture", 0);
+    this->shader->setUniform("time", material->getTime());
     update(dt);
     model->draw();
-
+    glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
 }
 
@@ -67,6 +69,7 @@ void DrawableObject::drawRegular(float dt, const std::vector<Light *> &lights)
 {
 
     shader->use();
+
     shader->setUniform("lightCount", static_cast<int>(lights.size()));
     shader->setModelMatrix(tranformation->getModelMatrix());
 
@@ -99,7 +102,6 @@ void DrawableObject::createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed
     animator = std::make_unique<MoveBetweenPointsAnimator>(p1, p2, speed);
     setAnimated(true);
 }
-
 
 void DrawableObject::update(float dt)
 {

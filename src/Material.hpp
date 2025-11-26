@@ -21,7 +21,7 @@ private:
     GLuint textureID;
     bool isSkyBox = false;
     std::vector<std::string> faces;
-
+    float time = 1.0f;
 public:
     Material();
     Material(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
@@ -51,4 +51,7 @@ public:
 
     bool hasTexture() const { return texture; }
     GLuint getTextureID()  { return textureID; }
+    void setTime(float t) { time = t; }
+    float getTime() { return time; }
+
 };

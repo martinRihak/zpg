@@ -34,6 +34,14 @@ struct Material {
 uniform Material material;
 
 void main(){
-    vec4 objectColor = vec4(material.objectColor, 1.0);
-    frag_color =  objectColor;}
+    vec3 color;
+    if(material.hasTexture == true)
+        color = texture(material.ourTexture, texCoords).rgb;
+    else
+        color = material.objectColor;
+
+    frag_color = vec4(color, 1.0);
+}
+
+
 

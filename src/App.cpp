@@ -54,13 +54,7 @@ App::~App()
 
 void App::createScenes()
 {
-    std::vector<std::string> skyboxFaces = {
-        "../Models/cubeMap/stars_posx.jpg",
-        "../Models/cubeMap/stars_negx.jpg",
-        "../Models/cubeMap/stars_posy.jpg",
-        "../Models/cubeMap/stars_negy.jpg",
-        "../Models/cubeMap/stars_posz.jpg",
-        "../Models/cubeMap/stars_negz.jpg"};
+
     float triangle3D[] = {
         0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
         0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,

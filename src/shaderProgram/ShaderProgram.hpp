@@ -41,6 +41,9 @@ public:
     void setCamera(Camera *camera) { this->camera = camera; }
     Camera *getCamera() const { return this->camera; }
 
+    void setStoredViewMatrix(const glm::mat4 &viewMatrix) { storedViewMatrix = viewMatrix; }
+
+
     // Overloaded uniform setters
     void setUniform(const char *name, float value);
     void setUniform(const char *name, int value);

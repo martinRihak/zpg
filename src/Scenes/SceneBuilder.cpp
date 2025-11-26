@@ -86,6 +86,19 @@ void SceneBuilder::create4Spheres()
 }
 void SceneBuilder::createForest()
 {
+    std::vector<std::string> skyboxFaces = {
+        "../Models/cubeMap/posx.jpg",
+        "../Models/cubeMap/negx.jpg",
+        "../Models/cubeMap/posy.jpg",
+        "../Models/cubeMap/negy.jpg",
+        "../Models/cubeMap/posz.jpg",
+        "../Models/cubeMap/negz.jpg"};
+    
+    DrawableObject *cube = createObject("cube", "skyboxShader");
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getTransformation().setScale(glm::vec3(50));
+    cube->getMaterial()->loadCubeMap();
+    cube->getMaterial()->setTime(0.2f);
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
@@ -126,6 +139,7 @@ void SceneBuilder::createForest()
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(-5.0f, 0.0f, 0.0f), 10, forest);
     scene->addObject(plane);
+    scene->addObject(cube);
     scene->addObject(shrek);
     scene->addObject(fiona);
     scene->addObject(toiled);
@@ -152,7 +166,7 @@ void SceneBuilder::createSunSystem()
     cube->getMaterial()->loadCubeMap();
 
     // Slunce
-    DrawableObject *sun = createObject("sphereOBJ", "phong");
+    DrawableObject *sun = createObject("sphereOBJ", "constant");
     sun->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
     sun->getTransformation().setScale(glm::vec3(1.0f));
     sun->getTransformation().setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -261,9 +275,9 @@ void SceneBuilder::createGame()
     cube->getMaterial()->setFaces(skyboxFaces);
     cube->getTransformation().setScale(glm::vec3(50));
     cube->getMaterial()->loadCubeMap();
-    DrawableObject *asteroid = createObject("sphereOBJ", "phong");
+    DrawableObject *asteroid = createObject("asteroid", "phong");
     asteroid->getMaterial()->loadTexture("../Models/NASA/asteroid/asteroid.jpg");
-    asteroid->getTransformation().setScale(glm::vec3(0.1f));
+    asteroid->getTransformation().setScale(glm::vec3(0.001f));
     GameScene *scene = new GameScene(7.0f, this->camera, asteroid);
     DrawableObject *formula = createObject("formula", "phong");
     formula->getTransformation().setScale(glm::vec3(0.2f));
@@ -272,7 +286,7 @@ void SceneBuilder::createGame()
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
     scene->addObject(formula);
-  //  scene->addObject(cube);
+    scene->addObject(cube);
     this->createScene(scene);
 }
 Scene *SceneBuilder::getScene(int8_t index) const
