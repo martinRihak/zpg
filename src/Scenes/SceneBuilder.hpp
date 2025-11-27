@@ -15,12 +15,12 @@ private:
     std::map<std::string, Model *> models;
     std::map<std::string, ShaderProgram *> shaders;
     std::vector<Light *> lights;
+    std::vector<DrawableObject *> skybox;
     Camera *camera;
     std::vector<Scene *> scenes;
     int8_t activeSceneIndex = 0;
 
     void createScene(Scene *scene);
-
 public:
     SceneBuilder(Camera *camera);
     ~SceneBuilder();
@@ -33,6 +33,7 @@ public:
     void createSunSystem();
     void createTestScene();
     void createGame();
+    void createSkyBox();
     // Accessors
 
     Model *getModel(const std::string &name) { return models[name]; }

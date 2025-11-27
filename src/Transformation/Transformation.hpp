@@ -25,6 +25,8 @@ class Rotate : public ITransformation
 private:
     float angle;
     glm::vec3 axis;
+    glm::mat4 rotationMatrix;
+    bool mat4Rotation = false;
 
 public:
     Rotate() : angle(0.0f), axis(0.0f, 1.0f, 0.0f) {}
@@ -33,10 +35,19 @@ public:
         angle = ang;
         axis = ax;
     }
+    void setRotation(const glm::mat4 &mat)
+    {
+        rotationMatrix = mat;
+        mat4Rotation = true;
+    }
     float getAngle() const { return angle; }
     glm::vec3 getAxis() const { return axis; }
     glm::mat4 getModelMatrix() const override
     {
+        if (mat4Rotation)
+        {
+            return rotationMatrix;
+        }
         return glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
     }
 };
@@ -64,6 +75,8 @@ private:
     std::shared_ptr<Scale> scale;
 
     std::shared_ptr<CustomTransform> custom;
+    std::shared_ptr<CompositeTransformation> composite;
+
     bool useCustom;
 
     glm::mat4 modelMatrix;
@@ -75,6 +88,7 @@ public:
     void setPosition(const glm::vec3 &pos);
     glm::vec3 getPosition() const;
     void setRotation(float angle, const glm::vec3 &axis);
+    void setRotation(const glm::mat4 &mat);
     float getRotationAngle() const;
     glm::vec3 getRotationAxis() const;
     void setScale(const glm::vec3 &scl);
@@ -82,6 +96,11 @@ public:
     glm::mat4 getModelMatrix() const;
     void setModelMatrix(const glm::mat4 &mat);
 
-    void setUseCustom(bool enable){useCustom = enable;}
-    bool getUseCustom() const{return useCustom;}
+    void setUseCustom(bool enable) { useCustom = enable; }
+    bool getUseCustom() const { return useCustom; }
+
+    CompositeTransformation* getComposite() const { return composite.get(); }
+    void createComposire(){
+        composite = std::make_shared<CompositeTransformation>();
+        }
 };

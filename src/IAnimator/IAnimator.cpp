@@ -4,7 +4,8 @@
 #include <glm/gtx/transform.hpp>
 #include <random> // Pro náhodnost
 #include <ctime>  // Pro seedování randomu
-
+#include <glm/gtx/string_cast.hpp>
+#include <glm/exponential.hpp>
 void NullAnimator::update(IAnimatable &obj, float dt)
 {
 }
@@ -101,11 +102,11 @@ void MoveBetweenPointsAnimator::update(IAnimatable &obj, float dt)
 {
     Transformation &t = obj.getTransformation();
     glm::vec3 currentPos = t.getPosition();
-    glm::vec3 target = (goingToB ? B : A) ;
+    glm::vec3 target = (goingToB ? B : A);
 
     glm::vec3 direction = glm::normalize(target - currentPos);
     glm::vec3 nextPos = currentPos + direction * speed * dt;
-  
+
     if (glm::dot(target - nextPos, direction) < 0.0f)
     {
         nextPos = target;
@@ -162,16 +163,106 @@ void ApproachCameraAnimator::update(IAnimatable &obj, float dt)
     glm::vec3 newPos = currentPos + direction * speed * dt;
     t.setPosition(newPos);
 }
-BasicBezier::BasicBezier(glm::mat4 points,glm::mat4x3 B,float t) : points(points), B(B),t(t) {}
+BasicBezier::BasicBezier(glm::mat4 points, glm::mat4x3 B, float t) : points(points), B(B), t(t) {}
 
-void BasicBezier::update(IAnimatable &obj, float dt){
+void BasicBezier::update(IAnimatable &obj, float dt)
+{
     Transformation &tr = obj.getTransformation();
 
-    glm::vec4 parameters = glm::vec4(t * t * t,t * t,t,1.0f);
-    glm::vec3 p = parameters * points * B;
- 
+    glm::vec4 parameters = glm::vec4(t * t * t, t * t, t, 1.0f);
+    glm::vec3 p = parameters * points * glm::transpose(B);
     tr.setPosition(glm::vec3(p));
 
-    if(t >= 1.0f || t<=0.0) delta *= -1;
-    t += delta*dt;
+    if (t >= 1.0f || t <= 0.0)
+        delta *= -1;
+    t += delta * dt;
+}
+BezierAnimator::BezierAnimator(std::vector<glm::vec3> points, float speed) : points(points), speed(speed)
+{
+    if ((points.size() - 1) % 3 != 0)
+    {
+        throw std::invalid_argument("Neplatný počet bodů pro kubickou spline");
+    }
+}
+BezierAnimator::BezierAnimator(std::vector<glm::vec3> points, float speed, bool rotation) : points(points), speed(speed), rotation(rotation)
+{
+    if ((points.size() - 1) % 3 != 0)
+    {
+        throw std::invalid_argument("Neplatný počet bodů pro kubickou spline");
+    }
+}
+glm::vec3 BezierAnimator::compute(const std::vector<glm::vec3> &points, float localT) const
+{
+    float oneMinusT = 1.0f - localT;
+
+    float oneMinusTCu = glm::pow(oneMinusT, 3.0f);
+    float oneMinusTSqLocalT = 3.0f * glm::pow(oneMinusT, 2.0f) * localT;
+    float oneMinusTTsq = 3.0f * oneMinusT * glm::pow(localT, 2.0f);
+    float tCu = glm::pow(localT, 3.0f);
+
+    return (oneMinusTCu * points[0]) +
+           (oneMinusTSqLocalT * points[1]) +
+           (oneMinusTTsq * points[2]) +
+           (tCu * points[3]);
+}
+
+glm::vec3 BezierAnimator::computeTangent(const std::vector<glm::vec3> &points, float localT) const
+{
+    float oneMinusT = 1.0f - localT;
+    return 3.0f * oneMinusT * oneMinusT * (points[1] - points[0]) +
+           6.0f * oneMinusT * localT * (points[2] - points[1]) +
+           3.0f * localT * localT * (points[3] - points[2]);
+}
+void BezierAnimator::addPoint(glm::mat3 point)
+{
+    points.push_back(point[0]);
+    points.push_back(point[1]);
+    points.push_back(point[2]);
+}
+void BezierAnimator::update(IAnimatable &obj, float dt)
+{
+    t += speed * dt;
+    int numSegments = (points.size() - 1) / 3;
+    if (t > numSegments)
+        t = 0.0f;
+    if (t < 0.0f)
+        t = 0.0f; // Ochrana pro negativní speed, pokud bys ji přidal
+
+    int segment = static_cast<int>(t);
+    float localT = t - segment;
+    if (segment >= numSegments || (segment * 3 + 3) >= points.size())
+    {
+        return; // Bezpečnostní návrat
+    }
+
+    std::vector<glm::vec3> segPoints(4);
+    for (int i = 0; i < 4; ++i)
+    {
+        segPoints[i] = points[segment * 3 + i];
+    }
+
+    glm::vec3 newPos = compute(segPoints, localT);
+
+   // std::cout << "t: " << t << ", Pos: " << newPos.x << "," << newPos.y << "," << newPos.z << std::endl;
+    //std::cout << "------------------------------------------------" << std::endl;
+    if (rotation)
+    {
+        glm::vec3 tangent = computeTangent(segPoints, localT);
+        if (glm::length(tangent) > 0.001f)
+        { 
+            tangent = glm::normalize(tangent);
+            glm::mat4 rotMat = glm::lookAt(glm::vec3(0.0f), tangent, glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 newMat = glm::translate(glm::mat4(1.0f), newPos) * rotMat * glm::scale(glm::mat4(1.0f), obj.getTransformation().getScale());
+            obj.getTransformation().setModelMatrix(newMat);
+            //std::cout << "t: " << t << ", Pos: " << newPos.x << "," << newPos.y << "," << newPos.z << std::endl;
+        }
+        else
+        {
+            // Fallback: Žádná rotace, pokud tangent nulový (vzácné)
+        }
+    }
+    else
+    {
+        obj.getTransformation().setPosition(newPos);
+    }
 }

@@ -35,36 +35,86 @@ DrawableObject *SceneBuilder::createObject(const std::string &modelName, const s
     }
     return nullptr;
 }
+void SceneBuilder::createSkyBox()
+{
+    std::vector<std::string> skyboxFaces = {
+        "../Models/cubeMap/posx.jpg",
+        "../Models/cubeMap/negx.jpg",
+        "../Models/cubeMap/posy.jpg",
+        "../Models/cubeMap/negy.jpg",
+        "../Models/cubeMap/posz.jpg",
+        "../Models/cubeMap/negz.jpg"};
+
+    DrawableObject *cube = createObject("cube", "skyboxShader");
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getTransformation().setScale(glm::vec3(50));
+    cube->getMaterial()->loadCubeMap();
+    this->skybox.push_back(cube);
+    std::vector<std::string> skyboxSky = {
+        "../Models/NASA/cube/stars_posx.jpg",
+        "../Models/NASA/cube/stars_negx.jpg",
+        "../Models/NASA/cube/stars_posy.jpg",
+        "../Models/NASA/cube/stars_negy.jpg",
+        "../Models/NASA/cube/stars_posz.jpg",
+        "../Models/NASA/cube/stars_negz.jpg"};
+    DrawableObject *cube02 = createObject("cube", "skyboxShader");
+    cube02->getMaterial()->setFaces(skyboxSky);
+    cube02->getTransformation().setScale(glm::vec3(50));
+    cube02->getMaterial()->loadCubeMap();
+    this->skybox.push_back(cube02);
+    
+}
 void SceneBuilder::createTriangle()
 {
+    std::vector<glm::vec3> raceTrackPoints = {
+        glm::vec3(0.0f, 0.0f, 0.0f),  // P0: Start rovinky
+        glm::vec3(10.0f, 0.0f, 0.0f), // P1: Tah do rovinky
+        glm::vec3(20.0f, 0.5f, 5.0f), // P2: Mírný kopec a pravá zatáčka
+        glm::vec3(30.0f, 1.0f, 0.0f), // P3/P0: Konec první zatáčky
 
+        glm::vec3(35.0f, 1.5f, -10.0f), // P1: Tah do levé zatáčky s stoupáním
+        glm::vec3(20.0f, 2.0f, -15.0f), // P2: Hlubší zatáčka nahoře
+        glm::vec3(10.0f, 1.0f, -10.0f), // P3/P0: Konec zatáčky, mírné klesání
+
+        glm::vec3(5.0f, 0.5f, -5.0f),   // P1: Esovitá zatáčka vpravo
+        glm::vec3(15.0f, 0.0f, 0.0f),   // P2: Tah pro hladkost
+        glm::vec3(20.0f, -0.5f, 10.0f), // P3/P0: Konec es, kopec dolů
+
+        glm::vec3(10.0f, -1.0f, 15.0f), // P1: Návratová rovinka s klesáním
+        glm::vec3(-5.0f, -0.5f, 5.0f),  // P2: Poslední zatáčka vlevo
+        glm::vec3(0.0f, 0.0f, 0.0f)     // P3: Konec, uzavření na start
+    };
     Scene *scene = new Scene();
     DrawableObject *formula = createObject("formula", "phong");
-    formula->getTransformation().setScale(glm::vec3(0.2f));
+    formula->getTransformation().setScale(glm::vec3(0.05f));
     formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
-    formula->createBetweenPoints(glm::vec3(-20.0f, 4.0f, 0.0f), glm::vec3(20.0f, 0.0f, 0.0f), 5.0f);
-    DrawableObject *triangleObj = createObject("triangle3DModel", "phong");
+    formula->setMaterial(new Material(glm::vec3(1, 0, 0), glm::vec3(1, 0, 0), glm::vec3(1, 0, 0), 16.0f));
+    formula->addAnimator(new BezierAnimator(raceTrackPoints, 0.2f, true));
+
+    DrawableObject *triangleObj = createObject("tree", "phong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
     triangleObj->getTransformation().setUseCustom(true);
     triangleObj->getTransformation().setPosition(glm::vec3(-1, 0, 0));
-    DrawableObject *triangleObj2 = createObject("triangle3DModel", "phong");
+    DrawableObject *triangleObj2 = createObject("tree", "phong");
     triangleObj2->getMaterial()->loadTexture("../src/grass.png");
     triangleObj2->getTransformation().setPosition(glm::vec3(1, 0, 0));
+    triangleObj2->getTransformation().setScale(glm::vec3(0.2f));
     triangleObj2->addAnimator(new BasicBezier(
         glm::mat4(glm::vec4(-1.0, 3.0, -3.0, 1.0),
                   glm::vec4(3.0, -6.0, 3.0, 0),
                   glm::vec4(-3.0, 3.0, 0, 0),
                   glm::vec4(1, 0, 0, 0)),
         glm::mat4x3(glm::vec3(-1, 0, 0),
-                    glm::vec3(0, 1, 0),
-                    glm::vec3(0, -1, 0),
-                    glm::vec3(1, 0, 0)),
+                    glm::vec3(0, 5, 0),
+                    glm::vec3(0, -5, 0),
+                    glm::vec3(3, 3, 0)),
         0.5));
     Directional *light = new Directional(glm::vec3(0.0f, 20.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     scene->addLight(light);
     scene->addObject(triangleObj);
     scene->addObject(triangleObj2);
     scene->addObject(formula);
+    scene->addObject(skybox[0]);
     this->createScene(scene);
 }
 
@@ -102,19 +152,7 @@ void SceneBuilder::create4Spheres()
 }
 void SceneBuilder::createForest()
 {
-    std::vector<std::string> skyboxFaces = {
-        "../Models/cubeMap/posx.jpg",
-        "../Models/cubeMap/negx.jpg",
-        "../Models/cubeMap/posy.jpg",
-        "../Models/cubeMap/negy.jpg",
-        "../Models/cubeMap/posz.jpg",
-        "../Models/cubeMap/negz.jpg"};
 
-    DrawableObject *cube = createObject("cube", "skyboxShader");
-    cube->getMaterial()->setFaces(skyboxFaces);
-    cube->getTransformation().setScale(glm::vec3(50));
-    cube->getMaterial()->loadCubeMap();
-    cube->getMaterial()->setTime(0.2f);
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
@@ -155,7 +193,7 @@ void SceneBuilder::createForest()
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
     scene->randomForest(glm::vec3(-5.0f, 0.0f, 0.0f), 10, forest);
     scene->addObject(plane);
-    scene->addObject(cube);
+    scene->addObject(skybox[0]);
     scene->addObject(shrek);
     scene->addObject(fiona);
     scene->addObject(toiled);
@@ -168,19 +206,8 @@ void SceneBuilder::createForest()
 }
 void SceneBuilder::createSunSystem()
 {
-    std::vector<std::string> skyboxFaces = {
-        "../Models/NASA/cube/stars_posx.jpg",
-        "../Models/NASA/cube/stars_negx.jpg",
-        "../Models/NASA/cube/stars_posy.jpg",
-        "../Models/NASA/cube/stars_negy.jpg",
-        "../Models/NASA/cube/stars_posz.jpg",
-        "../Models/NASA/cube/stars_negz.jpg"};
-    Scene *scene = new Scene();
-    DrawableObject *cube = createObject("cube", "skyboxShader");
-    cube->getMaterial()->setFaces(skyboxFaces);
-    cube->getTransformation().setScale(glm::vec3(50));
-    cube->getMaterial()->loadCubeMap();
 
+    Scene *scene = new Scene();
     // Slunce
     DrawableObject *sun = createObject("sphereOBJ", "constant");
     sun->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
@@ -234,7 +261,7 @@ void SceneBuilder::createSunSystem()
     neptune->getMaterial()->loadTexture("../Models/NASA/2k_neptune.jpg");
     neptune->getTransformation().setScale(glm::vec3(0.2f));
     neptune->createOrbit(sun, 60.0f, 2.0f, 315.0f);
-    scene->addObject(cube);
+    scene->addObject(skybox[1]);
     scene->addObject(sun);
     scene->addObject(mercury);
     scene->addObject(venus);

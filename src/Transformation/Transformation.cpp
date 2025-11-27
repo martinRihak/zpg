@@ -24,7 +24,11 @@ void Transformation::setRotation(float angle, const glm::vec3& axis) {
     rotate->setRotation(angle, axis);
     updateModelMatrix();
 }
-
+void Transformation::setRotation(const glm::mat4 &mat)
+{
+    rotate->setRotation(mat);
+    updateModelMatrix();
+}
 float Transformation::getRotationAngle() const {
     return rotate->getAngle();
 }

@@ -109,3 +109,19 @@ public:
     BasicBezier(glm::mat4 points,glm::mat4x3 B,float t);
     void update(IAnimatable &obj, float dt) override;
 };
+class BezierAnimator : public IAnimator
+{
+private:
+    std::vector<glm::vec3> points;
+    float t = 0.5;
+    float speed = 0.5f;
+    bool rotation = false; 
+    glm::vec3 compute(const std::vector<glm::vec3> &points, float localT)const;
+    glm::vec3 computeTangent(const std::vector<glm::vec3> &points, float localT)const;
+public:
+    BezierAnimator(std::vector<glm::vec3> points, float speed);
+    BezierAnimator(std::vector<glm::vec3> points, float speed,bool rotation);
+    void addPoint(glm::mat3 points);
+    void update(IAnimatable &obj, float dt) override;
+
+};
