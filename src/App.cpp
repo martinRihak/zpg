@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+   //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -83,7 +83,9 @@ void App::createScenes()
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
     Model *cubeModel = new Model("../Models/assets/cube.obj");
-    Model* asteroid = new Model("../Models/NASA/asteroid/asteroid.obj");
+    Model* asteroid = new Model("../Models/NASA/asteroid/Test_planet.obj");
+    Model* shrekHouse= new Model("../Models/assets/PC _ Computer - Shrek 2 - Map Objects - Shrek's House/Shrek's House/Shrek_home.obj");
+    Model* rocket = new Model("../Models/assets/Rocket_Ship/10475_Rocket_Ship_v1_L3.obj");
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -114,10 +116,12 @@ void App::createScenes()
     builder->registerModel("shrek", shrekModel);
     builder->registerModel("fiona", fionaModel);
     builder->registerModel("toiled", toiledModel);
+    builder->registerModel("shrekHouse", shrekHouse);
 
     builder->registerModel("sphereOBJ", sphereOBJ);
     builder->registerModel("cube", cubeModel);
     builder->registerModel("asteroid",asteroid);
+    builder->registerModel("rocket",rocket);
     
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
@@ -125,11 +129,11 @@ void App::createScenes()
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
     builder->createSkyBox();
-   // builder->createGame();
+    //builder->createGame();
     builder->createTriangle();
-    builder->create4Spheres();
+    //builder->create4Spheres();
     builder->createForest();
-    builder->createSunSystem();
+    //builder->createSunSystem();
     //  builder->createTestScene();
 }
 void App::run()

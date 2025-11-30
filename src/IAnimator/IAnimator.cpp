@@ -213,11 +213,9 @@ glm::vec3 BezierAnimator::computeTangent(const std::vector<glm::vec3> &points, f
            6.0f * oneMinusT * localT * (points[2] - points[1]) +
            3.0f * localT * localT * (points[3] - points[2]);
 }
-void BezierAnimator::addPoint(glm::mat3 point)
+void BezierAnimator::addPoint(glm::vec3 point)
 {
-    points.push_back(point[0]);
-    points.push_back(point[1]);
-    points.push_back(point[2]);
+    points.push_back(point);
 }
 void BezierAnimator::update(IAnimatable &obj, float dt)
 {
@@ -226,13 +224,13 @@ void BezierAnimator::update(IAnimatable &obj, float dt)
     if (t > numSegments)
         t = 0.0f;
     if (t < 0.0f)
-        t = 0.0f; // Ochrana pro negativní speed, pokud bys ji přidal
+        t = 0.0f; 
 
     int segment = static_cast<int>(t);
     float localT = t - segment;
     if (segment >= numSegments || (segment * 3 + 3) >= points.size())
     {
-        return; // Bezpečnostní návrat
+        return; 
     }
 
     std::vector<glm::vec3> segPoints(4);
@@ -258,7 +256,6 @@ void BezierAnimator::update(IAnimatable &obj, float dt)
         }
         else
         {
-            // Fallback: Žádná rotace, pokud tangent nulový (vzácné)
         }
     }
     else

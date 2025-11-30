@@ -4,8 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/norm.hpp>
 #include <limits>
+
 Controller::Controller()
 {
+    for (int i = 0; i < 9; ++i)
+        prevKeyState[i] = false;
+    prevBState = false;  // Inicializace pro klávesu B
+    bezierMode = false;  // Výchozí: Bézier režim deaktivován
 }
 
 Controller::~Controller() {}
@@ -84,6 +89,16 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         prevKeyState[i] = pressed;
     }
 
+    // Nové: Detekce klávesy B pro toggle Bézier režimu
+    int bState = glfwGetKey(window, GLFW_KEY_B);
+    bool bPressed = (bState == GLFW_PRESS || bState == GLFW_REPEAT);
+    if (bPressed && !prevBState)
+    {
+        bezierMode = !bezierMode;  // Toggle režimu
+        printf("Bézier režim: %s\n", bezierMode ? "Aktivní (přidávání bodů levým klikem)" : "Deaktivní (standardní picking/unProject)");
+    }
+    prevBState = bPressed;
+
     if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && selectedObject)
     {
         if (currentScene)
@@ -102,101 +117,60 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         glfwGetCursorPos(window, &xpos, &ypos);
         int width, height;
         glfwGetWindowSize(window, &width, &height);
-        ypos = height - ypos;
+        glm::vec2 currentMousePos(static_cast<float>(xpos), static_cast<float>(ypos));
 
-        glm::vec3 screenNear(2.0f * xpos / width - 1.0f, 2.0f * ypos / height - 1.0f, -1.0f);
-
-        glm::mat4 proj = camera->getProjectionMatrix();
-        glm::mat4 view = camera->getCamera();
-        glm::vec4 viewport(0, 0, width, height);
-
-        glm::vec3 nearPoint = glm::unProject(screenNear, view, proj, viewport);
-        glm::vec3 rayOrigin = camera->getPosition();
-        glm::vec3 rayDir = glm::normalize(nearPoint - rayOrigin);
-
-        if (std::abs(rayDir.y) > 1e-6f)
+        if (!isDragging)
         {
-            float t = -rayOrigin.y / rayDir.y;
-            if (t > 0.0f)
-            {
-                glm::vec3 plantPos = rayOrigin + t * rayDir;
-                DrawableObject *newObj = nullptr;
-                newObj = selectedObject->clone();
-                if (newObj)
-                {
-                    newObj->getTransformation().setPosition(plantPos);
-                    if (currentScene)
-                    {
-                        currentScene->addObject(newObj);
-                        printf("Strom sazen na pozici: (%f, %f, %f)\n", plantPos.x, plantPos.y, plantPos.z);
-                    }
-                }
-            }
+            lastMousePos = currentMousePos;
+            isDragging = true;
         }
-    }
-
-    if (isDragging && selectedObject && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        glm::vec2 currentMousePos(xpos, ypos);
-        if (glm::distance2(currentMousePos, lastMousePos) > 0.1f)
+        else
         {
+            glm::vec2 delta = currentMousePos - lastMousePos;
+            glm::vec3 rayOrigin = camera->getPosition();
+            glm::vec3 rayDir = glm::normalize(glm::unProject(glm::vec3(currentMousePos.x, height - currentMousePos.y, 0.0f), camera->getCamera(), camera->getProjectionMatrix(), glm::vec4(0, 0, width, height)) - rayOrigin);
+
+            float objY = selectedObject->getTransformation().getPosition().y;
+
+            if (std::abs(rayDir.y) > 1e-6)
             {
-                int width, height;
-                glfwGetWindowSize(window, &width, &height);
-                ypos = height - ypos;
-                ypos = height - ypos;
-
-                glm::vec3 screenNear(2.0f * xpos / width - 1.0f, 2.0f * ypos / height - 1.0f, -1.0f);
-                glm::vec3 screenFar(screenNear.x, screenNear.y, 1.0f);
-
-                glm::mat4 proj = camera->getProjectionMatrix();
-                glm::mat4 view = camera->getCamera();
-                glm::vec4 viewport(0, 0, width, height);
-
-                glm::vec3 rayOrigin = glm::unProject(screenNear, view, proj, viewport);
-                glm::vec3 rayEnd = glm::unProject(screenFar, view, proj, viewport);
-                glm::vec3 rayDir = glm::normalize(rayEnd - rayOrigin);
-
-                float objY = selectedObject->getTransformation().getPosition().y;
-                if (std::abs(rayDir.y) > 1e-6f)
+                float t = (objY - rayOrigin.y) / rayDir.y;
+                if (t > 0.0f)
                 {
-                    {
-                        float t = (objY - rayOrigin.y) / rayDir.y;
-                        if (t > 0.0f)
-                        {
-                            glm::vec3 newPos = rayOrigin + t * rayDir;
-                            selectedObject->getTransformation().setPosition(newPos);
-                        }
-                    }
-
-                    lastMousePos = currentMousePos;
-                }
-            }
-            if (selectedObject != nullptr)
-            {
-                glm::vec3 deltaPos(0.0f);
-                float speed = 2.0f;
-                if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-                    deltaPos.x -= speed * dt;
-                if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-                    deltaPos.x += speed * dt;
-                if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-                    deltaPos.z -= speed * dt;
-                if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-                    deltaPos.z += speed * dt;
-
-                if (glm::length(deltaPos) > 0.0f)
-                {
-                    glm::vec3 newPos = selectedObject->getTransformation().getPosition() + deltaPos;
+                    glm::vec3 newPos = rayOrigin + t * rayDir;
                     selectedObject->getTransformation().setPosition(newPos);
                 }
             }
+
+            lastMousePos = currentMousePos;
+        }
+    }
+    else
+    {
+        isDragging = false;
+    }
+
+    if (selectedObject != nullptr)
+    {
+        glm::vec3 deltaPos(0.0f);
+        float speed = 2.0f;
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+            deltaPos.x -= speed * dt;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            deltaPos.x += speed * dt;
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+            deltaPos.z -= speed * dt;
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+            deltaPos.z += speed * dt;
+
+        if (glm::length(deltaPos) > 0.0f)
+        {
+            glm::vec3 newPos = selectedObject->getTransformation().getPosition() + deltaPos;
+            selectedObject->getTransformation().setPosition(newPos);
         }
     }
 }
+
 void Controller::handleMouseClick(GLFWwindow *window, int button, int action, int mods, Camera *camera, Scene *scene, SceneBuilder *builder)
 {
     float moveSpeed = 2.0f;
@@ -214,6 +188,7 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     int newY = height - (int)ypos;
+
     if (button == GLFW_MOUSE_BUTTON_LEFT && scene->isGameScene())
     {
         glm::vec3 rayOrigin = camera->getPosition();
@@ -232,43 +207,53 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         shot->addAnimator(new ShootAnimator(startPos,rayWorld, 10.0f,camera));
         scene->addObject(shot);
     }
-    if (button == GLFW_MOUSE_BUTTON_LEFT && !scene->isGameScene())
-    {
-        GLbyte color[4];
-        GLfloat depth;
-        GLuint stencilId;
 
-        glReadPixels((GLint)xpos, newY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
-        glReadPixels((GLint)xpos, newY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        glReadPixels((GLint)xpos, newY, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &stencilId);
+    // Spočítej world pozici pomocí unProject (společné pro oba režimy)
+    GLbyte color[4];
+    GLfloat depth;
+    GLuint stencilId;
 
-        printf("Clicked on pixel %f, %f, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
-               xpos, ypos, color[0], color[1], color[2], color[3], depth, stencilId);
+    glReadPixels((GLint)xpos, newY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+    glReadPixels((GLint)xpos, newY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    glReadPixels((GLint)xpos, newY, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &stencilId);
 
-        selectedObject = scene->getObjectById(stencilId);
-        if (selectedObject)
-        {
-            printf("Vybrán objekt s ID %u\n", stencilId);
-            if (currentScene->isGameScene())
+    glm::vec3 screenPos((GLfloat)xpos, (GLfloat)newY, depth);
+    glm::mat4 viewMatrix = camera->getCamera();
+    glm::mat4 projMatrix = camera->getProjectionMatrix();
+    glm::vec4 viewport(0, 0, (GLfloat)width, (GLfloat)height);
+    glm::vec3 worldPos = glm::unProject(screenPos, viewMatrix, projMatrix, viewport);
+    printf("unProject [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && !scene->isGameScene()) {
+        if (bezierMode) {
+            if (selectedObject->hasBezier()) {
+                selectedObject->addControlPoint(worldPos); 
+                printf("Přidán Bézier bod: [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
+            } else {
+                printf("Vyber objekt pro přidávání bodů!\n");
+            }
+        } else {
+            printf("Clicked on pixel %f, %f, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
+                   xpos, ypos, color[0], color[1], color[2], color[3], depth, stencilId);
+
+            selectedObject = scene->getObjectById(stencilId);
+            if (selectedObject)
             {
+                printf("Vybrán objekt s ID %u\n", stencilId);
+                if (currentScene->isGameScene())
+                {
 
-                auto &objs = currentScene->getObjects();
-                objs.erase(std::remove(objs.begin(), objs.end(), selectedObject), objs.end());
-                delete selectedObject;
+                    auto &objs = currentScene->getObjects();
+                    objs.erase(std::remove(objs.begin(), objs.end(), selectedObject), objs.end());
+                    delete selectedObject;
+                    selectedObject = nullptr;
+                    printf("Objekt smazán!\n");
+                }
+            }
+            else
+            {
                 selectedObject = nullptr;
-                printf("Objekt smazán!\n");
             }
         }
-        else
-        {
-            selectedObject = nullptr;
-        }
-
-        glm::vec3 screenPos((GLfloat)xpos, (GLfloat)newY, depth);
-        glm::mat4 viewMatrix = camera->getCamera();
-        glm::mat4 projMatrix = camera->getProjectionMatrix();
-        glm::vec4 viewport(0, 0, (GLfloat)width, (GLfloat)height);
-        glm::vec3 worldPos = glm::unProject(screenPos, viewMatrix, projMatrix, viewport);
-        printf("unProject [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
     }
 }

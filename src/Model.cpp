@@ -1,11 +1,11 @@
 #include "Model.hpp"
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"  
+#include "tiny_obj_loader.h"
 #include <stdexcept>
 #include <vector>
-#include <limits>  
+#include <limits>
 #include <iostream>
-
+#include <filesystem>
 void Model::Mesh::createVAO()
 {
     glGenVertexArrays(1, &VAO);
@@ -32,7 +32,7 @@ void Model::Mesh::configAttributes(int stride, int posOffset, int normOffset, in
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(normOffset));
     if (uvOffset >= 0)
-    { 
+    {
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(uvOffset));
     }
@@ -40,35 +40,39 @@ void Model::Mesh::configAttributes(int stride, int posOffset, int normOffset, in
 
 Model::Model(const float *model, size_t size, int vertexCount)
 {
-    Mesh* mesh = new Mesh();
+    Mesh *mesh = new Mesh();
 
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
-    for (size_t i = 0; i < vertexCount * 6; i += 6) {  
-        glm::vec3 pos(model[i], model[i+1], model[i+2]);
+    for (size_t i = 0; i < vertexCount * 6; i += 6)
+    {
+        glm::vec3 pos(model[i], model[i + 1], model[i + 2]);
         minBounds = glm::min(minBounds, pos);
         maxBounds = glm::max(maxBounds, pos);
     }
 
-    mesh->createVBO(model, size);                                        
-    mesh->createVAO();                                                  
-    mesh->configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1); 
+    mesh->createVBO(model, size);
+    mesh->createVAO();
+    mesh->configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1);
     mesh->indexCount = 0;
     mesh->vertexCount = vertexCount;
+    mesh->material = new Material();
+
     meshes.push_back(mesh);
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
 }
 
 Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 {
-    Mesh* mesh = new Mesh();
+    Mesh *mesh = new Mesh();
 
     // --- NOVÉ: Výpočet bounds z vertexů ---
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
     int stride = hasUv ? 8 : 6;
-    for (size_t i = 0; i < vertexCount * stride; i += stride) {
-        glm::vec3 pos(model[i], model[i+1], model[i+2]);
+    for (size_t i = 0; i < vertexCount * stride; i += stride)
+    {
+        glm::vec3 pos(model[i], model[i + 1], model[i + 2]);
         minBounds = glm::min(minBounds, pos);
         maxBounds = glm::max(maxBounds, pos);
     }
@@ -80,6 +84,8 @@ Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
     mesh->configAttributes(glStride, 0, 3 * sizeof(float), uvOffset);
     mesh->vertexCount = vertexCount;
     mesh->indexCount = 0;
+    mesh->material = new Material();
+
     meshes.push_back(mesh);
 
     glBindVertexArray(0);
@@ -88,28 +94,31 @@ Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
 Model::Model(const char *name)
 {
     tinyobj::ObjReaderConfig reader_config;
-   reader_config.mtl_search_path = "";  
+    reader_config.mtl_search_path = "";
 
     tinyobj::ObjReader reader;
-    if (!reader.ParseFromFile(name, reader_config)) {
+    if (!reader.ParseFromFile(name, reader_config))
+    {
         std::cerr << "TinyObjLoader error: " << reader.Error() << std::endl;
         std::cout << "Failed to load model: " << name << std::endl;
-        return; 
+        return;
     }
 
-    if (!reader.Warning().empty()) {
+    if (!reader.Warning().empty())
+    {
         std::cerr << "TinyObjLoader warning: " << reader.Warning() << std::endl;
     }
 
-    auto& attrib = reader.GetAttrib();
-    auto& shapes = reader.GetShapes();
-    auto& materials = reader.GetMaterials();
+    auto &attrib = reader.GetAttrib();
+    auto &shapes = reader.GetShapes();
+    auto &materials = reader.GetMaterials();
 
     minBounds = glm::vec3(std::numeric_limits<float>::max());
     maxBounds = glm::vec3(std::numeric_limits<float>::lowest());
 
-    for (const auto& shape : shapes) {
-        Mesh* mesh = new Mesh();
+    for (const auto &shape : shapes)
+    {
+        Mesh *mesh = new Mesh();
 
         std::vector<float> vertices;
         std::vector<unsigned int> indices;
@@ -118,9 +127,11 @@ Model::Model(const char *name)
         bool hasUVs = !attrib.texcoords.empty();
 
         size_t index_offset = 0;
-        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f) {
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f)
+        {
             size_t fv = shape.mesh.num_face_vertices[f];
-            for (size_t v = 0; v < fv; ++v) {
+            for (size_t v = 0; v < fv; ++v)
+            {
                 tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
                 float x = attrib.vertices[3 * idx.vertex_index + 0];
@@ -134,20 +145,26 @@ Model::Model(const char *name)
                 minBounds = glm::min(minBounds, pos);
                 maxBounds = glm::max(maxBounds, pos);
 
-                if (idx.normal_index >= 0 && hasNormals) {
+                if (idx.normal_index >= 0 && hasNormals)
+                {
                     vertices.push_back(attrib.normals[3 * idx.normal_index + 0]);
                     vertices.push_back(attrib.normals[3 * idx.normal_index + 1]);
                     vertices.push_back(attrib.normals[3 * idx.normal_index + 2]);
-                } else {
+                }
+                else
+                {
                     vertices.push_back(0.0f);
                     vertices.push_back(0.0f);
                     vertices.push_back(0.0f);
                 }
 
-                if (idx.texcoord_index >= 0 && hasUVs) {
+                if (idx.texcoord_index >= 0 && hasUVs)
+                {
                     vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
                     vertices.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
-                } else {
+                }
+                else
+                {
                     vertices.push_back(0.0f);
                     vertices.push_back(0.0f);
                 }
@@ -155,7 +172,8 @@ Model::Model(const char *name)
             index_offset += fv;
         }
 
-        for (size_t i = 0; i < vertices.size() / (hasUVs ? 8 : 6); ++i) {
+        for (size_t i = 0; i < vertices.size() / (hasUVs ? 8 : 6); ++i)
+        {
             indices.push_back(static_cast<unsigned int>(i));
         }
 
@@ -170,16 +188,30 @@ Model::Model(const char *name)
         mesh->indexCount = indices.size();
         mesh->vertexCount = vertices.size() / (hasUVs ? 8 : 6);
 
-        glBindVertexArray(0);
+        mesh->material = new Material();
+        if (!shape.mesh.material_ids.empty() && shape.mesh.material_ids[0] >= 0)
+        {
 
-        meshes.push_back(mesh);
+            const auto &mat = materials[shape.mesh.material_ids[0]];
+            mesh->material->setDiffuse(glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]));
+            mesh->material->setAmbient(glm::vec3(mat.ambient[0], mat.ambient[1], mat.ambient[2]));
+            mesh->material->setSpecular(glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]));
+            mesh->material->setShininess(mat.shininess);
 
-        if (!shape.mesh.material_ids.empty() && shape.mesh.material_ids[0] >= 0) {
-            const auto& mat = materials[shape.mesh.material_ids[0]];
-            if (!mat.diffuse_texname.empty()) {
-                mesh->texturePath = mat.diffuse_texname;
+            if (!mat.diffuse_texname.empty())
+            {
+                std::filesystem::path objPath(name);
+                std::string dir = objPath.parent_path().string();
+
+                std::string textureImg = dir.empty() ? mat.diffuse_texname : dir + "/" + mat.diffuse_texname;
+
+                std::cout << "Cesta k textuře: " << textureImg << std::endl;
+                mesh->material->loadTexture(textureImg.c_str());
+
+                mesh->texturePath = textureImg;
             }
         }
+        meshes.push_back(mesh);
     }
 }
 
@@ -188,24 +220,24 @@ Model::~Model()
     meshes.clear();
 }
 
-void Model::draw()
+void Model::drawMesh(size_t index)
 {
-    for (const Mesh *mesh : meshes)
+    if (index >= meshes.size())
+        return;
+
+    Mesh *mesh = meshes[index];
+    glBindVertexArray(mesh->VAO);
+
+    if (mesh->indexCount > 0)
     {
-        glBindVertexArray(mesh->VAO);
-        if (mesh->indexCount > 0)
-        {
-            glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, 0);
-        }
-        else
-        {
-            glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
-        }
-        glBindVertexArray(0);
-        GLenum err = glGetError();
-        if (err != GL_NO_ERROR)
-            std::cerr << "OpenGL: " << err << std::endl;
+        glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, 0);
     }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
+    }
+
+    glBindVertexArray(0); 
 }
 const std::string &Model::getTexturePath(size_t meshIndex) const
 {

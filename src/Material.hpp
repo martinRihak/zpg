@@ -50,6 +50,7 @@ public:
     void setSkyBox(bool isSkyBox) { this->isSkyBox = isSkyBox; }
 
     bool hasTexture() const { return texture; }
+    void setTexture(bool texture) { this->texture = texture; }
     GLuint getTextureID()  { return textureID; }
     void setTime(float t) { time = t; }
     float getTime() { return time; }

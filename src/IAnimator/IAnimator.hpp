@@ -121,7 +121,7 @@ private:
 public:
     BezierAnimator(std::vector<glm::vec3> points, float speed);
     BezierAnimator(std::vector<glm::vec3> points, float speed,bool rotation);
-    void addPoint(glm::mat3 points);
+    void addPoint(glm::vec3 points);
     void update(IAnimatable &obj, float dt) override;
 
 };

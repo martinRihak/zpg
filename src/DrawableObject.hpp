@@ -24,7 +24,6 @@ private:
     Model *model;
     ShaderProgram *shader;
     std::shared_ptr<Transformation> tranformation;
-    Material *material;
     std::unique_ptr<IAnimator> animator;
     bool animated = false;
     CompositeTransformation queuedTransforms;
@@ -33,7 +32,7 @@ private:
 
     glm::vec3 minBounds, maxBounds;
     float boundingRadius = 1.0f;
-    bool selected = false;
+    bool selected = false,Bezier = false;
     int id;
 
     void drawSkybox(float dt);
@@ -42,7 +41,6 @@ private:
 public:
     DrawableObject(Model *model, ShaderProgram *shader);
     ~DrawableObject();
-    void draw(float dt);
     void draw(float dt, const std::vector<Light *> &lights);
     Transformation &getTransformation() override;
     const Transformation &getTransformation() const override;
@@ -53,7 +51,9 @@ public:
     void createRotation(float speedDegPerSec, glm::vec3 axis, int dir);
     void createOrbit(const IAnimatable *center, float radius, float speedDegPerSec, float initialAngleDeg = 0.0f);
     void createRandomMovement(float speed, float baseInterval);
+    void createRandomMovement(float speed, float baseInterval, glm::vec3 minBounds, glm::vec3 maxBounds);
     void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
+    void createBezier(std::vector<glm::vec3> controlPoints, float speed,bool rotation);
     void addAnimator(IAnimator *animator)
     {
         this->animator = std::unique_ptr<IAnimator>(animator);
@@ -69,12 +69,11 @@ public:
     bool getHasLight() const;
     PointLight *getLight() const;
     void createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att);
-
-    Material *getMaterial() const { return material; }
+    
+    Material *getMaterial() const { return model->getMaterial(0); }
     void createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
     void setMaterial(Material *mat);
 
-    void computeBounds();
     bool intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const;
     void setSelected(bool selected) { this->selected = selected; }
     bool isSelected() const { return selected; }
@@ -85,4 +84,8 @@ public:
 
     void destroy() override;
     bool isDestroyed() const { return destroyVal; }
+
+    bool hasBezier() const { return Bezier; }
+    void setHasBezier(bool Bezier) {this->Bezier = Bezier;}
+    void addControlPoint(glm::vec3 point);
 };

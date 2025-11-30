@@ -26,24 +26,27 @@ void Scene::addLight(Light *light)
 {
     lights.push_back(light);
 }
-DrawableObject* Scene::getObjectById(uint8_t id) {
-    for (DrawableObject* obj : objects) {
-        if (obj->getID() == id) return obj;
+DrawableObject *Scene::getObjectById(uint8_t id)
+{
+    for (DrawableObject *obj : objects)
+    {
+        if (obj->getID() == id)
+            return obj;
     }
     return nullptr;
 }
 void Scene::render(float dt)
 {
-glEnable(GL_STENCIL_TEST);
+    glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     for (DrawableObject *o : this->objects)
     {
-        glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);  
+        glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);
         o->draw(dt, this->lights);
     }
 
-    glStencilFunc(GL_ALWAYS, 0, 0xFF); 
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);
     for (DrawableObject *o : this->objects)
     {
         o->draw(dt, this->lights);
@@ -100,4 +103,18 @@ void Scene::randomForest(glm::vec3 center, int radius, const std::vector<std::pa
             this->addObject(newObj);
         }
     }
+}
+
+void Scene::fireFly(DrawableObject *prototype,int n, glm::vec3 minBounds, glm::vec3 maxBounds, float speed, float baseInterval){
+    //prototype->createRandomMovement(speed, baseInterval, minBounds, maxBounds);
+    //this->addLight(prototype->getLight());
+    //this->addObject(prototype);
+    //for (int i = 1; i < n; i++)
+    //{
+        //DrawableObject *newObj = prototype->clone();
+        //newObj->createRandomMovement(speed, baseInterval, minBounds, maxBounds);
+        //this->addLight(newObj->getLight());
+        //this->addObject(newObj);
+    //}
+    
 }

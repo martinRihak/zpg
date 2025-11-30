@@ -26,6 +26,7 @@ public:
     const glm::vec3 &getBackground() const { return background; }
     const std::vector<Light *> &getLights() const;
     void randomForest(glm::vec3 center, int radius, const std::vector<std::pair<DrawableObject *, int>> &objectsToSpawn);
+    void fireFly(DrawableObject *prototype,int n,glm::vec3 minBounds,glm::vec3 maxBounds,float speed,float baseInterval);
     virtual void render(float dt);
 
     bool isGameScene() { return isGame; }

@@ -37,19 +37,7 @@ DrawableObject *SceneBuilder::createObject(const std::string &modelName, const s
 }
 void SceneBuilder::createSkyBox()
 {
-    std::vector<std::string> skyboxFaces = {
-        "../Models/cubeMap/posx.jpg",
-        "../Models/cubeMap/negx.jpg",
-        "../Models/cubeMap/posy.jpg",
-        "../Models/cubeMap/negy.jpg",
-        "../Models/cubeMap/posz.jpg",
-        "../Models/cubeMap/negz.jpg"};
 
-    DrawableObject *cube = createObject("cube", "skyboxShader");
-    cube->getMaterial()->setFaces(skyboxFaces);
-    cube->getTransformation().setScale(glm::vec3(50));
-    cube->getMaterial()->loadCubeMap();
-    this->skybox.push_back(cube);
     std::vector<std::string> skyboxSky = {
         "../Models/NASA/cube/stars_posx.jpg",
         "../Models/NASA/cube/stars_negx.jpg",
@@ -67,29 +55,27 @@ void SceneBuilder::createSkyBox()
 void SceneBuilder::createTriangle()
 {
     std::vector<glm::vec3> raceTrackPoints = {
-        glm::vec3(0.0f, 0.0f, 0.0f),  // P0: Start rovinky
-        glm::vec3(10.0f, 0.0f, 0.0f), // P1: Tah do rovinky
-        glm::vec3(20.0f, 0.5f, 5.0f), // P2: Mírný kopec a pravá zatáčka
-        glm::vec3(30.0f, 1.0f, 0.0f), // P3/P0: Konec první zatáčky
+        glm::vec3(0.0f, 0.0f, 0.0f),  
+        glm::vec3(10.0f, 0.0f, 0.0f), 
+        glm::vec3(20.0f, 0.5f, 5.0f), 
+        glm::vec3(30.0f, 1.0f, 0.0f),
 
-        glm::vec3(35.0f, 1.5f, -10.0f), // P1: Tah do levé zatáčky s stoupáním
-        glm::vec3(20.0f, 2.0f, -15.0f), // P2: Hlubší zatáčka nahoře
-        glm::vec3(10.0f, 1.0f, -10.0f), // P3/P0: Konec zatáčky, mírné klesání
+        glm::vec3(35.0f, 1.5f, -10.0f), 
+        glm::vec3(20.0f, 2.0f, -15.0f), 
+        glm::vec3(10.0f, 1.0f, -10.0f), 
 
-        glm::vec3(5.0f, 0.5f, -5.0f),   // P1: Esovitá zatáčka vpravo
-        glm::vec3(15.0f, 0.0f, 0.0f),   // P2: Tah pro hladkost
-        glm::vec3(20.0f, -0.5f, 10.0f), // P3/P0: Konec es, kopec dolů
+        glm::vec3(5.0f, 0.5f, -5.0f),   
+        glm::vec3(15.0f, 0.0f, 0.0f),  
+        glm::vec3(20.0f, -0.5f, 10.0f), 
 
-        glm::vec3(10.0f, -1.0f, 15.0f), // P1: Návratová rovinka s klesáním
-        glm::vec3(-5.0f, -0.5f, 5.0f),  // P2: Poslední zatáčka vlevo
-        glm::vec3(0.0f, 0.0f, 0.0f)     // P3: Konec, uzavření na start
+        glm::vec3(10.0f, -1.0f, 15.0f), 
+        glm::vec3(-5.0f, -0.5f, 5.0f),  
+        glm::vec3(0.0f, 0.0f, 0.0f)     
     };
     Scene *scene = new Scene();
-    DrawableObject *formula = createObject("formula", "phong");
-    formula->getTransformation().setScale(glm::vec3(0.05f));
-    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
-    formula->setMaterial(new Material(glm::vec3(1, 0, 0), glm::vec3(1, 0, 0), glm::vec3(1, 0, 0), 16.0f));
-    formula->addAnimator(new BezierAnimator(raceTrackPoints, 0.2f, true));
+    DrawableObject *formula = createObject("rocket", "phong");
+    formula->getTransformation().setScale(glm::vec3(0.005f));
+    formula->createBezier(raceTrackPoints,0.2f,true);
 
     DrawableObject *triangleObj = createObject("tree", "phong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
@@ -152,30 +138,48 @@ void SceneBuilder::create4Spheres()
 }
 void SceneBuilder::createForest()
 {
+    std::vector<std::string> skyboxFaces = {
+        "../Models/cubeMap/posx.jpg",
+        "../Models/cubeMap/negx.jpg",
+        "../Models/cubeMap/posy.jpg",
+        "../Models/cubeMap/negy.jpg",
+        "../Models/cubeMap/posz.jpg",
+        "../Models/cubeMap/negz.jpg"};
+    DrawableObject *cube = createObject("cube", "skyboxShader");
+    cube->getTransformation().setScale(glm::vec3(50));
+    cube->getMaterial()->setTime(0.2f);
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getMaterial()->loadCubeMap();
 
     Scene *scene = new Scene();
     DrawableObject *tree = createObject("tree", "phong");
     tree->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
 
     DrawableObject *shrek = createObject("shrek", "phong");
-    shrek->getMaterial()->loadTexture("../Models/assets/shrek/shrek.png");
-    shrek->getTransformation().setPosition(glm::vec3(5, 0, 0));
+    shrek->getTransformation().setPosition(glm::vec3(1, 0, 0));
+    shrek->getTransformation().setRotation(-45.0f, glm::vec3(0, 1, 0));
     DrawableObject *fiona = createObject("fiona", "phong");
-    fiona->getMaterial()->loadTexture("../Models/assets/shrek/fiona.png");
-    fiona->getTransformation().setPosition(glm::vec3(7, 0, 0));
+    fiona->getTransformation().setPosition(glm::vec3(-1, 0, 0));
+    fiona->getTransformation().setRotation(45.0f, glm::vec3(0, 1, 0));
     DrawableObject *toiled = createObject("toiled", "phong");
-    toiled->getMaterial()->loadTexture("../Models/assets/shrek/toiled.jpg");
-    toiled->getTransformation().setPosition(glm::vec3(6, 0, -3));
+    toiled->getTransformation().setPosition(glm::vec3(-6, 0, -4));
     toiled->getTransformation().setRotation(45.0f, glm::vec3(0, 1, 0));
+
+    DrawableObject *house = createObject("shrekHouse", "phong");
+    house->getTransformation().setPosition(glm::vec3(0, 0, -7));
+    house->getTransformation().setRotation(-45.0f, glm::vec3(0, 1, 0));
+
 
     DrawableObject *bush = createObject("bush", "phong");
     DrawableObject *plane = createObject("plane", "phong");
     plane->getMaterial()->loadTexture("../src/grass.png");
     plane->getTransformation().setPosition(glm::vec3(0, 0, 0));
+    plane->getTransformation().setScale(glm::vec3(3.f));
     DrawableObject *plane2 = createObject("plane", "phong");
     plane2->getTransformation().setPosition(glm::vec3(20, 0, 0));
     plane2->getMaterial()->loadTexture("../src/grass.png");
     plane2->getTransformation().setPosition(glm::vec3(0, 0, 0));
+    plane2->getTransformation().setScale(glm::vec3(3.f));
     DrawableObject *firefly = createObject("sphere", "phong");
     DrawableObject *firefly2 = createObject("sphere", "phong");
     firefly->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
@@ -183,17 +187,17 @@ void SceneBuilder::createForest()
     firefly->getTransformation().setPosition(glm::vec3(0.0, -2, 0));
     firefly->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
-
     firefly2->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
     firefly2->getTransformation().setScale(glm::vec3(0.05f));
     firefly2->getMaterial()->setObjectColor(glm::vec3(1, 1, 1));
     firefly2->getMaterial()->setEmission(glm::vec3(1.5, 1.2, 0.5));
     firefly->createRandomMovement(0.5f, 2.f);
     firefly2->createRandomMovement(0.5f, 2.0f);
-    std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 50}};
-    scene->randomForest(glm::vec3(-5.0f, 0.0f, 0.0f), 10, forest);
+    std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 20}};
+    scene->randomForest(glm::vec3(12.0f, 0.0f, 0.0f), 10, forest);
+    scene->randomForest(glm::vec3(-12.0f, 0.0f, 0.0f), 10, forest);
     scene->addObject(plane);
-    scene->addObject(skybox[0]);
+    scene->addObject(cube);
     scene->addObject(shrek);
     scene->addObject(fiona);
     scene->addObject(toiled);
@@ -202,6 +206,7 @@ void SceneBuilder::createForest()
     scene->addLight(firefly2->getLight());
     scene->addObject(firefly);
     scene->addObject(firefly2);
+    scene->addObject(house);
     this->createScene(scene);
 }
 void SceneBuilder::createSunSystem()
@@ -261,7 +266,7 @@ void SceneBuilder::createSunSystem()
     neptune->getMaterial()->loadTexture("../Models/NASA/2k_neptune.jpg");
     neptune->getTransformation().setScale(glm::vec3(0.2f));
     neptune->createOrbit(sun, 60.0f, 2.0f, 315.0f);
-    scene->addObject(skybox[1]);
+    scene->addObject(skybox[0]);
     scene->addObject(sun);
     scene->addObject(mercury);
     scene->addObject(venus);
@@ -319,7 +324,6 @@ void SceneBuilder::createGame()
     cube->getTransformation().setScale(glm::vec3(50));
     cube->getMaterial()->loadCubeMap();
     DrawableObject *asteroid = createObject("sphere", "phong");
-    asteroid->getMaterial()->loadTexture("../Models/NASA/asteroid/asteroid.jpg");
     asteroid->getTransformation().setScale(glm::vec3(0.00001f));
     GameScene *scene = new GameScene(4.0f, this->camera, asteroid);
 

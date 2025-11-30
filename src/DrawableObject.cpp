@@ -5,7 +5,7 @@
 #include <limits> // Pro FLT_MAX
 
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
-    : model(model), shader(shader), material(new Material())
+    : model(model), shader(shader)
 {
     tranformation = std::make_shared<Transformation>();
     // Inicializace bounding box
@@ -20,25 +20,26 @@ void DrawableObject::destroy()
 {
     destroyVal = true;
 }
-void DrawableObject::draw(float dt)
-{
-    shader->use();
-    shader->setUniform("lightCount", 0);
-    update(dt);
-    shader->updateMaterial(this->material);
-    this->shader->setModelMatrix(tranformation->getModelMatrix());
-    model->draw();
-    glUseProgram(0);
-}
 
 void DrawableObject::createRandomMovement(float speed, float baseInterval)
 {
     this->animator = std::make_unique<RandomMovementAnimator>(speed, baseInterval);
     this->animated = true;
 }
+
+void DrawableObject::createBezier(std::vector<glm::vec3> controlPoints, float speed, bool rotation){
+    this->animator = std::make_unique<BezierAnimator>(controlPoints, speed, rotation);
+    this->animated = true;
+    this->Bezier = true;
+}
+void DrawableObject::createRandomMovement(float speed, float baseInterval, glm::vec3 minBounds, glm::vec3 maxBounds)
+{
+    this->animator = std::make_unique<RandomMovementAnimator>(speed, baseInterval, minBounds, maxBounds);
+    this->animated = true;
+}
 void DrawableObject::draw(float dt, const std::vector<Light *> &lights)
 {
-    if (material->isSkyBoxMaterial())
+    if (getMaterial()->isSkyBoxMaterial())
     {
         drawSkybox(dt);
     }
@@ -56,11 +57,11 @@ void DrawableObject::drawSkybox(float dt)
     shader->setModelMatrix(tranformation->getModelMatrix());
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, material->getTextureID());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, getMaterial()->getTextureID());
     this->shader->setUniform("cubeTexture", 0);
-    this->shader->setUniform("time", material->getTime());
+    this->shader->setUniform("time", getMaterial()->getTime());
     update(dt);
-    model->draw();
+    model->drawMesh(0);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
 }
@@ -78,11 +79,12 @@ void DrawableObject::drawRegular(float dt, const std::vector<Light *> &lights)
         lights[i]->update(dt);
         shader->updateLight(i, lights[i]);
     }
-
-    shader->updateMaterial(this->material);
-
     update(dt);
-    model->draw();
+    for (size_t i = 0; i < model->getMeshCount(); i++)
+    {
+        shader->updateMaterial(model->getMaterial(i));
+        model->drawMesh(i);
+    }
 
     glUseProgram(0);
 }
@@ -153,7 +155,6 @@ DrawableObject *DrawableObject::clone() const
 {
 
     DrawableObject *newObj = new DrawableObject(this->model, this->shader);
-    newObj->setMaterial(this->material);
     return newObj;
 }
 
@@ -168,13 +169,12 @@ void DrawableObject::createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att)
 }
 void DrawableObject::setMaterial(Material *mat)
 {
-    if (material)
-        delete material;
-    material = mat;
+
+    this->model->setMaterial(mat);
 }
 void DrawableObject::createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness)
 {
-    this->material = new Material(a, d, s, shiness);
+    this->model->setMaterial(new Material(a, d, s, shiness));
 }
 
 bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, float &dist) const
@@ -205,17 +205,29 @@ bool DrawableObject::intersectsRay(const glm::vec3 &rayOrigin, const glm::vec3 &
     tmin = glm::max(tmin, glm::min(t1, t2));
     tmax = glm::min(tmax, glm::max(t1, t2));
 
-    // 3. Kontrola, zda se intervaly překrývají a zda je průsečík před kamerou
     if (tmax < 0 || tmin > tmax)
         return false;
 
-    dist = tmin > 0.0f ? tmin : tmax; // Pokud tmin < 0, ale tmax > 0 → jsme uvnitř boxu
+    dist = tmin > 0.0f ? tmin : tmax;
     return true;
 }
 bool DrawableObject::collidesWith(const DrawableObject *other) const
 {
     glm::vec3 distVec = getTransformation().getPosition() - other->getTransformation().getPosition();
     float dist = glm::length(distVec);
-    float sumRadius = boundingRadius + other->boundingRadius; // boundingRadius přidej dříve
+    float sumRadius = boundingRadius + other->boundingRadius;
     return dist <= sumRadius;
+}
+void DrawableObject::addControlPoint(glm::vec3 point)
+{
+    BezierAnimator *bezierAnim = dynamic_cast<BezierAnimator *>(animator.get());
+    if (bezierAnim)
+    {
+        bezierAnim->addPoint(point);
+        printf("Bod přidán do Bézier animátoru!\n");
+    }
+    else
+    {
+        printf("Objekt nemá Bézier animátor!\n");
+    }
 }
