@@ -8,9 +8,22 @@ DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader)
 {
     tranformation = std::make_shared<Transformation>();
-    // Inicializace bounding box
+
     minBounds = model->getMinBounds();
     maxBounds = model->getMaxBounds();
+    for (size_t i = 0; i < model->getMeshCount(); ++i)
+    {
+        auto defaultMat = model->getMaterial(i);
+        if (defaultMat)
+        {
+            materials.push_back(std::make_unique<Material>(*defaultMat));
+        }
+        else
+        {
+            materials.push_back(std::make_unique<Material>());
+        }
+    }
+    // model->freeMaterial();
 }
 
 DrawableObject::~DrawableObject()
@@ -27,8 +40,15 @@ void DrawableObject::createRandomMovement(float speed, float baseInterval)
     this->animated = true;
 }
 
-void DrawableObject::createBezier(std::vector<glm::vec3> controlPoints, float speed, bool rotation){
-    this->animator = std::make_unique<BezierAnimator>(controlPoints, speed, rotation);
+void DrawableObject::createBezier(std::vector<glm::vec3> controlPoints, float speed, bool rotation)
+{
+    this->animator = std::make_unique<BezierAnimator>(controlPoints, speed, rotation, this->shader->getCamera());
+    this->animated = true;
+    this->Bezier = true;
+}
+void DrawableObject::createBezier(float speed, bool rotation)
+{
+    this->animator = std::make_unique<BezierAnimator>(speed, rotation, this->shader->getCamera());
     this->animated = true;
     this->Bezier = true;
 }
@@ -82,11 +102,18 @@ void DrawableObject::drawRegular(float dt, const std::vector<Light *> &lights)
     update(dt);
     for (size_t i = 0; i < model->getMeshCount(); i++)
     {
-        shader->updateMaterial(model->getMaterial(i));
+        shader->updateMaterial(getMaterial(i));
         model->drawMesh(i);
     }
-
     glUseProgram(0);
+    if (editMode && Bezier)
+    {
+        BezierAnimator *bezierAnim = dynamic_cast<BezierAnimator *>(animator.get());
+        if (bezierAnim)
+        {
+            bezierAnim->drawControlPoints(); // ← Nové: Nech animátor kreslit body
+        }
+    }
 }
 
 void DrawableObject::createRotation(float speedDegPerSec, glm::vec3 axis, int dir)
@@ -229,5 +256,33 @@ void DrawableObject::addControlPoint(glm::vec3 point)
     else
     {
         printf("Objekt nemá Bézier animátor!\n");
+    }
+}
+void DrawableObject::edit(bool bezierEdit)
+{
+    if (Bezier)
+    {
+        BezierAnimator *bezierAnim = dynamic_cast<BezierAnimator *>(animator.get());
+        if (bezierEdit)
+        {
+            editMode = true;
+            materials[0].get()->setTexture(false);
+            materials[0].get()->setObjectColor(glm::vec3(1.0f, 1.0f, 1.0f));
+            bezierAnim->stop();
+            return;
+        }
+        else
+        {
+            editMode = false;
+            bezierAnim->printPoints();
+            materials[0].get()->setTexture(true);
+            bezierAnim->start();
+            return;
+        }
+    }
+    else
+    {
+        printf("Objekt nemá Bézier animátor!\n");
+        return;
     }
 }

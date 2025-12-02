@@ -56,8 +56,8 @@ Model::Model(const float *model, size_t size, int vertexCount)
     mesh->configAttributes(6 * sizeof(float), 0, 3 * sizeof(float), -1);
     mesh->indexCount = 0;
     mesh->vertexCount = vertexCount;
-    mesh->material = new Material();
 
+    mesh->material = new Material();
     meshes.push_back(mesh);
     glBindVertexArray(0);
 }
@@ -84,8 +84,8 @@ Model::Model(const float *model, size_t size, int vertexCount, bool hasUv)
     mesh->configAttributes(glStride, 0, 3 * sizeof(float), uvOffset);
     mesh->vertexCount = vertexCount;
     mesh->indexCount = 0;
-    mesh->material = new Material();
 
+    mesh->material = new Material();
     meshes.push_back(mesh);
 
     glBindVertexArray(0);
@@ -237,7 +237,7 @@ void Model::drawMesh(size_t index)
         glDrawArrays(GL_TRIANGLES, 0, mesh->vertexCount);
     }
 
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
 }
 const std::string &Model::getTexturePath(size_t meshIndex) const
 {
@@ -247,4 +247,12 @@ const std::string &Model::getTexturePath(size_t meshIndex) const
     }
     static std::string empty = "";
     return empty;
+}
+
+void Model::freeMaterial() const
+{
+    for (auto mesh : meshes)
+    {
+        delete mesh->material;
+    }
 }

@@ -50,32 +50,18 @@ void SceneBuilder::createSkyBox()
     cube02->getTransformation().setScale(glm::vec3(50));
     cube02->getMaterial()->loadCubeMap();
     this->skybox.push_back(cube02);
-    
 }
 void SceneBuilder::createTriangle()
 {
     std::vector<glm::vec3> raceTrackPoints = {
-        glm::vec3(0.0f, 0.0f, 0.0f),  
-        glm::vec3(10.0f, 0.0f, 0.0f), 
-        glm::vec3(20.0f, 0.5f, 5.0f), 
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(10.0f, 0.0f, 0.0f),
+        glm::vec3(20.0f, 0.5f, 5.0f),
         glm::vec3(30.0f, 1.0f, 0.0f),
-
-        glm::vec3(35.0f, 1.5f, -10.0f), 
-        glm::vec3(20.0f, 2.0f, -15.0f), 
-        glm::vec3(10.0f, 1.0f, -10.0f), 
-
-        glm::vec3(5.0f, 0.5f, -5.0f),   
-        glm::vec3(15.0f, 0.0f, 0.0f),  
-        glm::vec3(20.0f, -0.5f, 10.0f), 
-
-        glm::vec3(10.0f, -1.0f, 15.0f), 
-        glm::vec3(-5.0f, -0.5f, 5.0f),  
-        glm::vec3(0.0f, 0.0f, 0.0f)     
     };
     Scene *scene = new Scene();
-    DrawableObject *formula = createObject("rocket", "phong");
-    formula->getTransformation().setScale(glm::vec3(0.005f));
-    formula->createBezier(raceTrackPoints,0.2f,true);
+    DrawableObject *rocket = createObject("rocket", "phong");
+    rocket->createBezier(raceTrackPoints, 0.05f, true);
 
     DrawableObject *triangleObj = createObject("tree", "phong");
     triangleObj->getMaterial()->loadTexture("../src/wooden_fence.png");
@@ -99,7 +85,7 @@ void SceneBuilder::createTriangle()
     scene->addLight(light);
     scene->addObject(triangleObj);
     scene->addObject(triangleObj2);
-    scene->addObject(formula);
+    scene->addObject(rocket);
     scene->addObject(skybox[0]);
     this->createScene(scene);
 }
@@ -107,12 +93,12 @@ void SceneBuilder::createTriangle()
 void SceneBuilder::create4Spheres()
 {
     Scene *scene = new Scene;
-    DrawableObject *sphere1 = createObject("sphere", "phong");
+    DrawableObject *sphere1 = createObject("sphere", "constant");
     sphere1->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
 
-    DrawableObject *sphere2 = createObject("sphere", "phong");
+    DrawableObject *sphere2 = createObject("sphere", "lambert");
     DrawableObject *sphere3 = createObject("sphere", "phong");
-    DrawableObject *sphere4 = createObject("sphere", "phong");
+    DrawableObject *sphere4 = createObject("sphere", "blinn");
     PointLight *centerLight = new PointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     Reflector *reflector = new Reflector(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0, -1.0, 0.0), 20.0, 50.0);
     lights.push_back(centerLight);
@@ -168,7 +154,6 @@ void SceneBuilder::createForest()
     DrawableObject *house = createObject("shrekHouse", "phong");
     house->getTransformation().setPosition(glm::vec3(0, 0, -7));
     house->getTransformation().setRotation(-45.0f, glm::vec3(0, 1, 0));
-
 
     DrawableObject *bush = createObject("bush", "phong");
     DrawableObject *plane = createObject("plane", "phong");
@@ -280,34 +265,132 @@ void SceneBuilder::createSunSystem()
 
     this->createScene(scene);
 }
-void SceneBuilder::createTestScene()
+void SceneBuilder::createRaceTrack()
 {
+    std::vector<glm::vec3> racePoints = {
+        glm::vec3(-1.195549f, -0.002268f, 0.320951f), // Anchor 0
+        glm::vec3(-3.182554f, -0.003398f, 0.570556f), // Control 1
+        glm::vec3(-3.864220f, -0.004058f, 0.682624f), // Control 2
+
+        // Segment 1
+        glm::vec3(-9.612954f, -0.005435f, 2.007441f),  // Anchor 1
+        glm::vec3(-11.183517f, -0.005883f, 2.632321f), // Control 1
+        glm::vec3(-11.313234f, -0.005546f, 3.004949f), // Control 2
+
+        // Segment 2
+        glm::vec3(-15.198067f, -0.006311f, 4.427852f), // Anchor 2
+        glm::vec3(-17.045133f, -0.006960f, 4.916194f), // Control 1
+        glm::vec3(-17.548966f, -0.007856f, 4.959759f), // Control 2
+
+        // Segment 3
+        glm::vec3(-21.406281f, -0.009493f, 3.930578f), // Anchor 3
+        glm::vec3(-23.440138f, -0.010426f, 3.232136f), // Control 1
+        glm::vec3(-23.969256f, -0.008604f, 1.485010f), // Control 2
+
+        // Segment 4
+        glm::vec3(-27.449684f, -0.005776f, -3.314631f), // Anchor 4
+        glm::vec3(-28.433953f, -0.005094f, -5.258684f), // Control 1
+        glm::vec3(-28.506816f, -0.005103f, -6.420078f), // Control 2
+
+        // Segment 5
+        glm::vec3(-26.468117f, -0.001585f, -9.288795f),  // Anchor 5
+        glm::vec3(-25.710114f, -0.000301f, -10.624357f), // Control 1
+        glm::vec3(-25.001798f, -0.001033f, -11.424430f), // Control 2
+
+        // Segment 6
+        glm::vec3(-21.363127f, -0.002899f, -13.505445f), // Anchor 6
+        glm::vec3(-19.657422f, -0.003420f, -14.492901f), // Control 1
+        glm::vec3(-17.878059f, -0.004186f, -15.363656f), // Control 2
+
+        // Segment 7
+        glm::vec3(-10.896156f, -0.005128f, -17.841543f), // Anchor 7
+        glm::vec3(-8.778522f, -0.005659f, -18.617341f),  // Control 1
+        glm::vec3(-7.535917f, -0.006718f, -18.451695f),  // Control 2
+
+        // Segment 8
+        glm::vec3(-4.874798f, -0.008116f, -14.296818f), // Anchor 8
+        glm::vec3(-3.605691f, -0.008731f, -12.576759f), // Control 1
+        glm::vec3(-3.688160f, -0.008547f, -11.170652f), // Control 2
+
+        // Segment 9
+        glm::vec3(-8.749309f, -0.008124f, -8.387122f),  // Anchor 9
+        glm::vec3(-10.488372f, -0.008076f, -7.483707f), // Control 1
+        glm::vec3(-11.973001f, -0.007629f, -7.276085f), // Control 2
+
+        // Segment 10
+        glm::vec3(-18.863472f, -0.005676f, -7.678588f), // Anchor 10
+        glm::vec3(-20.465481f, -0.005070f, -7.284795f), // Control 1
+        glm::vec3(-20.812141f, -0.004871f, -6.084391f), // Control 2
+
+        // Segment 11
+        glm::vec3(-17.900444f, -0.006347f, -1.967047f), // Anchor 11
+        glm::vec3(-16.806005f, -0.006868f, -0.459519f), // Control 1
+        glm::vec3(-15.145297f, -0.007526f, -0.104377f), // Control 2
+
+        // Segment 12
+        glm::vec3(-8.060884f, -0.009716f, -2.605188f), // Anchor 12
+        glm::vec3(-5.601828f, -0.010596f, -3.354056f), // Control 1
+        glm::vec3(-3.102038f, -0.011248f, -4.810794f), // Control 2
+
+        // Segment 13
+        glm::vec3(4.039268f, -0.011220f, -11.998540f), // Anchor 13
+        glm::vec3(5.713342f, -0.011871f, -13.864799f), // Control 1
+        glm::vec3(6.101143f, -0.012572f, -15.032980f), // Control 2
+
+        // Segment 14
+        glm::vec3(12.575954f, -0.015718f, -16.981590f), // Anchor 14
+        glm::vec3(15.164223f, -0.017100f, -17.873307f), // Control 1
+        glm::vec3(17.589561f, -0.018536f, -17.878267f), // Control 2
+
+        // Segment 15
+        glm::vec3(26.973827f, -0.022296f, -16.160179f), // Anchor 15
+        glm::vec3(28.978656f, -0.023236f, -15.596426f), // Control 1
+        glm::vec3(29.599311f, -0.016819f, -13.124381f), // Control 2
+
+        // Segment 16
+        glm::vec3(30.002054f, -0.011156f, -6.072968f), // Anchor 16
+        glm::vec3(30.337064f, -0.009565f, -2.781806f), // Control 1
+        glm::vec3(29.242834f, -0.008696f, -1.506426f), // Control 2
+
+        // Segment 17
+        glm::vec3(25.608234f, -0.008326f, 0.523492f), // Anchor 17
+        glm::vec3(23.668748f, -0.007925f, 1.701527f), // Control 1
+        glm::vec3(21.670870f, -0.007217f, 1.891440f), // Control 2
+
+        // Segment 18
+        glm::vec3(16.598379f, -0.005880f, 1.314054f), // Anchor 18
+        glm::vec3(14.616126f, -0.005281f, 1.206135f), // Control 1
+        glm::vec3(12.810913f, -0.004334f, 1.100719f), // Control 2
+
+        // Segment 19
+        glm::vec3(-1.195549f, -0.002268f, 0.320951f) // Anchor 19
+
+    };
+    std::vector<std::string> skyboxFaces = {
+        "../Models/cubeMap/posx.jpg",
+        "../Models/cubeMap/negx.jpg",
+        "../Models/cubeMap/posy.jpg",
+        "../Models/cubeMap/negy.jpg",
+        "../Models/cubeMap/posz.jpg",
+        "../Models/cubeMap/negz.jpg"};
+    DrawableObject *cube = createObject("cube", "skyboxShader");
+    cube->getTransformation().setScale(glm::vec3(50));
+    cube->getMaterial()->setFaces(skyboxFaces);
+    cube->getMaterial()->loadCubeMap();
+
     Scene *scena = new Scene();
     DrawableObject *formula = createObject("formula", "phong");
-    DrawableObject *house = createObject("house", "phong");
-    DrawableObject *Koen = createObject("koen", "phong");
-    DrawableObject *ferarri = createObject("ferarri", "phong");
-    // house->getTransformation().setScale(glm::vec3(0.8f));
-    house->getTransformation().setPosition(glm::vec3(-2.0, 0.0, 8.0));
-    formula->getTransformation().setScale(glm::vec3(0.2f));
-    Koen->getTransformation().setPosition(glm::vec3(0.0, 3.0, 0.0));
-    Koen->getTransformation().setScale(glm::vec3(0.2f));
-    ferarri->getTransformation().setPosition(glm::vec3(0.0, -3.0, 0.0));
-    ferarri->getTransformation().setScale(glm::vec3(0.015f));
-    ferarri->getMaterial()->setObjectColor(glm::vec3(0, 1, 0));
-    Koen->getMaterial()->setObjectColor(glm::vec3(0, 0, 1));
-    formula->getMaterial()->setObjectColor(glm::vec3(1, 0, 0));
-    formula->createRotation(20.f, glm::vec3(0, 1, 0), -1);
-    Koen->createRotation(30.f, glm::vec3(0, 1, 0), 1);
-    ferarri->createRotation(25.f, glm::vec3(0, 1, 0), 1);
-    house->createOrbit(formula, 9.0, 40.0, 0.0);
-    scena->addObject(formula);
-    scena->addObject(house);
-    scena->addObject(Koen);
-    scena->addObject(ferarri);
+    formula->getMaterial()->setObjectColor(glm::vec3(1.f, 0.0f, 0.0f));
+    formula->getMaterial()->setShininess(32.0f);
+    DrawableObject *raceTrack = createObject("raceTrack", "phong");
+    formula->createBezier(racePoints, 1.0f, true);
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    // scena->addLight(light);
+    // scena->addLight(light);a
+    scena->addObject(cube);
     scena->addLight(light);
+    scena->addObject(raceTrack);
+    scena->addObject(formula);
+
     this->createScene(scena);
 }
 void SceneBuilder::createGame()
@@ -323,12 +406,13 @@ void SceneBuilder::createGame()
     cube->getMaterial()->setFaces(skyboxFaces);
     cube->getTransformation().setScale(glm::vec3(50));
     cube->getMaterial()->loadCubeMap();
-    DrawableObject *asteroid = createObject("sphere", "phong");
+    DrawableObject *asteroid = createObject("asteroid", "constant");
+    // asteroid->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
     asteroid->getTransformation().setScale(glm::vec3(0.00001f));
     GameScene *scene = new GameScene(4.0f, this->camera, asteroid);
 
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-    scene->addLight(light);
+    //  scene->addLight(light);
     scene->addObject(cube);
     this->createScene(scene);
 }

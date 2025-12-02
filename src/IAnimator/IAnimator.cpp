@@ -141,7 +141,7 @@ void ShootAnimator::update(IAnimatable &obj, float dt)
     t.setPosition(newPos);
 }
 ApproachCameraAnimator::ApproachCameraAnimator(const Camera *cam, float speed, float radius)
-    : camera(cam), speed(speed), radius(radius) {} // Opravená inicializace: přidán radius
+    : camera(cam), speed(speed), radius(radius) {}
 void ApproachCameraAnimator::update(IAnimatable &obj, float dt)
 {
     Transformation &t = obj.getTransformation();
@@ -184,12 +184,37 @@ BezierAnimator::BezierAnimator(std::vector<glm::vec3> points, float speed) : poi
         throw std::invalid_argument("Neplatný počet bodů pro kubickou spline");
     }
 }
-BezierAnimator::BezierAnimator(std::vector<glm::vec3> points, float speed, bool rotation) : points(points), speed(speed), rotation(rotation)
+BezierAnimator::BezierAnimator(std::vector<glm::vec3> points, float speed, bool rotation, Camera *camera) : points(points), speed(speed), rotation(rotation), camera(camera)
 {
     if ((points.size() - 1) % 3 != 0)
     {
         throw std::invalid_argument("Neplatný počet bodů pro kubickou spline");
     }
+    Shader *pointsShaderVert = new Shader("shaders/bezierPoints.vert", GL_VERTEX_SHADER);
+    Shader *pointsShaderFrag = new Shader("shaders/bezierPoints.frag", GL_FRAGMENT_SHADER);
+    pointsShader = new ShaderProgram(*pointsShaderVert, *pointsShaderFrag, this->camera);
+    this->camera->attach(pointsShader);
+    glGenVertexArrays(1, &pointsVAO);
+    glGenBuffers(1, &pointsVBO);
+    glGenVertexArrays(1, &curveVAO);
+    glGenBuffers(1, &curveVBO);
+    updatePointsBuffer();
+}
+BezierAnimator::BezierAnimator(float speed, bool rotation, Camera *camera) : speed(speed), rotation(rotation), camera(camera)
+{
+    if ((points.size() - 1) % 3 != 0)
+    {
+        throw std::invalid_argument("Neplatný počet bodů pro kubickou spline");
+    }
+    Shader *pointsShaderVert = new Shader("shaders/bezierPoints.vert", GL_VERTEX_SHADER);
+    Shader *pointsShaderFrag = new Shader("shaders/bezierPoints.frag", GL_FRAGMENT_SHADER);
+    pointsShader = new ShaderProgram(*pointsShaderVert, *pointsShaderFrag, this->camera);
+    this->camera->attach(pointsShader);
+    glGenVertexArrays(1, &pointsVAO);
+    glGenBuffers(1, &pointsVBO);
+    glGenVertexArrays(1, &curveVAO);
+    glGenBuffers(1, &curveVBO);
+    updatePointsBuffer();
 }
 glm::vec3 BezierAnimator::compute(const std::vector<glm::vec3> &points, float localT) const
 {
@@ -216,21 +241,26 @@ glm::vec3 BezierAnimator::computeTangent(const std::vector<glm::vec3> &points, f
 void BezierAnimator::addPoint(glm::vec3 point)
 {
     points.push_back(point);
+    updatePointsBuffer();
 }
 void BezierAnimator::update(IAnimatable &obj, float dt)
 {
+    if (!moving)
+    {
+        return;
+    }
     t += speed * dt;
     int numSegments = (points.size() - 1) / 3;
     if (t > numSegments)
         t = 0.0f;
     if (t < 0.0f)
-        t = 0.0f; 
+        t = 0.0f;
 
     int segment = static_cast<int>(t);
     float localT = t - segment;
     if (segment >= numSegments || (segment * 3 + 3) >= points.size())
     {
-        return; 
+        return;
     }
 
     std::vector<glm::vec3> segPoints(4);
@@ -240,26 +270,106 @@ void BezierAnimator::update(IAnimatable &obj, float dt)
     }
 
     glm::vec3 newPos = compute(segPoints, localT);
-
-   // std::cout << "t: " << t << ", Pos: " << newPos.x << "," << newPos.y << "," << newPos.z << std::endl;
-    //std::cout << "------------------------------------------------" << std::endl;
     if (rotation)
     {
         glm::vec3 tangent = computeTangent(segPoints, localT);
         if (glm::length(tangent) > 0.001f)
-        { 
-            tangent = glm::normalize(tangent);
-            glm::mat4 rotMat = glm::lookAt(glm::vec3(0.0f), tangent, glm::vec3(0.0f, 1.0f, 0.0f));
-            glm::mat4 newMat = glm::translate(glm::mat4(1.0f), newPos) * rotMat * glm::scale(glm::mat4(1.0f), obj.getTransformation().getScale());
-            obj.getTransformation().setModelMatrix(newMat);
-            //std::cout << "t: " << t << ", Pos: " << newPos.x << "," << newPos.y << "," << newPos.z << std::endl;
-        }
-        else
         {
+            tangent = glm::normalize(tangent);
+            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+            glm::vec3 right = glm::normalize(glm::cross(up, tangent));
+            glm::vec3 newUp = glm::cross(tangent, right);
+
+            glm::mat4 rotMat(1.0f);
+            rotMat[0] = glm::vec4(right, 0.0f);
+            rotMat[1] = glm::vec4(newUp, 0.0f);
+            rotMat[2] = glm::vec4(tangent, 0.0f);
+            glm::mat4 newMat = glm::translate(glm::mat4(1.0f), newPos) *
+                               rotMat *
+                               glm::scale(glm::mat4(1.0f), obj.getTransformation().getScale());
+            obj.getTransformation().setModelMatrix(newMat);
         }
     }
     else
     {
         obj.getTransformation().setPosition(newPos);
     }
+}
+void BezierAnimator::start()
+{
+    moving = true;
+}
+void BezierAnimator::stop()
+{
+    moving = false;
+}
+void BezierAnimator::drawControlPoints() const
+{
+    pointsShader->use();
+    pointsShader->setModelMatrix(glm::mat4(1.0f));                        // Body v world space
+    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 0.0f, 0.0f)); // Červené body
+    glPointSize(15.0f);
+    glBindVertexArray(pointsVAO);
+    glDrawArrays(GL_POINTS, 0, points.size());
+    glBindVertexArray(0);
+    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 1.0f, 0.0f)); // Žlutá pro křivku
+    glLineWidth(2.0f);                                                    // Tloušťka čáry
+    glBindVertexArray(curveVAO);
+    glDrawArrays(GL_LINE_STRIP, 0, curvePoints.size()); // Spoj body čárami
+    glBindVertexArray(0);
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        printf("OpenGL chyba při kreslení bodů: %x\n", err);
+    }
+    glUseProgram(0);
+}
+void BezierAnimator::updatePointsBuffer()
+{
+    if(points.size() == 0) return;
+
+    glBindVertexArray(pointsVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    curvePoints.clear();
+    int numSegments = (points.size() - 1) / 3;
+    const int pointsPerSegment = 50; 
+
+    for (int seg = 0; seg < numSegments; ++seg)
+    {
+        std::vector<glm::vec3> segPoints(4);
+        for (int i = 0; i < 4; ++i)
+        {
+            segPoints[i] = points[seg * 3 + i];
+        }
+
+        for (int i = 0; i <= pointsPerSegment; ++i)
+        {
+            float localT = static_cast<float>(i) / pointsPerSegment;
+            glm::vec3 point = compute(segPoints, localT);
+            curvePoints.push_back(point);
+        }
+    }
+
+    // Naplň VBO pro křivku
+    glBindVertexArray(curveVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, curveVBO);
+    glBufferData(GL_ARRAY_BUFFER, curvePoints.size() * sizeof(glm::vec3), curvePoints.data(), GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+void BezierAnimator::printPoints() const
+{
+    for(auto& p : points)
+        std::cout << glm::to_string(p) << std::endl;
 }

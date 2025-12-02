@@ -91,6 +91,7 @@ public:
     void setRotation(const glm::mat4 &mat);
     float getRotationAngle() const;
     glm::vec3 getRotationAxis() const;
+    glm::mat4 getRotaionMatrix() const{return rotate.get()->getModelMatrix(); }
     void setScale(const glm::vec3 &scl);
     glm::vec3 getScale() const;
     glm::mat4 getModelMatrix() const;

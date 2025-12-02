@@ -1,7 +1,11 @@
 #pragma once
 #include "../Transformation/Transformation.hpp"
 #include "IAnimatable.hpp"
-
+#include "../shaderProgram/ShaderProgram.hpp"
+#include <glm/glm.hpp>
+#include <GL/glew.h>
+#include <vector>
+#include <memory>
 class IAnimator
 {
 public:
@@ -69,7 +73,7 @@ private:
     float speed;
     bool goingToB;
 };
-class Camera; 
+class Camera;
 class ShootAnimator : public IAnimator
 {
 private:
@@ -81,7 +85,7 @@ private:
     Camera *camera;
 
 public:
-    ShootAnimator(glm::vec3 startPos, glm::vec3 direction, float speed , Camera *camera);
+    ShootAnimator(glm::vec3 startPos, glm::vec3 direction, float speed, Camera *camera);
     void update(IAnimatable &obj, float dt) override;
 };
 class ApproachCameraAnimator : public IAnimator
@@ -92,7 +96,7 @@ private:
     float radius;
 
 public:
-    ApproachCameraAnimator(const Camera *cam, float speed,  float radius);
+    ApproachCameraAnimator(const Camera *cam, float speed, float radius);
     void update(IAnimatable &obj, float dt) override;
 };
 
@@ -106,7 +110,7 @@ private:
     float delta = 0.5f;
 
 public:
-    BasicBezier(glm::mat4 points,glm::mat4x3 B,float t);
+    BasicBezier(glm::mat4 points, glm::mat4x3 B, float t);
     void update(IAnimatable &obj, float dt) override;
 };
 class BezierAnimator : public IAnimator
@@ -115,13 +119,27 @@ private:
     std::vector<glm::vec3> points;
     float t = 0.5;
     float speed = 0.5f;
-    bool rotation = false; 
-    glm::vec3 compute(const std::vector<glm::vec3> &points, float localT)const;
-    glm::vec3 computeTangent(const std::vector<glm::vec3> &points, float localT)const;
+    bool moving = true,rotation = false,constantSpeed = true;
+    glm::vec3 compute(const std::vector<glm::vec3> &points, float localT) const;
+    glm::vec3 computeTangent(const std::vector<glm::vec3> &points, float localT) const;
+    GLuint pointsVAO = 0;
+    GLuint pointsVBO = 0;
+    GLuint curveVAO = 0; 
+    GLuint curveVBO = 0;
+    std::vector<glm::vec3> curvePoints;
+    ShaderProgram *pointsShader = nullptr;
+    void updatePointsBuffer();
+    Camera *camera;
+
 public:
     BezierAnimator(std::vector<glm::vec3> points, float speed);
-    BezierAnimator(std::vector<glm::vec3> points, float speed,bool rotation);
+    BezierAnimator(std::vector<glm::vec3> points, float speed, bool rotation, Camera *camera);
+    BezierAnimator(float speed, bool rotation, Camera *camera);
     void addPoint(glm::vec3 points);
-    void update(IAnimatable &obj, float dt) override;
+    void start();
+    void stop();
 
+    void printPoints() const;
+    void update(IAnimatable &obj, float dt) override;
+    void drawControlPoints() const;
 };

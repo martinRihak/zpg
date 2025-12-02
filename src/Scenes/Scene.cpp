@@ -105,16 +105,4 @@ void Scene::randomForest(glm::vec3 center, int radius, const std::vector<std::pa
     }
 }
 
-void Scene::fireFly(DrawableObject *prototype,int n, glm::vec3 minBounds, glm::vec3 maxBounds, float speed, float baseInterval){
-    //prototype->createRandomMovement(speed, baseInterval, minBounds, maxBounds);
-    //this->addLight(prototype->getLight());
-    //this->addObject(prototype);
-    //for (int i = 1; i < n; i++)
-    //{
-        //DrawableObject *newObj = prototype->clone();
-        //newObj->createRandomMovement(speed, baseInterval, minBounds, maxBounds);
-        //this->addLight(newObj->getLight());
-        //this->addObject(newObj);
-    //}
-    
-}
+

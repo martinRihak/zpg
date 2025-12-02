@@ -9,8 +9,8 @@ Controller::Controller()
 {
     for (int i = 0; i < 9; ++i)
         prevKeyState[i] = false;
-    prevBState = false;  // Inicializace pro klávesu B
-    bezierMode = false;  // Výchozí: Bézier režim deaktivován
+    prevBState = false; // Inicializace pro klávesu B
+    bezierMode = false; // Výchozí: Bézier režim deaktivován
 }
 
 Controller::~Controller() {}
@@ -35,7 +35,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         camera->setEye(camera->getPosition() + glm::normalize(glm::cross(camera->getTarget(), camera->getUp())) * cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         camera->switchFlash();
-
     if (glfwGetWindowAttrib(window, GLFW_FOCUSED) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
     {
         double xpos, ypos;
@@ -94,10 +93,18 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
     bool bPressed = (bState == GLFW_PRESS || bState == GLFW_REPEAT);
     if (bPressed && !prevBState)
     {
-        bezierMode = !bezierMode;  // Toggle režimu
-        printf("Bézier režim: %s\n", bezierMode ? "Aktivní (přidávání bodů levým klikem)" : "Deaktivní (standardní picking/unProject)");
+        if (selectedObject == nullptr)
+        {
+            printf("Vyber objekt pro přidávání bodů!\n");
+        }
+        else
+        {
+            bezierMode = !bezierMode;
+            selectedObject->edit(bezierMode);
+            printf("Bézier režim: %s\n", bezierMode ? "Aktivní (přidávání bodů levým klikem)" : "Deaktivní (standardní picking/unProject)");
+        }
     }
-    prevBState = bPressed;
+        prevBState = bPressed;
 
     if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && selectedObject)
     {
@@ -202,9 +209,9 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         DrawableObject *shot = builder->createObject("sphere", "phong");
 
         shot->getTransformation().setScale(glm::vec3(0.05f));
-        glm::vec3 startPos = rayOrigin + rayWorld * 0.5f; 
+        glm::vec3 startPos = rayOrigin + rayWorld * 0.5f;
 
-        shot->addAnimator(new ShootAnimator(startPos,rayWorld, 10.0f,camera));
+        shot->addAnimator(new ShootAnimator(startPos, rayWorld, 10.0f, camera));
         scene->addObject(shot);
     }
 
@@ -224,15 +231,22 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
     glm::vec3 worldPos = glm::unProject(screenPos, viewMatrix, projMatrix, viewport);
     printf("unProject [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
 
-    if (button == GLFW_MOUSE_BUTTON_LEFT && !scene->isGameScene()) {
-        if (bezierMode) {
-            if (selectedObject->hasBezier()) {
-                selectedObject->addControlPoint(worldPos); 
+    if (button == GLFW_MOUSE_BUTTON_LEFT && !scene->isGameScene())
+    {
+        if (bezierMode)
+        {
+            if (selectedObject->hasBezier())
+            {
+                selectedObject->addControlPoint(worldPos);
                 printf("Přidán Bézier bod: [%f, %f, %f]\n", worldPos.x, worldPos.y, worldPos.z);
-            } else {
+            }
+            else
+            {
                 printf("Vyber objekt pro přidávání bodů!\n");
             }
-        } else {
+        }
+        else
+        {
             printf("Clicked on pixel %f, %f, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
                    xpos, ypos, color[0], color[1], color[2], color[3], depth, stencilId);
 

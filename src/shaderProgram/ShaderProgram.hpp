@@ -28,6 +28,7 @@ private:
 
 public:
     ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader, Camera *camera);
+    ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader);
     ~ShaderProgram();
 
     void use();

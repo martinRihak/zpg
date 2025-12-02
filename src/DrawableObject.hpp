@@ -25,6 +25,7 @@ private:
     ShaderProgram *shader;
     std::shared_ptr<Transformation> tranformation;
     std::unique_ptr<IAnimator> animator;
+    std::vector<std::unique_ptr<Material>> materials;
     bool animated = false;
     CompositeTransformation queuedTransforms;
     bool hasLight = false, destroyVal = false;
@@ -32,7 +33,7 @@ private:
 
     glm::vec3 minBounds, maxBounds;
     float boundingRadius = 1.0f;
-    bool selected = false,Bezier = false;
+    bool selected = false,Bezier = false,editMode = false;
     int id;
 
     void drawSkybox(float dt);
@@ -54,6 +55,7 @@ public:
     void createRandomMovement(float speed, float baseInterval, glm::vec3 minBounds, glm::vec3 maxBounds);
     void createBetweenPoints(glm::vec3 p1, glm::vec3 p2, float speed);
     void createBezier(std::vector<glm::vec3> controlPoints, float speed,bool rotation);
+    void createBezier(float speed,bool rotation);
     void addAnimator(IAnimator *animator)
     {
         this->animator = std::unique_ptr<IAnimator>(animator);
@@ -70,7 +72,7 @@ public:
     PointLight *getLight() const;
     void createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att);
     
-    Material *getMaterial() const { return model->getMaterial(0); }
+    Material *getMaterial(int index = 0) const { return materials[index].get(); }
     void createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness);
     void setMaterial(Material *mat);
 
@@ -88,4 +90,5 @@ public:
     bool hasBezier() const { return Bezier; }
     void setHasBezier(bool Bezier) {this->Bezier = Bezier;}
     void addControlPoint(glm::vec3 point);
+    void edit(bool bezierEdit);
 };

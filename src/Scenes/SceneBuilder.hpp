@@ -31,7 +31,7 @@ public:
     void create4Spheres();
     void createForest();
     void createSunSystem();
-    void createTestScene();
+    void createRaceTrack();
     void createGame();
     void createSkyBox();
     // Accessors

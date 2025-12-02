@@ -37,7 +37,7 @@ App::App(int width, int height) : width(width), height(height)
             Scene* scene = app->builder->getScene(app->controller->getActiveScene());
             app->controller->handleMouseClick(win, button, action, mods, app->camera, scene, app->builder);
         } });
-   //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 App::~App()
 {
@@ -73,7 +73,6 @@ void App::createScenes()
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
-    Model *formula = new Model("../Models/assets/formula1.obj");
     Model *house = new Model("../Models/assets/house.obj");
     //  Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
     // Model *Ferarri = new Model("../Models/assets/Humvee.obj");
@@ -83,9 +82,13 @@ void App::createScenes()
     Model *toiledModel = new Model("../Models/assets/shrek/toiled.obj");
     Model *sphereOBJ = new Model("../Models/NASA/sphereOBJ.obj");
     Model *cubeModel = new Model("../Models/assets/cube.obj");
-    Model* asteroid = new Model("../Models/NASA/asteroid/Test_planet.obj");
-    Model* shrekHouse= new Model("../Models/assets/PC _ Computer - Shrek 2 - Map Objects - Shrek's House/Shrek's House/Shrek_home.obj");
-    Model* rocket = new Model("../Models/assets/Rocket_Ship/10475_Rocket_Ship_v1_L3.obj");
+    Model *asteroid = new Model("../Models/NASA/Rocky_Asteroid/Rocky_Asteroid_2.obj");
+    Model *shrekHouse = new Model("../Models/assets/PC _ Computer - Shrek 2 - Map Objects - Shrek's House/Shrek's House/Shrek_home.obj");
+    Model *rocket = new Model("../Models/assets/Rocket_Ship/10475_Rocket_Ship_v1_L3.obj");
+
+    Model *raceTrack = new Model("../Models/RaceTrack/RaceTrack/gp.obj");
+    Model *formula = new Model("../Models/RaceTrack/formula.obj");
+
     // Initialize shaders
     Shader *lambertFrag = new Shader("shaders/Lambert.frag", GL_FRAGMENT_SHADER);
     Shader *constantFrag = new Shader("shaders/Constant.frag", GL_FRAGMENT_SHADER);
@@ -105,13 +108,10 @@ void App::createScenes()
     builder->registerModel("triangle", triangleModel);
     builder->registerModel("triangle3DModel", triandel3DModel);
     builder->registerModel("plane", planeModel);
-    //  builder->registerModel("ferarri", Ferarri);
     builder->registerModel("bush", bush);
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("house", house);
-    builder->registerModel("formula", formula);
-    // builder->registerModel("koen", Koen);
 
     builder->registerModel("shrek", shrekModel);
     builder->registerModel("fiona", fionaModel);
@@ -120,26 +120,29 @@ void App::createScenes()
 
     builder->registerModel("sphereOBJ", sphereOBJ);
     builder->registerModel("cube", cubeModel);
-    builder->registerModel("asteroid",asteroid);
-    builder->registerModel("rocket",rocket);
-    
+    builder->registerModel("asteroid", asteroid);
+    builder->registerModel("rocket", rocket);
+
+    builder->registerModel("formula", formula);
+    builder->registerModel("raceTrack", raceTrack);
+
     builder->registerShader("lambert", lambertShader);
     builder->registerShader("constant", constantShader);
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
     builder->createSkyBox();
-    //builder->createGame();
+    builder->createGame();
     builder->createTriangle();
-    //builder->create4Spheres();
+    builder->create4Spheres();
     builder->createForest();
-    //builder->createSunSystem();
-    //  builder->createTestScene();
+    builder->createSunSystem();
+    builder->createRaceTrack();
 }
 void App::run()
 {
     createScenes();
-   controller->setCurrentScene(builder->getScene(0));
+    controller->setCurrentScene(builder->getScene(0));
     double lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(this->window))
     {

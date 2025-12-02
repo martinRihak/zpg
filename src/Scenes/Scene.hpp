@@ -15,6 +15,7 @@ protected:
     glm::vec3 background = glm::vec3(0.0f, 0.0f, 0.0f);
 
     int countObjects = 1;
+
     bool isGame = false;
 public:
     Scene();
@@ -35,4 +36,6 @@ public:
     std::vector<DrawableObject *> &getObjects() { return objects; } // Pro mazání
 
     DrawableObject *getObjectById(uint8_t id);
+
+    void bezierEditing(DrawableObject* prototype,bool bezierEdit);
 };

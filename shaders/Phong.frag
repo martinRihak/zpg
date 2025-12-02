@@ -32,7 +32,6 @@ struct Material {
     sampler2D ourTexture;
 };
 uniform Material material;
-uniform float time;
 void main() {
     vec3 norm = normalize(worldNormal);
     vec3 viewDir = normalize(viewPos - worldPosition);
@@ -42,7 +41,6 @@ void main() {
     vec3 color;
     if(material.hasTexture == true){ 
         color = texture(material.ourTexture, texCoords).rgb;
-        color = color * time;
     }
     else
         color = material.objectColor;

@@ -10,6 +10,11 @@ GameScene::~GameScene()
 }
 void GameScene::render(float dt)
 {
+    if (score < 0)
+    {
+        printf("Game Over\n");
+        return;
+    }
     updateSpawning(dt);
     colision();
     glEnable(GL_STENCIL_TEST);
@@ -21,6 +26,7 @@ void GameScene::render(float dt)
     }
     for (DrawableObject *e : enemy)
     {
+        glStencilFunc(GL_ALWAYS, e->getID(), 0xFF);
         e->draw(dt, this->lights);
     }
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
@@ -36,13 +42,11 @@ void GameScene::render(float dt)
 }
 void GameScene::updateSpawning(float dt)
 {
-
     if (!camera || !enemyPrototype)
         return;
 
     spawnTimer += dt;
 
-    // Náhodný interval mezi 0.8s – 2.5s pro větší zajímavost
     float currentInterval = spawnInterval + (rand() % 1000 / 1000.0f) * 2.0f - 0.5f;
 
     if (spawnTimer >= currentInterval)
@@ -50,19 +54,35 @@ void GameScene::updateSpawning(float dt)
         spawnTimer = 0.0f;
         DrawableObject *enemy = enemyPrototype->clone();
 
-        float distance = 25.0f + static_cast<float>(rand() % 1000) / 1000.0f * 20.0f;
+        glm::vec3 spawnPos;
+        bool positionInView = false;
+        int maxTries = 50; // Omezení počtu pokusů, aby se zabránilo nekonečné smyčce
 
-        float theta = static_cast<float>(rand() % 360) * 3.14159f / 180.0f;
-        float phi = static_cast<float>(rand() % 360) * 3.14159f / 180.0f;
+        for (int i = 0; i < maxTries; ++i) {
+            float distance = 15.0f + static_cast<float>(rand() % 1000) / 1000.0f * 10.0f;
+            float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.0f;
 
-        glm::vec3 offset(
-            distance * sin(phi) * cos(theta),
-            distance * sin(phi) * sin(theta),
-            distance * cos(phi));
+            glm::vec3 cameraPos = camera->getPosition();
+            // Generujeme pozici v kruhu kolem kamery na stejné výškové úrovni
+            glm::vec3 offset(distance * cos(angle), 0.0f, distance * sin(angle));
+            spawnPos = cameraPos + offset;
 
-        glm::vec3 cameraPos = camera->getPosition();
-        enemy->getTransformation().setPosition(cameraPos + offset);
+            // Test viditelnosti
+            glm::vec4 clipSpacePos = camera->getProjectionMatrix() * camera->getCamera() * glm::vec4(spawnPos, 1.0);
+            glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
 
+            if (ndcSpacePos.z > 0 && ndcSpacePos.z < 1.0 && // Je mezi near a far rovinou
+                abs(ndcSpacePos.x) < 1.0 && abs(ndcSpacePos.y) < 1.0) { // Je vlevo/vpravo/nahoře/dole
+                positionInView = true;
+                break;
+            }
+        }
+
+        if (!positionInView) { // Pokud se nepodařilo najít pozici, přeskočíme spawn
+             delete enemy;
+             return;
+        }
+        enemy->getTransformation().setPosition(spawnPos);
         float approachSpeed = 0.5f + static_cast<float>(rand() % 1000) / 1000.0f * 1.6f;
 
         enemy->addAnimator(new ApproachCameraAnimator(camera, approachSpeed, 2.0f));
@@ -76,6 +96,13 @@ void GameScene::colision()
     {
         for (DrawableObject *enemy : this->enemy)
         {
+            if (enemy->isDestroyed())
+            {
+                removeObjects(enemy);
+                score -= 10;
+                printf("Skore: %d\n", score);
+                continue;
+            }
             if (bull->collidesWith(enemy))
             {
                 printf("Kolize: Strela Zasahla nepritele.");

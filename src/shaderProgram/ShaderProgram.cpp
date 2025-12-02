@@ -13,7 +13,14 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentS
     glLinkProgram(this->shaderProgram);
     //  updateCamera(this->camera);
 }
-
+ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader)
+{
+    this->shaderProgram = glCreateProgram();
+    glAttachShader(this->shaderProgram, vertexShader.getID());
+    glAttachShader(this->shaderProgram, fragmentShader.getID());
+    glLinkProgram(this->shaderProgram);
+    //  updateCamera(this->camera);
+}
 void ShaderProgram::use()
 {
     glUseProgram(this->shaderProgram);

@@ -53,4 +53,5 @@ public:
         return nullptr;
     }
     void setMaterial(Material *mat) { meshes[0]->material = mat; }
+    void freeMaterial() const;;
 };
