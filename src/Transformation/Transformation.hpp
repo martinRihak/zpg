@@ -70,38 +70,39 @@ public:
 class Transformation
 {
 private:
-    std::shared_ptr<Move> move;
-    std::shared_ptr<Rotate> rotate;
-    std::shared_ptr<Scale> scale;
-
-    std::shared_ptr<CustomTransform> custom;
+    std::unique_ptr<Move> move;
+    std::unique_ptr<Rotate> rotate;
+    std::unique_ptr<Scale> scale;
+    std::unique_ptr<CustomTransform> custom;
     std::shared_ptr<CompositeTransformation> composite;
-
     bool useCustom;
-
+    mutable bool dirty;
     glm::mat4 modelMatrix;
 
     void updateModelMatrix();
 
 public:
     Transformation();
+    Transformation(const Transformation& other);
+    Transformation& operator=(const Transformation& other);
+    Transformation(Transformation&&) noexcept = default;
+    Transformation& operator=(Transformation&&) noexcept = default;
+
     void setPosition(const glm::vec3 &pos);
     glm::vec3 getPosition() const;
     void setRotation(float angle, const glm::vec3 &axis);
     void setRotation(const glm::mat4 &mat);
     float getRotationAngle() const;
     glm::vec3 getRotationAxis() const;
-    glm::mat4 getRotaionMatrix() const{return rotate.get()->getModelMatrix(); }
+    glm::mat4 getRotationMatrix() const { return rotate->getModelMatrix(); }
     void setScale(const glm::vec3 &scl);
     glm::vec3 getScale() const;
-    glm::mat4 getModelMatrix() const;
+    glm::mat4 getModelMatrix();
     void setModelMatrix(const glm::mat4 &mat);
 
-    void setUseCustom(bool enable) { useCustom = enable; }
+    void setUseCustom(bool enable) { useCustom = enable; dirty = true; }
     bool getUseCustom() const { return useCustom; }
 
     CompositeTransformation* getComposite() const { return composite.get(); }
-    void createComposire(){
-        composite = std::make_shared<CompositeTransformation>();
-        }
+    void createComposite() { composite = std::make_shared<CompositeTransformation>(); dirty = true; }
 };

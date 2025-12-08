@@ -3,7 +3,8 @@
 #include "IAnimator/IAnimator.hpp"
 #include "Lights/PointLight.hpp"
 #include <limits> // Pro FLT_MAX
-
+#include <memory>
+#include <iostream>
 DrawableObject::DrawableObject(Model *model, ShaderProgram *shader)
     : model(model), shader(shader)
 {
@@ -182,6 +183,7 @@ DrawableObject *DrawableObject::clone() const
 {
 
     DrawableObject *newObj = new DrawableObject(this->model, this->shader);
+    newObj->getTransformation().setModelMatrix(this->tranformation->getModelMatrix());
     return newObj;
 }
 
@@ -196,7 +198,6 @@ void DrawableObject::createLight(glm::vec3 diff, glm::vec3 spec, glm::vec3 att)
 }
 void DrawableObject::setMaterial(Material *mat)
 {
-
     this->model->setMaterial(mat);
 }
 void DrawableObject::createMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shiness)

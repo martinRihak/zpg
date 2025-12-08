@@ -15,8 +15,13 @@ private:
     void updateSpawning(float dt);
     void removeObjects(DrawableObject* obj);
 
+    //Scenes
+    Scene* gameOver = nullptr;
+    ShaderProgram* scenesShader = nullptr;
+
 public:
-    GameScene(float spawnInterval, Camera* camera, DrawableObject* enemyPrototype);
+    GameScene(float spawnInterval, Camera* camera, DrawableObject* enemyPrototype,ShaderProgram* scenesShader);
     ~GameScene();
+    void createScenes();
     void render(float dt) override;
 };

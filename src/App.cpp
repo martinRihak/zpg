@@ -55,27 +55,13 @@ App::~App()
 void App::createScenes()
 {
 
-    float triangle3D[] = {
-        0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
-        0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
-        -0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
-        -0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
-        0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
-        0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
-        0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
-        0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
-        0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
-        -0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
-        0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
-        0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f};
     Model *bush = new Model(bushes, sizeof(bushes), 8730);
     Model *sphereModel = new Model(sphere, sizeof(sphere), 2880);
     Model *treeModel = new Model(tree, sizeof(tree), 92814);
     Model *triangleModel = new Model(triangle, sizeof(triangle), 3);
     Model *triandel3DModel = new Model(triangle3D, sizeof(triangle3D), 12, true);
     Model *house = new Model("../Models/assets/house.obj");
-    //  Model *Koen = new Model("../Models/assets/Koenigsegg.obj");
-    // Model *Ferarri = new Model("../Models/assets/Humvee.obj");
+
     Model *planeModel = new Model(plane, sizeof(plane), 6, true);
     Model *shrekModel = new Model("../Models/assets/shrek/shrek.obj");
     Model *fionaModel = new Model("../Models/assets/shrek/fiona.obj");
@@ -85,7 +71,7 @@ void App::createScenes()
     Model *asteroid = new Model("../Models/NASA/Rocky_Asteroid/Rocky_Asteroid_2.obj");
     Model *shrekHouse = new Model("../Models/assets/PC _ Computer - Shrek 2 - Map Objects - Shrek's House/Shrek's House/Shrek_home.obj");
     Model *rocket = new Model("../Models/assets/Rocket_Ship/10475_Rocket_Ship_v1_L3.obj");
-
+    Model *teren = new Model("../Models/assets/teren.obj");
     Model *raceTrack = new Model("../Models/RaceTrack/RaceTrack/gp.obj");
     Model *formula = new Model("../Models/RaceTrack/formula.obj");
 
@@ -112,6 +98,7 @@ void App::createScenes()
     builder->registerModel("sphere", sphereModel);
     builder->registerModel("tree", treeModel);
     builder->registerModel("house", house);
+    builder->registerModel("teren", teren);
 
     builder->registerModel("shrek", shrekModel);
     builder->registerModel("fiona", fionaModel);
@@ -131,6 +118,7 @@ void App::createScenes()
     builder->registerShader("phong", phongShader);
     builder->registerShader("blinn", blinnShader);
     builder->registerShader("skyboxShader", skyboxShader);
+
     builder->createSkyBox();
     builder->createGame();
     builder->createTriangle();

@@ -7,10 +7,6 @@
 
 Controller::Controller()
 {
-    for (int i = 0; i < 9; ++i)
-        prevKeyState[i] = false;
-    prevBState = false; // Inicializace pro klávesu B
-    bezierMode = false; // Výchozí: Bézier režim deaktivován
 }
 
 Controller::~Controller() {}
@@ -88,7 +84,6 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
         prevKeyState[i] = pressed;
     }
 
-    // Nové: Detekce klávesy B pro toggle Bézier režimu
     int bState = glfwGetKey(window, GLFW_KEY_B);
     bool bPressed = (bState == GLFW_PRESS || bState == GLFW_REPEAT);
     if (bPressed && !prevBState)
@@ -117,8 +112,8 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             printf("Objekt smazán!\n");
         }
     }
-
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && selectedObject != nullptr)
+    int pPressed = glfwGetKey(window, GLFW_KEY_P);
+    if (pPressed == GLFW_PRESS || pPressed == GLFW_REPEAT && selectedObject != nullptr)
     {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
@@ -145,7 +140,9 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
                 if (t > 0.0f)
                 {
                     glm::vec3 newPos = rayOrigin + t * rayDir;
-                    selectedObject->getTransformation().setPosition(newPos);
+                    DrawableObject* newObj = selectedObject->clone();
+                    newObj->getTransformation().setPosition(newPos);
+                    currentScene->addObject(newObj);
                 }
             }
 
@@ -169,6 +166,13 @@ void Controller::processInput(GLFWwindow *window, int8_t sceneCount, Camera *cam
             deltaPos.z -= speed * dt;
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
             deltaPos.z += speed * dt;
+        if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS) {
+            selectedObject->getTransformation().setRotation(selectedObject->getTransformation().getRotationAngle() + (speed * 10.0f * dt), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+        if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) {
+            selectedObject->getTransformation().setRotation(selectedObject->getTransformation().getRotationAngle() - (speed * 10.0f * dt), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+            
 
         if (glm::length(deltaPos) > 0.0f)
         {
@@ -215,7 +219,6 @@ void Controller::handleMouseClick(GLFWwindow *window, int button, int action, in
         scene->addObject(shot);
     }
 
-    // Spočítej world pozici pomocí unProject (společné pro oba režimy)
     GLbyte color[4];
     GLfloat depth;
     GLuint stencilId;

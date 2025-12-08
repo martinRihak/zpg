@@ -10,3 +10,4 @@
 #include "suzi_smooth.h"
 #include "tree.h"
 #include "triangle.h"
+#include  "triangle3D.h"

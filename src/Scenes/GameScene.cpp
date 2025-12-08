@@ -1,18 +1,33 @@
 #include "GameScene.hpp"
 
-GameScene::GameScene(float spawnInterval, Camera *camera, DrawableObject *enemyPrototype)
-    : spawnInterval(spawnInterval), camera(camera), enemyPrototype(enemyPrototype)
+GameScene::GameScene(float spawnInterval, Camera *camera, DrawableObject *enemyPrototype,ShaderProgram* scenesShader)
+    : spawnInterval(spawnInterval), camera(camera), enemyPrototype(enemyPrototype), scenesShader(scenesShader)
 {
     this->isGame = true;
+    createScenes();
+
 }
 GameScene::~GameScene()
 {
+}
+void GameScene::createScenes()
+{
+    if(scenesShader == nullptr){
+        printf("ShaderProgram neni prirazen\n");
+        return;
+    }
+    this->scenesShader = scenesShader;
+    gameOver = new Scene();
+    Model* gameOverModel = new Model("../Models/Game/GameOver.obj");
+    DrawableObject* gameOverObj = new DrawableObject(gameOverModel, scenesShader);
+    gameOver->addObject(gameOverObj);
+
 }
 void GameScene::render(float dt)
 {
     if (score < 0)
     {
-        printf("Game Over\n");
+        gameOver->render(dt);
         return;
     }
     updateSpawning(dt);

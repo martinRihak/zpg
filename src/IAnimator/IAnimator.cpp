@@ -306,16 +306,16 @@ void BezierAnimator::stop()
 void BezierAnimator::drawControlPoints() const
 {
     pointsShader->use();
-    pointsShader->setModelMatrix(glm::mat4(1.0f));                        // Body v world space
-    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 0.0f, 0.0f)); // Červené body
+    pointsShader->setModelMatrix(glm::mat4(1.0f));                        
+    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 0.0f, 0.0f)); 
     glPointSize(15.0f);
     glBindVertexArray(pointsVAO);
     glDrawArrays(GL_POINTS, 0, points.size());
     glBindVertexArray(0);
-    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 1.0f, 0.0f)); // Žlutá pro křivku
-    glLineWidth(2.0f);                                                    // Tloušťka čáry
+    pointsShader->setUniform("objectColor", glm::vec3(1.0f, 1.0f, 0.0f)); 
+    glLineWidth(2.0f);                                                    
     glBindVertexArray(curveVAO);
-    glDrawArrays(GL_LINE_STRIP, 0, curvePoints.size()); // Spoj body čárami
+    glDrawArrays(GL_LINE_STRIP, 0, curvePoints.size()); 
     glBindVertexArray(0);
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR)
@@ -357,7 +357,6 @@ void BezierAnimator::updatePointsBuffer()
         }
     }
 
-    // Naplň VBO pro křivku
     glBindVertexArray(curveVAO);
     glBindBuffer(GL_ARRAY_BUFFER, curveVBO);
     glBufferData(GL_ARRAY_BUFFER, curvePoints.size() * sizeof(glm::vec3), curvePoints.data(), GL_DYNAMIC_DRAW);

@@ -88,7 +88,7 @@ void Scene::randomForest(glm::vec3 center, int radius, const std::vector<std::pa
         for (int i = 0; i < count; ++i)
         {
             DrawableObject *newObj = prototype->clone();
-
+            newObj->setMaterial(prototype->getMaterial());
             float randX = static_cast<float>(std::rand() % (2 * radius + 1) - radius);
             float randZ = static_cast<float>(std::rand() % (2 * radius + 1) - radius);
             glm::vec3 pos = glm::vec3(center.x + randX, center.y, center.z + randZ);

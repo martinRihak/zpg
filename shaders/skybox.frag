@@ -6,5 +6,5 @@ uniform samplerCube cubeTexture;
 uniform float time;
 void main() {
    vec4 color = texture(cubeTexture,uv);
-   frag_color = vec4(color.rgb * time , 1.0);
+   frag_color = vec4(color * time);
 }

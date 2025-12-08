@@ -24,6 +24,16 @@ void SceneBuilder::createScene(Scene *scene)
     scene->addLight(camera->getFlashLight());
     this->scenes.push_back(scene);
 }
+ShaderProgram *SceneBuilder::getShader(const std::string &name) const
+{
+    auto it = shaders.find(name);
+    if (it != shaders.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
 DrawableObject *SceneBuilder::createObject(const std::string &modelName, const std::string &shaderName)
 {
     auto modelIt = models.find(modelName);
@@ -131,6 +141,8 @@ void SceneBuilder::createForest()
         "../Models/cubeMap/negy.jpg",
         "../Models/cubeMap/posz.jpg",
         "../Models/cubeMap/negz.jpg"};
+
+    DrawableObject *teren = createObject("teren","phong");
     DrawableObject *cube = createObject("cube", "skyboxShader");
     cube->getTransformation().setScale(glm::vec3(50));
     cube->getMaterial()->setTime(0.2f);
@@ -156,15 +168,7 @@ void SceneBuilder::createForest()
     house->getTransformation().setRotation(-45.0f, glm::vec3(0, 1, 0));
 
     DrawableObject *bush = createObject("bush", "phong");
-    DrawableObject *plane = createObject("plane", "phong");
-    plane->getMaterial()->loadTexture("../src/grass.png");
-    plane->getTransformation().setPosition(glm::vec3(0, 0, 0));
-    plane->getTransformation().setScale(glm::vec3(3.f));
-    DrawableObject *plane2 = createObject("plane", "phong");
-    plane2->getTransformation().setPosition(glm::vec3(20, 0, 0));
-    plane2->getMaterial()->loadTexture("../src/grass.png");
-    plane2->getTransformation().setPosition(glm::vec3(0, 0, 0));
-    plane2->getTransformation().setScale(glm::vec3(3.f));
+
     DrawableObject *firefly = createObject("sphere", "phong");
     DrawableObject *firefly2 = createObject("sphere", "phong");
     firefly->createLight(glm::vec3(1.0, 0.9, 0.3), glm::vec3(0.4, 0.4, 0.3), glm::vec3(1.0, 0.7, 1.8));
@@ -181,12 +185,11 @@ void SceneBuilder::createForest()
     std::vector<std::pair<DrawableObject *, int>> forest = {{tree, 50}, {bush, 20}};
     scene->randomForest(glm::vec3(12.0f, 0.0f, 0.0f), 10, forest);
     scene->randomForest(glm::vec3(-12.0f, 0.0f, 0.0f), 10, forest);
-    scene->addObject(plane);
     scene->addObject(cube);
+    scene->addObject(teren);
     scene->addObject(shrek);
     scene->addObject(fiona);
     scene->addObject(toiled);
-    scene->addObject(plane2);
     scene->addLight(firefly->getLight());
     scene->addLight(firefly2->getLight());
     scene->addObject(firefly);
@@ -409,7 +412,7 @@ void SceneBuilder::createGame()
     DrawableObject *asteroid = createObject("asteroid", "constant");
     // asteroid->getMaterial()->loadTexture("../Models/NASA/2k_sun.jpg");
     asteroid->getTransformation().setScale(glm::vec3(0.00001f));
-    GameScene *scene = new GameScene(4.0f, this->camera, asteroid);
+    GameScene *scene = new GameScene(4.0f, this->camera, asteroid,getShader("constant"));
 
     Directional *light = new Directional(glm::vec3(0.0f, 10.0f, -2.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     //  scene->addLight(light);
